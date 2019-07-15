@@ -14,7 +14,7 @@ class IndexButtonBar extends Component {
     return (
       <React.Fragment>
       <div className='index-button-bar__header'>
-        N Supported Data Resources
+        {this.props.buttons.length} Supported Data Resources
       </div>
       <div className='index-button-bar'> 
         {
