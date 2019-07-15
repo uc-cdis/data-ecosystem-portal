@@ -47,6 +47,8 @@ class IndexButtonBar extends Component {
                       link={item.external_link}
                       className='index-button-bar__item'
                       caption='Visit Website'
+                      target='_blank'
+                      isExternal={true}
                     />
                   }
                 </div>

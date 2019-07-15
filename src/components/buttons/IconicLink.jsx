@@ -5,28 +5,44 @@ import IconComponent from '../Icon';
 
 
 class IconicLink extends React.Component {
-  render() {
-    let styles = {};
-    if (this.props.iconColor && this.props.iconColor !== '') { styles = { fill: this.props.iconColor }; }
+  renderButton(props) {
     return (
-      <Link className={this.props.className} to={this.props.link}>
+      <React.Fragment>
         {
-          this.props.dictIcons !== undefined ?
-            <button className={this.props.buttonClassName}>
-              {this.props.caption}&ensp;
+          props.dictIcons !== undefined ?
+            <button className={props.buttonClassName}>
+              {props.caption}&ensp;
               <IconComponent
-                dictIcons={this.props.dictIcons}
-                iconName={this.props.icon}
+                dictIcons={props.dictIcons}
+                iconName={props.icon}
                 height='14px'
                 svgStyles={{ ...styles }}
               />
             </button> :
-            <button className={this.props.buttonClassName}>
-              {this.props.caption}
+            <button className={props.buttonClassName}>
+              {props.caption}
             </button>
         }
-      </Link>
+      </React.Fragment>
     );
+  }
+
+  render() {
+    let styles = {};
+    if (this.props.iconColor && this.props.iconColor !== '') { styles = { fill: this.props.iconColor }; }
+    if (this.props.isExternal) {
+      return (
+        <a href={this.props.link} target={this.props.target} class={this.props.className}>
+          { this.renderButton(this.props) }
+        </a>
+      );
+    } else {
+      return (
+          <Link className={this.props.className} to={this.props.link} target={this.props.target}>
+            { this.renderButton(this.props) }
+          </Link>
+      );
+    }
   }
 }
 
@@ -38,6 +54,8 @@ IconicLink.propTypes = {
   caption: PropTypes.string,
   buttonClassName: PropTypes.string,
   className: PropTypes.string,
+  target: PropTypes.string,
+  isExternal: PropTypes.bool,
 };
 
 IconicLink.defaultProps = {
@@ -47,6 +65,8 @@ IconicLink.defaultProps = {
   caption: '',
   buttonClassName: 'button-primary-white',
   className: '',
+  target: '',
+  isExternal: false,
 };
 
 export default IconicLink;
