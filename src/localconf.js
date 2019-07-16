@@ -1,7 +1,7 @@
 const { components, requiredCerts, config } = require('./params');
 
 /**
- * Setup configuration variables based on the "app" the data-portal is
+ * Setup configuration variables based on the "app" the data-ecosystem-portal is
  * being deployed into (Brain Health Commons, Blood Pack, ...)
  *
  * @param {app, dev, basename, mockStore, hostname} opts overrides for defaults

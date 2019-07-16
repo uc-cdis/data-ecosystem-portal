@@ -141,12 +141,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/uc-cdis/data-portal.git"
+    "url": "git+https://github.com/uc-cdis/data-ecosystem-portal.git"
   },
   "author": "philloooo",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/uc-cdis/data-portal/issues"
+    "url": "https://github.com/uc-cdis/data-ecosystem-portal/issues"
   },
-  "homepage": "https://github.com/uc-cdis/data-portal#readme"
+  "homepage": "https://github.com/uc-cdis/data-ecosystem-portal#readme"
 }
