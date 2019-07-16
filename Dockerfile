@@ -1,4 +1,4 @@
-# To run: docker run -d --name=dataportal -p 80:80 quay.io/cdis/data-portal
+# To run: docker run -d --name=dataportal -p 80:80 quay.io/cdis/data-ecosystem-portal
 # To check running container: docker exec -it dataportal /bin/bash
 
 FROM ubuntu:16.04
@@ -24,9 +24,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ARG APP=dev
 ARG BASENAME
 
-RUN mkdir -p /data-portal
-COPY . /data-portal
-WORKDIR /data-portal
+RUN mkdir -p /data-ecosystem-portal
+COPY . /data-ecosystem-portal
+WORKDIR /data-ecosystem-portal
 RUN COMMIT=`git rev-parse HEAD` && echo "export const portalCommit = \"${COMMIT}\";" >src/versions.js \
     && VERSION=`git describe --always --tags` && echo "export const portalVersion =\"${VERSION}\";" >>src/versions.js \
     && /bin/rm -rf .git \
