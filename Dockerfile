@@ -38,7 +38,6 @@ RUN VERSION=`git describe --always --tags` && echo "export const portalVersion =
 RUN /bin/rm -rf .git
 RUN /bin/rm -rf node_modules
 RUN npm config set unsafe-perm=true && npm ci
-RUN npm run schema
 RUN npm run relay
 RUN npm run params
 RUN NODE_OPTIONS=--max-old-space-size=4096 NODE_ENV=production ./node_modules/.bin/webpack --bail
