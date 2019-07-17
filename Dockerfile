@@ -27,6 +27,8 @@ ARG BASENAME
 RUN mkdir -p /data-ecosystem-portal
 COPY . /data-ecosystem-portal
 WORKDIR /data-ecosystem-portal
+RUN ls
+RUN ls ./src/
 RUN COMMIT=`git rev-parse HEAD` && echo "export const portalCommit = \"${COMMIT}\";" >src/versions.js \
     && VERSION=`git describe --always --tags` && echo "export const portalVersion =\"${VERSION}\";" >>src/versions.js \
     && /bin/rm -rf .git \
