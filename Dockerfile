@@ -32,16 +32,17 @@ RUN pwd
 RUN ls ../
 RUN ls ./data
 RUN ls ./data/
-RUN COMMIT=`git rev-parse HEAD` && echo "export const portalCommit = \"${COMMIT}\";" >src/versions.js \
-    && VERSION=`git describe --always --tags` && echo "export const portalVersion =\"${VERSION}\";" >>src/versions.js \
-    && /bin/rm -rf .git \
-    && /bin/rm -rf node_modules \
-    && npm config set unsafe-perm=true && npm ci \
-    && npm run relay \
-    && npm run params \
-    && NODE_OPTIONS=--max-old-space-size=4096 NODE_ENV=production ./node_modules/.bin/webpack --bail \
-    && cp nginx.conf /etc/nginx/conf.d/nginx.conf \
-    && rm /etc/nginx/sites-enabled/default
+RUN COMMIT=`git rev-parse HEAD` 
+RUN echo "export const portalCommit = \"${COMMIT}\";" >src/versions.js
+RUN VERSION=`git describe --always --tags` && echo "export const portalVersion =\"${VERSION}\";" >>src/versions.js
+RUN /bin/rm -rf .git
+RUN /bin/rm -rf node_modules
+RUN npm config set unsafe-perm=true && npm ci
+RUN npm run relay
+RUN npm run params
+RUN NODE_OPTIONS=--max-old-space-size=4096 NODE_ENV=production ./node_modules/.bin/webpack --bail
+RUN cp nginx.conf /etc/nginx/conf.d/nginx.conf
+RUN rm /etc/nginx/sites-enabled/default
 
 # In standard prod these will be overwritten by volume mounts
 # Provided here for ease of use in development and
