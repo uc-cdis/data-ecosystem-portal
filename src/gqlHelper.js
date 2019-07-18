@@ -22,7 +22,7 @@ const helperSingleton = {
       code
     }
     count1: _case_count
-    count2: _study_count
+    count2: _experiment_count
     count3: _aliquot_count
     
     fileCount1: _aggregated_snp_array_count
@@ -49,11 +49,12 @@ const helperSingleton = {
       code
     }
     count1: _case_count( project_id:$name )
-    count2: _study_count( project_id:$name )
+    count2: _experiment_count( project_id:$name )
     count3: _aliquot_count( project_id:$name )
     
     chart1: _case_count( project_id:$name )
-    chart2: _study_count( project_id:$name )
+    chart2: _experiment_count( project_id:$name )
+    chart3: _aliquot_count( project_id:$name )
     
     fileCount1: _aggregated_snp_array_count( project_id:$name )
     fileCount2: _aligned_reads_count( project_id:$name )
