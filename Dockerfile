@@ -32,11 +32,12 @@ RUN COMMIT=`git rev-parse HEAD` && echo "export const portalCommit = \"${COMMIT}
     && /bin/rm -rf .git \
     && /bin/rm -rf node_modules \
     && npm config set unsafe-perm=true && npm ci \
-    && npm run relay \
     && npm run params \
     && NODE_OPTIONS=--max-old-space-size=4096 NODE_ENV=production ./node_modules/.bin/webpack --bail \
     && cp nginx.conf /etc/nginx/conf.d/nginx.conf \
     && rm /etc/nginx/sites-enabled/default
+
+# && npm run relay \
 
 # In standard prod these will be overwritten by volume mounts
 # Provided here for ease of use in development and
