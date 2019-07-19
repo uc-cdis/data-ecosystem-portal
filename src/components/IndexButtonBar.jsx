@@ -28,7 +28,7 @@ class IndexButtonBar extends Component {
                     dictIcons={this.props.dictIcons}
                     iconName={item.icon}
                     height='90px'
-                  /> : <img src={item.logo}/> }
+                  /> : <img height='90px' src={item.logo}/> }
                 </div>
                 <div className='body-typo index-button-bar__thumbnail-text'>{item.body}</div>
                 <div className='index-button-bar__button-group'>

@@ -55,7 +55,7 @@
         },
         {
           "name": "NDC: DAIDs Data Commons",
-          "icon": "data-access",
+          "icon": "data-explore",
           "body": "The HIV Data Commons.",
           "external_link": "https://daids.niaiddata.org",
           "internal_link": "/datasets",
