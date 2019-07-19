@@ -13,7 +13,6 @@ function scanJsonDir(dirPath) {
       (jsonName) => {
         const key = jsonName.substring(0, jsonName.length - 5); // strip .json
         const valueStr = fs.readFileSync(`${dirPath}/${jsonName}`, 'utf8');
-        console.log('looking at: ', jsonName);
         return { key, value: JSON.parse(valueStr) };
       },
     )

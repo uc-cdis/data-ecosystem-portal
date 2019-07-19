@@ -835,8 +835,8 @@
     }
   },
   "_settings": {
-    "_dict_commit": "3bca2b446c9225324c2a870519f6e6e1b8208a51",
-    "_dict_version": "3.5.4",
+    "_dict_commit": "0c6236695104a355867ab3da8c59f53c4b9b1e34",
+    "_dict_version": "3.5.3",
     "enable_case_cache": false
   },
   "_terms": {
@@ -4463,7 +4463,7 @@
     "id": "comorbidity",
     "links": [
       {
-        "backref": "comorbidities",
+        "backref": "comobidities",
         "label": "describes",
         "multiplicity": "one_to_one",
         "name": "subjects",
@@ -5089,7 +5089,7 @@
         "type": "string"
       },
       "relation": {
-        "description": "A related resource. Recommended best practice is to identify the related resource by means of a string conforming to a formal identification system. \n",
+        "description": "A related resource. Recommended best practice is to identify the related resource by means of a string conforming to a formal identification system. \n",
         "type": "string"
       },
       "rights": {
@@ -5537,7 +5537,7 @@
           {
             "enumeration": "Not Reported",
             "source": "NCI Thesaurus",
-            "term_id": " C43234",
+            "term_id": " C43234",
             "term_version": "18.09d (Release date:2018-09-24)"
           }
         ],
@@ -7474,10 +7474,6 @@
           "Never transferred",
           "Transferred"
         ]
-      },
-      "harmonized_visit_number": {
-        "description": "The derived harmonized visit number for the studies MACS and WIHS.\n",
-        "type": "integer"
       },
       "health_insurance": {
         "description": "Currently have any health insurance\n",
@@ -11524,7 +11520,7 @@
         ]
       },
       "freq_as_good": {
-        "description": "Frequency of feeling as good as others.\n",
+        "description": "Frequency of feeling as good as others.\n",
         "enum": [
           "Rarely",
           "Some",
@@ -11605,7 +11601,7 @@
         ]
       },
       "freq_focused": {
-        "description": "Frequency trouble keeping the mind on what doing.\n",
+        "description": "Frequency trouble keeping the mind on what doing.\n",
         "enum": [
           "Rarely",
           "Some",
