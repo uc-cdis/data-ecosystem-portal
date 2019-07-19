@@ -6,7 +6,7 @@
 //      https://mozilla.github.io/nunjucks/
 //
 
-import { graphql } from 'react-relay';
+const graphql = require("react-relay");
 
 
 /**
