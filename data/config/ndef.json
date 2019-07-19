@@ -43,7 +43,7 @@
           "name": "ImmPort",
           "body": "ImmPort is funded by the NIH, NIAID, and DAIT in support of the NIH mission to share data with the public. Data is provided by NIH-funded programs and other research organizations.",
           "external_link": "https://www.immport.org/home",
-          "icon": "data-analyze"
+          "logo": "custom/logo/immport-main-icon.png"
         },
         {
           "name": "NDC: TB Data Commons",
@@ -81,11 +81,6 @@
     },
     "topBar": {
       "items": [
-        {
-          "icon": "upload",
-          "link": "/submission",
-          "name": "Submit Data"
-        },
         {
           "link": "https://gen3.org/resources/user/",
           "name": "Documentation"

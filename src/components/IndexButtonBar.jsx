@@ -23,11 +23,12 @@ class IndexButtonBar extends Component {
               <div className='index-button-bar__thumbnail-button' key={item.name}>
                 <div className='h3-typo index-button-bar__thumbnail-title'>{item.name}</div>
                 <div className='index-button-bar__icon'>
+                 { typeof item.icon !== 'undefined' ?
                   <IconComponent
                     dictIcons={this.props.dictIcons}
                     iconName={item.icon}
                     height='90px'
-                  />
+                  /> : <img src={item.logo}/> }
                 </div>
                 <div className='body-typo index-button-bar__thumbnail-text'>{item.body}</div>
                 <div className='index-button-bar__button-group'>
