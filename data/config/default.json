@@ -79,6 +79,14 @@
         }
       ]
     },
+    "topBar": {
+      "items": [
+        {
+          "link": "https://gen3.org/resources/user/",
+          "name": "Documentation"
+        }
+      ]
+    },
     "login": {
       "title": "NDEF Data Ecosystem",
       "subTitle": "Cross-Commons Datasets",
