@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     nginx \
     python \
     vim \
-    && curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+    && curl -sL https://deb.nodesource.com/setup_12.x | bash - \
     && apt-get install -y --no-install-recommends nodejs \
     && rm -rf /var/lib/apt/lists/* \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
@@ -27,11 +27,17 @@ ARG BASENAME
 RUN mkdir -p /data-ecosystem-portal
 COPY . /data-ecosystem-portal
 WORKDIR /data-ecosystem-portal
+
+RUN node -- version
+RUN npm -- version
+RUN ls ./src/
+
 RUN COMMIT=`git rev-parse HEAD` && echo "export const portalCommit = \"${COMMIT}\";" >src/versions.js \
     && VERSION=`git describe --always --tags` && echo "export const portalVersion =\"${VERSION}\";" >>src/versions.js \
     && /bin/rm -rf .git \
     && /bin/rm -rf node_modules \
     && npm config set unsafe-perm=true && npm ci \
+    && cat ./src/gqlHelper.js
     && npm run relay \
     && npm run params \
     && NODE_OPTIONS=--max-old-space-size=4096 NODE_ENV=production ./node_modules/.bin/webpack --bail \
