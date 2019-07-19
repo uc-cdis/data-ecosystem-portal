@@ -28,8 +28,8 @@ RUN mkdir -p /data-ecosystem-portal
 COPY . /data-ecosystem-portal
 WORKDIR /data-ecosystem-portal
 
-RUN node -- version
-RUN npm -- version
+RUN node --version
+RUN npm --version
 RUN ls ./src/
 
 RUN COMMIT=`git rev-parse HEAD` && echo "export const portalCommit = \"${COMMIT}\";" >src/versions.js \
