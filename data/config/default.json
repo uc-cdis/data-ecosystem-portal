@@ -104,6 +104,7 @@
       }
     ]
   },
+  "requiredCerts": [],
   "featureFlags": {
     "explorer": true,
     "analysis": true

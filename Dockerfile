@@ -28,10 +28,6 @@ RUN mkdir -p /data-ecosystem-portal
 COPY . /data-ecosystem-portal
 WORKDIR /data-ecosystem-portal
 
-RUN node --version
-RUN npm --version
-RUN ls ./src/
-
 RUN COMMIT=`git rev-parse HEAD` && echo "export const portalCommit = \"${COMMIT}\";" >src/versions.js \
     && VERSION=`git describe --always --tags` && echo "export const portalVersion =\"${VERSION}\";" >>src/versions.js \
     && /bin/rm -rf .git \
@@ -42,8 +38,6 @@ RUN COMMIT=`git rev-parse HEAD` && echo "export const portalCommit = \"${COMMIT}
     && NODE_OPTIONS=--max-old-space-size=4096 NODE_ENV=production ./node_modules/.bin/webpack --bail \
     && cp nginx.conf /etc/nginx/conf.d/nginx.conf \
     && rm /etc/nginx/sites-enabled/default
-
-# && cat ./src/gqlHelper.js \
 
 # In standard prod these will be overwritten by volume mounts
 # Provided here for ease of use in development and

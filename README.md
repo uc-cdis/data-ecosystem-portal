@@ -1,6 +1,6 @@
 # Data Ecosystem Portal
 
-The DEF serves 2 sub-commons at sub1.example.com and sub2.example.com with a centralized commons at example.com running Fence, Indexd, and Arborist.
+This portal serves 2 sub-commons at sub1.example.com and sub2.example.com with a centralized commons at example.com running Fence, Indexd, and Arborist.
 When logged in at example.com, requests sent to both sub1 and sub2 are allowed to carry the same authentication cookie, therefore extra login is not needed for sub1 or sub2. 
 The DEF was created using Windmill Data Explorer and the Unity Portal.
 The login component will save an `access_token` to `sessionStorage` for each commons that will be used for accessing the data in the explorer.
