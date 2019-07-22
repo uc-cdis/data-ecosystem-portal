@@ -5,20 +5,20 @@ import { homepageChartNodes } from '../localconf';
 import getReduxStore from '../reduxStore';
 // import getProjectsList from './relayer';
 
-const updateRedux = async projectNodeCounts => getReduxStore().then(
-  (store) => {
-    store.dispatch({
-      type: 'RECEIVE_PROJECT_NODE_DATASETS',
-      projectNodeCounts,
-      homepageChartNodes,
-      // fileNodes: store.getState().submission.file_nodes,
-    });
-  },
-  (err) => {
-    console.error('WARNING: failed to load redux store', err);
-    return 'ERR';
-  },
-);
+// const updateRedux = async projectNodeCounts => getReduxStore().then(
+//   (store) => {
+//     store.dispatch({
+//       type: 'RECEIVE_PROJECT_NODE_DATASETS',
+//       projectNodeCounts,
+//       homepageChartNodes,
+//       // fileNodes: store.getState().submission.file_nodes,
+//     });
+//   },
+//   (err) => {
+//     console.error('WARNING: failed to load redux store', err);
+//     return 'ERR';
+//   },
+// );
 
 const getProjectNodeCounts = async () => { //async (callback) => {
   return;

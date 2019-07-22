@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { components } from '../params';
+// import { components } from '../params';
 import TransactionLogTable from '../components/tables/TransactionLogTable';
 
 // const extractData = (summaryCounts) => {
