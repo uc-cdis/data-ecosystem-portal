@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-const IconComponent = function ({ dictIcons, iconName, height, svgStyles }) {
+function IconComponent(dictIcons, iconName, height, svgStyles) {
 	if (Object.prototype.hasOwnProperty.call(dictIcons, iconName)) {
 		return dictIcons[iconName](height, svgStyles);
 	}
