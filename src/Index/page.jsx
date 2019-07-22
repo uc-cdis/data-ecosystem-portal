@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import MediaQuery from 'react-responsive';
 import Introduction from '../components/Introduction';
-import { ReduxIndexButtonBar, ReduxIndexBarChart, ReduxIndexCounts } from './reduxer';
+import { ReduxIndexButtonBar, ReduxIndexCounts } from './reduxer';
 import dictIcons from '../img/icons';
 import { components } from '../params';
 import getProjectNodeCounts from './utils';

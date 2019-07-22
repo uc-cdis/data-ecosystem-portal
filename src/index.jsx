@@ -17,15 +17,15 @@ import ReduxLogin, { fetchLogin } from './Login/ReduxLogin';
 import ProtectedContent from './Login/ProtectedContent';
 import HomePage from './Homepage/page';
 import DocumentPage from './Document/page';
-import ExplorerPage from './Explorer/ExplorerPage';
+// import ExplorerPage from './Explorer/ExplorerPage';
 import IndexPage from './Index/page';
 import UserProfile, { fetchAccess } from './UserProfile/ReduxUserProfile';
-import UserAgreementCert from './UserAgreement/ReduxCertPopup';
+// import UserAgreementCert from './UserAgreement/ReduxCertPopup';
 import theme from './theme';
 import getReduxStore from './reduxStore';
 import { ReduxNavBar, ReduxTopBar, ReduxFooter } from './Layout/reduxer';
 import ReduxQueryNode, { submitSearchForm } from './QueryNode/ReduxQueryNode';
-import { basename, dev, gaDebug, workspaceUrl, workspaceErrorUrl,
+import { basename, dev, gaDebug, 
   indexPublic, useGuppyForExplorer, explorerPublic,
 } from './localconf';
 import { gaTracking, components } from './params';
@@ -107,20 +107,6 @@ async function init() {
                       path='/submission'
                       component={
                         props => <ProtectedContent component={HomePage} {...props} />
-                      }
-                    />
-                    <Route
-                      exact
-                      path='/submission/files'
-                      component={
-                        props => <ProtectedContent component={ReduxMapFiles} {...props} />
-                      }
-                    />
-                    <Route
-                      exact
-                      path='/submission/map'
-                      component={
-                        props => <ProtectedContent component={ReduxMapDataModel} {...props} />
                       }
                     />
                     <Route
