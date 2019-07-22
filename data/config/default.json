@@ -1,5 +1,5 @@
 {
-  "gaTrackingId": "UA-119127212-1",
+  "gaTrackingId": "undefined",
   "graphql": {
     "boardCounts": [
       {
@@ -31,35 +31,31 @@
     "projectDetails": "boardCounts"
   },
   "components": {
-    "appName": "NDEF",
+    "appName": "Generic Data Ecosystem",
     "index": {
       "introduction": {
         "heading": "Cross-Commons Datasets",
-        "text": "Divisions within NIAID can have their own independent data models while maintaining interoperability of the data ecosystem. The data within projects are findable, accessible, interoperable, and reusable (FAIR), but it will be easier for each individual research community to work within the system. Of course, with this approach, two different research communities may create data models that have data elements that may conflict and that will need to be manually de-conflicted.",
+        "text": "Divisions within a commons can have their own independent data models while maintaining interoperability of the data ecosystem. The data within projects are findable, accessible, interoperable, and reusable (FAIR), but it will be easier for each individual research community to work within the system. Of course, with this approach, two different research communities may create data models that have data elements that may conflict and that will need to be manually de-conflicted.",
         "link": "/datasets"
       },
       "buttons": [
         {
-          "name": "ImmPort",
-          "body": "ImmPort is funded by the NIH, NIAID, and DAIT in support of the NIH mission to share data with the public. Data is provided by NIH-funded programs and other research organizations.",
-          "external_link": "https://www.immport.org/home",
-          "logo": "custom/logo/immport-main-icon.png"
+          "name": "Dataset 1",
+          "body": "A description of dataset 1 is forthcoming.",
+          "external_link": "https://gen3.org/",
+          "icon": "data-explore"
         },
         {
-          "name": "NDC: TB Data Commons",
-          "icon": "data-explore",
-          "body": "The TB Project data commons.",
-          "external_link": "https://tb.niaiddata.org",
-          "internal_link": "/datasets",
-          "label": "Explore cohorts"
+          "name": "Dataset 2",
+          "body": "A description of dataset 2 is forthcoming.",
+          "external_link": "https://gen3.org/",
+          "icon": "data-explore"
         },
         {
-          "name": "NDC: DAIDs Data Commons",
-          "icon": "data-explore",
-          "body": "The HIV Data Commons.",
-          "external_link": "https://daids.niaiddata.org",
-          "internal_link": "/datasets",
-          "label": "Explore cohorts"
+          "name": "Dataset 3",
+          "body": "A description of dataset 3 is forthcoming.",
+          "external_link": "https://gen3.org/",
+          "icon": "data-explore"
         }
       ]
     },
@@ -88,9 +84,9 @@
       ]
     },
     "login": {
-      "title": "NDEF Data Ecosystem",
+      "title": "Generic Data Ecosystem",
       "subTitle": "Cross-Commons Datasets",
-      "text": "The website combines government datasets from multiple divisions of NIAID to create clean, easy to navigate visualizations for data-driven discovery within Allergy and Infectious Diseases.",
+      "text": "The website combines multiple datasets to create clean, easy to navigate visualizations for data-driven discovery.",
       "contact": "If you have any questions about access or the registration process, please contact ",
       "email": "support@datacommons.io"
     },
@@ -104,11 +100,6 @@
         "src": "/src/img/createdby.png",
         "href": "https://ctds.uchicago.edu/",
         "alt": "Center for Translational Data Science at the University of Chicago"
-      },
-      {
-        "src": "/custom/logo/niaid.png",
-        "href": "https://niaid.bionimbus.org",
-        "alt": "NIAID Data Hub"
       }
     ]
   },
@@ -117,7 +108,6 @@
     "explorer": true,
     "analysis": true
   },
-  "analysisTools": [ "ndhHIV" ],
   "dataExplorerConfig": {
     "charts": {
       "project_id": {

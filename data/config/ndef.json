@@ -1,5 +1,5 @@
 {
-  "gaTrackingId": "UA-119127212-1",
+  "gaTrackingId": "undefined",
   "graphql": {
     "boardCounts": [
       {
@@ -117,7 +117,6 @@
     "explorer": true,
     "analysis": true
   },
-  "analysisTools": [ "ndhHIV" ],
   "dataExplorerConfig": {
     "charts": {
       "project_id": {
