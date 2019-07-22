@@ -1,8 +1,9 @@
 // import _ from 'underscore';
-import { fetchWithCreds } from '../actions';
-import { homepageChartNodes, datasetUrl } from '../localconf';
+// import { fetchWithCreds } from '../actions';
+// import { homepageChartNodes, datasetUrl } from '../localconf';
+import { homepageChartNodes } from '../localconf';
 import getReduxStore from '../reduxStore';
-import getProjectsList from './relayer';
+// import getProjectsList from './relayer';
 
 const updateRedux = async projectNodeCounts => getReduxStore().then(
   (store) => {
@@ -19,7 +20,7 @@ const updateRedux = async projectNodeCounts => getReduxStore().then(
   },
 );
 
-const getProjectNodeCounts = async (callback) => {
+const getProjectNodeCounts = async () => { //async (callback) => {
   return;
 
   // const resultStatus = { needLogin: false };

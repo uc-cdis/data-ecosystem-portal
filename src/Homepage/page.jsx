@@ -14,7 +14,6 @@ class HomePage extends React.Component {
   render() {
     return (
       <div style={{ padding: '40px 20px' }}>
-        <ReduxProjectDashboard {...this.props} />
         <ReduxTransaction />
       </div>
     );
