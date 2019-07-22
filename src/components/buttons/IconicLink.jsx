@@ -5,22 +5,22 @@ import IconComponent from '../Icon';
 
 
 class IconicLink extends React.Component {
-  renderButton(props) {
+  renderButton(styles) {
     return (
       <React.Fragment>
         {
-          props.dictIcons !== undefined ?
-            <button className={props.buttonClassName}>
-              {props.caption}&ensp;
+          this.props.dictIcons !== undefined ?
+            <button className={this.props.buttonClassName}>
+              {this.props.caption}&ensp;
               <IconComponent
-                dictIcons={props.dictIcons}
-                iconName={props.icon}
+                dictIcons={this.props.dictIcons}
+                iconName={this.props.icon}
                 height='14px'
                 svgStyles={{ ...styles }}
               />
             </button> :
-            <button className={props.buttonClassName}>
-              {props.caption}
+            <button className={this.props.buttonClassName}>
+              {this.props.caption}
             </button>
         }
       </React.Fragment>
@@ -33,13 +33,13 @@ class IconicLink extends React.Component {
     if (this.props.isExternal) {
       return (
         <a href={this.props.link} target={this.props.target} class={this.props.className}>
-          { this.renderButton(this.props) }
+          { IconicLink.renderButton(styles) }
         </a>
       );
     } else {
       return (
           <Link className={this.props.className} to={this.props.link} target={this.props.target}>
-            { this.renderButton(this.props) }
+            { IconicLink.renderButton(styles) }
           </Link>
       );
     }
