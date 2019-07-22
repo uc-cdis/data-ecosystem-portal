@@ -28,11 +28,11 @@ class IndexButtonBar extends Component {
                     dictIcons={this.props.dictIcons}
                     iconName={item.icon}
                     height='90px'
-                  /> : <img height='90px' src={item.logo}/> }
+                  /> : <img height='90px' src={item.logo} alt=""/> }
                 </div>
                 <div className='body-typo index-button-bar__thumbnail-text'>{item.body}</div>
                 <div className='index-button-bar__button-group'>
-                  { item.hasOwnProperty("internal_link") && 
+                  { Object.prototype.hasOwnProperty.call(item, "internal_link") && 
                     <Button
                       className='index-button-bar__item'
                       onClick={() => {
@@ -43,7 +43,7 @@ class IndexButtonBar extends Component {
                       buttonType='secondary'
                     />
                   }
-                  { item.hasOwnProperty("external_link") && 
+                  { Object.prototype.hasOwnProperty.call(item, "external_link") && 
                     <IconicLink
                       link={item.external_link}
                       className='index-button-bar__item'
