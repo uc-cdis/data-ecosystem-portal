@@ -1,4 +1,4 @@
-/*eslint react/no-unused-prop-types*/
+/* eslint react/no-unused-prop-types:0 */
 
 import React from 'react';
 import PropTypes from 'prop-types';
