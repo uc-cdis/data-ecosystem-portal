@@ -1,8 +1,8 @@
 // import _ from 'underscore';
 // import { fetchWithCreds } from '../actions';
 // import { homepageChartNodes, datasetUrl } from '../localconf';
-import { homepageChartNodes } from '../localconf';
-import getReduxStore from '../reduxStore';
+// import { homepageChartNodes } from '../localconf';
+// import getReduxStore from '../reduxStore';
 // import getProjectsList from './relayer';
 
 // const updateRedux = async projectNodeCounts => getReduxStore().then(

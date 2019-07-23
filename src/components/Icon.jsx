@@ -4,9 +4,6 @@ function IconComponent({dictIcons, iconName, height, svgStyles}) {
   if (Object.prototype.hasOwnProperty.call(dictIcons, iconName)) {
 		return dictIcons[iconName](height, svgStyles);
 	}
-  console.log(iconName, ' is missing');
-  console.log(dictIcons[iconName], ' is the access');
-  console.log(dictIcons, 'that was all them');
 	return dictIcons['data-explore'](height, svgStyles);
 };
 
