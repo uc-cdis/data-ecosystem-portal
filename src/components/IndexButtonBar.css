@@ -51,6 +51,8 @@
 .index-button-bar__header { 
   font-size:22px;
   color:black;
+  margin-top:70px;
+  width:inherit;
 }
 
 
@@ -66,11 +68,6 @@
 .index-button-bar__item, .index-button-bar__item button {
   display:inline-block;
   font-weight:600;
-}
-
-.index-button-bar__header {
-  margin-top:70px;
-  width:inherit;
 }
 
 @media screen and (min-width: 1300px) {
