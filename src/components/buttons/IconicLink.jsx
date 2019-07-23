@@ -32,14 +32,14 @@ class IconicLink extends React.Component {
     if (this.props.iconColor && this.props.iconColor !== '') { styles = { fill: this.props.iconColor }; }
     if (this.props.isExternal) {
       return (
-        <a href={this.props.link} target={this.props.target} class={this.props.className}>
-          { IconicLink.renderButton(styles) }
+        <a href={this.props.link} target={this.props.target} className={this.props.className}>
+          { this.renderButton(styles) }
         </a>
       );
     } else {
       return (
           <Link className={this.props.className} to={this.props.link} target={this.props.target}>
-            { IconicLink.renderButton(styles) }
+            { this.renderButton(styles) }
           </Link>
       );
     }

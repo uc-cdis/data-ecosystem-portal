@@ -81,9 +81,9 @@ function buildConfig(opts) {
   // backward compatible: homepageChartNodes not set means using graphql query,
   // which will return 401 UNAUTHORIZED if not logged in, thus not making public
   let indexPublic = true;
-  if (typeof components.index.homepageChartNodes === 'undefined') {
-    indexPublic = false;
-  }
+  // if (typeof components.index.homepageChartNodes === 'undefined') {
+  //   indexPublic = false;
+  // }
 
   let useGuppyForExplorer = false;
   if (config.dataExplorerConfig.guppyConfig) {

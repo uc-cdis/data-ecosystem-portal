@@ -1,5 +1,5 @@
-const gaTracking = 'UA-119127212-1';
-// const hostname = typeof window !== 'undefined' ? `${window.location.protocol}//${window.location.hostname}/` : 'http://localhost/';
+const gaTracking = 'undefined';
+const hostname = typeof window !== 'undefined' ? `${window.location.protocol}//${window.location.hostname}/` : 'http://localhost/';
 const components = {
   appName:"NDEF",
   index:{
@@ -13,7 +13,7 @@ const components = {
         name:"ImmPort",
         body:"ImmPort is funded by the NIH, NIAID, and DAIT in support of the NIH mission to share data with the public. Data is provided by NIH-funded programs and other research organizations.",
         external_link:"https://www.immport.org/home",
-        logo:"custom/logo/immport-main-icon.png"
+        logo:"/custom/logo/immport-main-icon.png"
       },
       {
         name:"NDC: TB Data Commons",
@@ -107,7 +107,7 @@ const components = {
   }
 };
 const config = {
-  "gaTrackingId": "UA-119127212-1",
+  "gaTrackingId": "undefined",
   "graphql": {
     "boardCounts": [
       {
@@ -142,9 +142,6 @@ const config = {
   "featureFlags": {
     "explorer": true,
     "analysis": true
-  },
-  "analysisTools": {
-    "0": "ndhHIV"
   },
   "dataExplorerConfig": {
     "charts": {
