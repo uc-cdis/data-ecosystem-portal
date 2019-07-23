@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import React from 'react';
 import IconComponent from '../Icon';
 
-
 class IconicLink extends React.Component {
   renderButton(styles) {
     return (
