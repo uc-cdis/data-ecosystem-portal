@@ -3,29 +3,33 @@
   "graphql": {
     "boardCounts": [
       {
-        "graphql": "_subject_count",
-        "name": "Subject",
-        "plural": "Subjects"
+        "graphql": "_case_count",
+        "name": "Case",
+        "plural": "Cases"
       },
       {
-        "graphql": "_study_count",
-        "name": "Study",
-        "plural": "Studies"
+        "graphql": "_experiment_count",
+        "name": "Experiment",
+        "plural": "Experiments"
       },
       {
-        "graphql": "_summary_lab_result_count",
-        "name": "Lab record",
-        "plural": "Lab records"
+        "graphql": "_aliquot_count",
+        "name": "Aliquot",
+        "plural": "Aliquots"
       }
     ],
     "chartCounts": [
       {
-        "graphql": "_subject_count",
-        "name": "Subject"
+        "graphql": "_case_count",
+        "name": "Case"
       },
       {
-        "graphql": "_study_count",
-        "name": "Study"
+        "graphql": "_experiment_count",
+        "name": "Experiment"
+      },
+      {
+        "graphql": "_aliquot_count",
+        "name": "Aliquot"
       }
     ],
     "projectDetails": "boardCounts"
