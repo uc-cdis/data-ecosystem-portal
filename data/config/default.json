@@ -3,11 +3,6 @@
   "graphql": {
     "boardCounts": [
       {
-        "graphql": "_case_count",
-        "name": "Case",
-        "plural": "Cases"
-      },
-      {
         "graphql": "_experiment_count",
         "name": "Experiment",
         "plural": "Experiments"
@@ -19,10 +14,6 @@
       }
     ],
     "chartCounts": [
-      {
-        "graphql": "_case_count",
-        "name": "Case"
-      },
       {
         "graphql": "_experiment_count",
         "name": "Experiment"
