@@ -1,11 +1,8 @@
 import PropTypes from 'prop-types';
 
-function IconComponent({dictIcons, iconName, height, svgStyles}) {
-  if (Object.prototype.hasOwnProperty.call(dictIcons, iconName)) {
-		return dictIcons[iconName](height, svgStyles);
-	}
-	return dictIcons['data-explore'](height, svgStyles);
-};
+const IconComponent = ({ dictIcons, iconName, height, svgStyles }) => (
+  dictIcons[iconName](height, svgStyles)
+);
 
 IconComponent.propTypes = {
   iconName: PropTypes.string.isRequired,

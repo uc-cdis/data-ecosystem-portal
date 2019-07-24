@@ -5,7 +5,7 @@
 # css theming, logo graphics, and translation text
 #
 
-# cd to root of data-ecosystem-portal/ repo
+# cd to root of data-portal/ repo
 cd "$(dirname $(dirname "${BASH_SOURCE}"))"
 set -v
 APP="${APP:-dev}"

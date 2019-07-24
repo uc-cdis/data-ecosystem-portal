@@ -5,8 +5,8 @@ import './Introduction.less';
 
 class Introduction extends Component {
   static propTypes = {
-    data: PropTypes.object.isRequired
-    // dictIcons: PropTypes.object.isRequired,
+    data: PropTypes.object.isRequired,
+    dictIcons: PropTypes.object.isRequired,
   };
 
   render() {
@@ -16,9 +16,11 @@ class Introduction extends Component {
         <div className='high-light introduction__text'>{this.props.data.text}</div>
         <IconicLink
           link={this.props.data.link}
+          dictIcons={this.props.dictIcons}
           className='introduction__icon'
-          buttonClassName='g3-button--secondary'
-          caption='Browse Datasets'
+          icon='upload'
+          iconColor='#'
+          caption='Submit Data'
         />
       </div>
     );

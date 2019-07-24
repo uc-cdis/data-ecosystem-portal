@@ -104,7 +104,7 @@ export const ReduxExplorerTabPanel = (() => {
 
 export const ReduxSideBar = (() => {
   const mapStateToProps = state => ({
-    projects: [], // state.submission.projects,
+    projects: state.submission.projects,
     dictionary: state.submission.dictionary,
     selectedFilters: state.explorer.selected_filters || {
       projects: [],

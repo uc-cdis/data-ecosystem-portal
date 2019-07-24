@@ -2,13 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import MediaQuery from 'react-responsive';
 import Introduction from '../components/Introduction';
-import { ReduxIndexButtonBar, ReduxIndexCounts } from './reduxer';
+import { ReduxIndexButtonBar, ReduxIndexBarChart, ReduxIndexCounts } from './reduxer';
 import dictIcons from '../img/icons';
 import { components } from '../params';
 import getProjectNodeCounts from './utils';
 import { breakpoints } from '../localconf';
-import BacteriaGraphic from '../img/bacteria-image.svg';
-import AnalysisGraphic from '../img/analysis.svg';
 import './page.less';
 
 class IndexPageComponent extends React.Component {
@@ -31,9 +29,10 @@ class IndexPageComponent extends React.Component {
               <ReduxIndexCounts />
             </MediaQuery>
           </div>
-          <div className='index-page__graphics'>
-            <BacteriaGraphic id='index-page__bacteria-graphic' />
-            <AnalysisGraphic id='index-page__analysis-graphic' />
+          <div className='index-page__bar-chart'>
+            <MediaQuery query={`(min-width: ${breakpoints.tablet + 1}px)`}>
+              <ReduxIndexBarChart />
+            </MediaQuery>
           </div>
         </div>
         <ReduxIndexButtonBar {...this.props} />

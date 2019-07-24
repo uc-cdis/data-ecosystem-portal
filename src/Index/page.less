@@ -7,7 +7,6 @@
 
 .index-page__top {
   display: inline-flex;
-  margin-bottom:-300px;
 }
 
 @media screen and (max-width: 1290px) {
@@ -16,64 +15,15 @@
     flex-flow: column;
     align-items: center;
     width: 80%;
-    margin-bottom:0px;
   }
 }
 
-.index-page__graphics {
+.index-page__bar-chart {
   width: 770px;
-  display:inline-block;
 }
 
 @media screen and (max-width: 1290px) {
-  .index-page__graphics {
+  .index-page__bar-chart {
     width: unset;
-    display:none;
   }
-}
-
-#index-page__bacteria-graphic {
-  width:400px;
-  z-index:1;
-  position:relative;
-  top:-155px;
-  right:-75px;
-}
-
-/*
-#index-page__analysis-graphic {
-  width:390px;
-  z-index:0;
-  position:absolute;
-  top:130px;
-  right:90px;
-}
-*/
-
-#index-page__analysis-graphic {
-  width:390px;
-  margin-left:-100px;
-  margin-top:-250px;
-  top:-260px;
-  right:-50px;
-  z-index:0;
-  position:relative;
-}
-
-button {
-  -webkit-transition: color .3s, border-color .3s, background-color .3s;
-  transition: color .3s, border-color .3s, background-color .3s;
-}
-
-.g3-button--secondary {
-  border-color:solid var(--g3-secondary-btn__bg-color) 1px;
-}
-
-.g3-button--primary {
-  border:solid var(--g3-primary-btn__bg-color) 1px;
-}
-
-.g3-button--primary:hover {
-  background-color:var(--g3-primary-btn__bg-color);
-  border:solid black 1px;
 }

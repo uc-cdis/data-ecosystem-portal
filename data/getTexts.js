@@ -120,7 +120,6 @@ function buildConfig(appIn, data) {
 }
 
 const config = buildConfig(process.env.app, params);
-console.log('/*eslint-disable*/');
 console.log(`const gaTracking = '${defaultGA}';`);
 console.log('const hostname = typeof window !== \'undefined\' ? `${window.location.protocol}//${window.location.hostname}/` : \'http://localhost/\';');
 console.log(`const components = ${stringify(fillDefaultValues(componentTexts, defaultTexts), ['hostname'], 2)};`);

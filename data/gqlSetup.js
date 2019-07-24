@@ -47,7 +47,7 @@ console.error(gqlSetup);
 
 if (process.argv.length > 2 && process.argv[2].match(/^-+h(elp)?$/)) {
   console.log(`
-  Generator for dictionary-dependent gql for the data-ecosystem-portal.
+  Generator for dictionary-dependent gql for the data-portal.
   Relayjs validates gql at compile time.
   Typical use:
       node data/gqlSetup.js > src/gqlHelper.js
