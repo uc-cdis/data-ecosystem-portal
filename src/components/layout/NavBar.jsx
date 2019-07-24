@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import NavButton from './NavButton';
 import { breakpoints } from '../../localconf';
 import './NavBar.less';
+import Logo from '../../../custom/logo/ndef-logo.svg';
 
 /**
  * NavBar renders row of nav-items of form { name, icon, link }
@@ -66,11 +67,7 @@ class NavBar extends Component {
                 onClick={() => this.props.onActiveTab('')}
                 onKeyPress={() => this.props.onActiveTab('')}
               >
-                <img
-                  className='nav-bar__logo-img'
-                  src='/src/img/logo.png'
-                  alt=''
-                />
+                <Logo className='nav-bar__logo-img'/>
               </Link>
             </div>
             {

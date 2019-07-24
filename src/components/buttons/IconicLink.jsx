@@ -3,13 +3,10 @@ import { Link } from 'react-router-dom';
 import React from 'react';
 import IconComponent from '../Icon';
 
-
 class IconicLink extends React.Component {
-  render() {
-    let styles = {};
-    if (this.props.iconColor && this.props.iconColor !== '') { styles = { fill: this.props.iconColor }; }
+  renderButton(styles) {
     return (
-      <Link className={this.props.className} to={this.props.link}>
+      <React.Fragment>
         {
           this.props.dictIcons !== undefined ?
             <button className={this.props.buttonClassName}>
@@ -25,8 +22,26 @@ class IconicLink extends React.Component {
               {this.props.caption}
             </button>
         }
-      </Link>
+      </React.Fragment>
     );
+  }
+
+  render() {
+    let styles = {};
+    if (this.props.iconColor && this.props.iconColor !== '') { styles = { fill: this.props.iconColor }; }
+    if (this.props.isExternal) {
+      return (
+        <a href={this.props.link} target={this.props.target} className={this.props.className}>
+          { this.renderButton(styles) }
+        </a>
+      );
+    } else {
+      return (
+          <Link className={this.props.className} to={this.props.link} target={this.props.target}>
+            { this.renderButton(styles) }
+          </Link>
+      );
+    }
   }
 }
 
@@ -38,6 +53,8 @@ IconicLink.propTypes = {
   caption: PropTypes.string,
   buttonClassName: PropTypes.string,
   className: PropTypes.string,
+  target: PropTypes.string,
+  isExternal: PropTypes.bool,
 };
 
 IconicLink.defaultProps = {
@@ -47,6 +64,8 @@ IconicLink.defaultProps = {
   caption: '',
   buttonClassName: 'button-primary-white',
   className: '',
+  target: '',
+  isExternal: false,
 };
 
 export default IconicLink;

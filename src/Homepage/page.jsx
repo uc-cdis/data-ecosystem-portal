@@ -1,6 +1,8 @@
+/* eslint react/no-unused-prop-types:0 */
+
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ReduxProjectDashboard, ReduxTransaction } from './reduxer';
+import { ReduxTransaction } from './reduxer';
 import getProjectNodeCounts from '../Index/utils';
 import getTransactionList from './relayer';
 
@@ -14,7 +16,6 @@ class HomePage extends React.Component {
   render() {
     return (
       <div style={{ padding: '40px 20px' }}>
-        <ReduxProjectDashboard {...this.props} />
         <ReduxTransaction />
       </div>
     );

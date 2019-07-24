@@ -1,7 +1,7 @@
 const { components, requiredCerts, config } = require('./params');
 
 /**
- * Setup configuration variables based on the "app" the data-portal is
+ * Setup configuration variables based on the "app" the data-ecosystem-portal is
  * being deployed into (Brain Health Commons, Blood Pack, ...)
  *
  * @param {app, dev, basename, mockStore, hostname} opts overrides for defaults
@@ -58,7 +58,6 @@ function buildConfig(opts) {
   let userapiPath = typeof fenceURL === 'undefined' ? `${hostname}user/` : ensureTailingSlash(fenceURL);
   const jobapiPath = `${hostname}job/`;
   const credentialCdisPath = `${userapiPath}credentials/cdis/`;
-  const coreMetadataPath = `${hostname}coremetadata/`;
   const indexdPath = typeof indexdURL === 'undefined' ? `${hostname}index/` : ensureTailingSlash(indexdURL);
   const wtsPath = `${hostname}wts/oauth2/`;
   let login = {
@@ -82,9 +81,9 @@ function buildConfig(opts) {
   // backward compatible: homepageChartNodes not set means using graphql query,
   // which will return 401 UNAUTHORIZED if not logged in, thus not making public
   let indexPublic = true;
-  if (typeof components.index.homepageChartNodes === 'undefined') {
-    indexPublic = false;
-  }
+  // if (typeof components.index.homepageChartNodes === 'undefined') {
+  //   indexPublic = false;
+  // }
 
   let useGuppyForExplorer = false;
   if (config.dataExplorerConfig.guppyConfig) {
@@ -218,7 +217,6 @@ function buildConfig(opts) {
     submissionApiPath,
     submissionApiOauthPath,
     credentialCdisPath,
-    coreMetadataPath,
     indexdPath,
     graphqlPath,
     dataDictionaryTemplatePath,

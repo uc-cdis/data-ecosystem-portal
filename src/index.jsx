@@ -17,34 +17,23 @@ import ReduxLogin, { fetchLogin } from './Login/ReduxLogin';
 import ProtectedContent from './Login/ProtectedContent';
 import HomePage from './Homepage/page';
 import DocumentPage from './Document/page';
-import ExplorerPage from './Explorer/ExplorerPage';
-import CoreMetadataPage from './CoreMetadata/page';
-import { fetchCoreMetadata } from './CoreMetadata/reduxer';
+// import ExplorerPage from './Explorer/ExplorerPage';
 import IndexPage from './Index/page';
-import DataDictionary from './DataDictionary/.';
-import ProjectSubmission from './Submission/ReduxProjectSubmission';
-import ReduxMapFiles from './Submission/ReduxMapFiles';
-import ReduxMapDataModel from './Submission/ReduxMapDataModel';
 import UserProfile, { fetchAccess } from './UserProfile/ReduxUserProfile';
-import UserAgreementCert from './UserAgreement/ReduxCertPopup';
-import GraphQLQuery from './GraphQLEditor/ReduxGqlEditor';
+// import UserAgreementCert from './UserAgreement/ReduxCertPopup';
 import theme from './theme';
 import getReduxStore from './reduxStore';
 import { ReduxNavBar, ReduxTopBar, ReduxFooter } from './Layout/reduxer';
 import ReduxQueryNode, { submitSearchForm } from './QueryNode/ReduxQueryNode';
-import { basename, dev, gaDebug, workspaceUrl, workspaceErrorUrl,
+import { basename, dev, gaDebug, 
   indexPublic, useGuppyForExplorer, explorerPublic,
 } from './localconf';
-import Analysis from './Analysis/Analysis';
-import ReduxAnalysisApp from './Analysis/ReduxAnalysisApp';
 import { gaTracking, components } from './params';
 import GA, { RouteTracker } from './components/GoogleAnalytics';
 import DataExplorer from './DataExplorer/.';
 import GuppyDataExplorer from './GuppyDataExplorer/.';
 import isEnabled from './helpers/featureFlags';
 import sessionMonitor from './SessionMonitor';
-import Workspace from './Workspace';
-import ErrorWorkspacePlaceholder from './Workspace/ErrorWorkspacePlaceholder';
 import './index.less';
 
 // monitor user's session
@@ -122,51 +111,11 @@ async function init() {
                     />
                     <Route
                       exact
-                      path='/submission/files'
-                      component={
-                        props => <ProtectedContent component={ReduxMapFiles} {...props} />
-                      }
-                    />
-                    <Route
-                      exact
-                      path='/submission/map'
-                      component={
-                        props => <ProtectedContent component={ReduxMapDataModel} {...props} />
-                      }
-                    />
-                    <Route
-                      exact
                       path='/document'
                       component={
                         props => <ProtectedContent component={DocumentPage} {...props} />
                       }
                     />
-                    <Route
-                      path='/query'
-                      component={
-                        props => <ProtectedContent component={GraphQLQuery} {...props} />
-                      }
-                    />
-                    {
-                      isEnabled('analysis') ?
-                        <Route
-                          path='/analysis/:app'
-                          component={
-                            props => <ProtectedContent component={ReduxAnalysisApp} {...props} />
-                          }
-                        />
-                        : null
-                    }
-                    {
-                      isEnabled('analysis') ?
-                        <Route
-                          path='/analysis'
-                          component={
-                            props => <ProtectedContent component={Analysis} {...props} />
-                          }
-                        />
-                        : null
-                    }
                     <Route
                       path='/identity'
                       component={
@@ -176,74 +125,6 @@ async function init() {
                           {...props}
                         />)
                       }
-                    />
-                    <Route
-                      path='/quiz'
-                      component={
-                        props => (<ProtectedContent
-                          component={UserAgreementCert}
-                          {...props}
-                        />)
-                      }
-                    />
-                    <Route
-                      path='/dd/:node'
-                      component={
-                        props => (<ProtectedContent
-                          public
-                          component={DataDictionary}
-                          {...props}
-                        />)
-                      }
-                    />
-                    <Route
-                      path='/dd'
-                      component={
-                        props => (<ProtectedContent
-                          public
-                          component={DataDictionary}
-                          {...props}
-                        />)
-                      }
-                    />
-                    <Route
-                      exact
-                      path='/files/*'
-                      component={
-                        props => (<ProtectedContent
-                          filter={() =>
-                            store.dispatch(fetchCoreMetadata(props.match.params[0]))
-                          }
-                          component={CoreMetadataPage}
-                          {...props}
-                        />)
-                      }
-                    />
-                    <Route
-                      path='/files'
-                      component={
-                        props => (
-                          <ProtectedContent
-                            public={explorerPublic}
-                            component={useGuppyForExplorer ? GuppyDataExplorer : ExplorerPage}
-                            {...props}
-                          />
-                        )
-                      }
-                    />
-                    <Route
-                      path='/workspace'
-                      component={
-                        props => <ProtectedContent component={Workspace} {...props} />
-                      }
-                    />
-                    <Route
-                      path={workspaceUrl}
-                      component={ErrorWorkspacePlaceholder}
-                    />
-                    <Route
-                      path={workspaceErrorUrl}
-                      component={ErrorWorkspacePlaceholder}
                     />
                     <Route
                       path='/:project/search'
@@ -287,12 +168,6 @@ async function init() {
                       />
                       : null
                     }
-                    <Route
-                      path='/:project'
-                      component={
-                        props => <ProtectedContent component={ProjectSubmission} {...props} />
-                      }
-                    />
                   </Switch>
                 </div>
                 <ReduxFooter logos={components.footerLogos} />
