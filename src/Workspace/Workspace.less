@@ -1,0 +1,37 @@
+.workspace {
+  width: 100%;
+  min-height: inherit;
+  padding: 40px 20px;
+}
+
+.workspace__iframe {
+  display: flex;
+  flex-flow: column;
+}
+
+.workspace__terminate-button {
+  width: max-content;
+  margin: 20px 20px;
+}
+
+.workspace__iframe iframe {
+  height: 100vh;
+  width: 100%;
+}
+
+.workspace__options {
+  padding: 40px 20px;
+  display: flex;
+  flex-flow: wrap;
+}
+
+.error-workspace-placeholder__error-msg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--g3-color__bg-cloud);
+  z-index: 1;
+  text-align: center;
+}
