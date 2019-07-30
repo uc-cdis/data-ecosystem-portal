@@ -6,8 +6,10 @@ import { config } from '../params';
 // import { guppyUrl, tierAccessLevel, tierAccessLimit } from '../localconf';
 // import './GuppyExplorer.css';
 import DatasetBrowserTable from './DatasetBrowserTable/';
+import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import FilterGroup from '@gen3/ui-component/dist/components/filters/FilterGroup';
 import FilterList from '@gen3/ui-component/dist/components/filters/FilterList';
+import SummaryChartGroup from '@gen3/ui-component/dist/components/charts/SummaryChartGroup';
 import './DatasetBrowser.less';
 
 const defaultConfig = {
@@ -209,8 +211,19 @@ class Explorer extends React.Component {
       <FilterList key={0} sections={projectSections} /> //, <FilterList key={1} sections={subjectSections} />, <FilterList key={2} sections={fileSections} />,
     ];
 
+    
+    const supportedDataResourceCount = {
+      label: 'Supported Data Resources',
+      value:  1
+    };
 
+    const datasetCount = {
+      label: 'Datasets',
+      value: 2
+    };
 
+    const summaries = [supportedDataResourceCount, datasetCount];
+    
     // if (!filterTabs || filterTabs.length === 0) {
     //   return null;
     // }
@@ -228,6 +241,11 @@ class Explorer extends React.Component {
             />
           </div>
           <div className='data-explorer__visualizations'>
+            {
+              <div className='guppy-explorer-visualization__charts'>
+                <DataSummaryCardGroup summaryItems={summaries} connected />
+              </div>
+            }
             <DatasetBrowserTable
                 className='guppy-explorer-visualization__table'
                 tableConfig={{ fields: ['field1', 'field2'] }}

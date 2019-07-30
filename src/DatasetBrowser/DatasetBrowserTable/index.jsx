@@ -97,7 +97,7 @@ class DatasetBrowserTable extends React.Component {
     return (
       <div className={`explorer-table ${this.props.className}`}>
         {(this.props.isLocked) ? <React.Fragment />
-          : <p className='explorer-table__description'>{`Showing ${start} - ${end} of ${totalCount} ${guppyConfig.dataType}s`}</p> }
+          : <p className='explorer-table__description'>{`${totalCount || 0} matching datasets found`}</p> }
         <ReactTable
           columns={columnsConfig}
           manual
