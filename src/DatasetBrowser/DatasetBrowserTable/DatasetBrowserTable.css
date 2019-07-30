@@ -1,0 +1,50 @@
+.dataset-browser-table {
+  margin-top: 20px;
+}
+
+.dataset-browser-table__description {
+  margin-bottom: 10px;
+}
+
+.dataset-browser-table .ReactTable.-striped .rt-tr.-odd {
+  background-color: var(--g3-color__bg-cloud);
+}
+
+.dataset-browser-table .ReactTable.-striped .rt-tr.-even {
+  background-color: var(--g3-color__white);
+}
+
+.dataset-browser-table .ReactTable .rt-thead.-header {
+  background-color: var(--g3-color__white);
+  font-weight: 700;
+  border-bottom: solid 1px var(--g3-color__black);
+}
+
+.dataset-browser-table .ReactTable .rt-th {
+  padding: 15px 5px;
+}
+
+.dataset-browser-table .ReactTable .rt-noData {
+  width: 100%;
+  text-align: center;
+  border: 3px;
+}
+
+.dataset-browser-table .ReactTable .rt-th,
+.dataset-browser-table .ReactTable .rt-td {
+  white-space: unset;
+}
+
+.dataset-browser-table .ReactTable .rt-thead .rt-th.-sort-asc, .ReactTable .rt-thead .rt-td.-sort-asc,
+.dataset-browser-table .ReactTable .rt-thead .rt-th.-sort-desc, .ReactTable .rt-thead .rt-td.-sort-desc {
+  box-shadow: inset 0 0 0 0 transparent;
+}
+
+.dataset-browser-table .ReactTable .rt-thead .rt-tr {
+  text-align: left;
+}
+
+.dataset-browser-table .ReactTable .rt-thead .rt-th:first-child, 
+.dataset-browser-table .ReactTable .rt-tbody .rt-td:first-child {
+  padding-left: 20px;
+}

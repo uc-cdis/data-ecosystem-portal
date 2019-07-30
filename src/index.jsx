@@ -18,6 +18,7 @@ import ProtectedContent from './Login/ProtectedContent';
 import HomePage from './Homepage/page';
 import DocumentPage from './Document/page';
 // import ExplorerPage from './Explorer/ExplorerPage';
+import DatasetBrowser from './DatasetBrowser/';
 import IndexPage from './Index/page';
 import UserProfile, { fetchAccess } from './UserProfile/ReduxUserProfile';
 // import UserAgreementCert from './UserAgreement/ReduxCertPopup';
@@ -151,6 +152,17 @@ async function init() {
                               {...props}
                             />);
                         }
+                      }
+                    />
+                    <Route
+                      path='/datasets'
+                      component={
+                        props => (
+                          <ProtectedContent
+                            component={DatasetBrowser}
+                            {...props}
+                          />
+                        )
                       }
                     />
                     {isEnabled('explorer') ?
