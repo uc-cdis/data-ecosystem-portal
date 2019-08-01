@@ -95,9 +95,9 @@ class DatasetBrowserTable extends React.Component {
     const start = (this.state.currentPage * this.state.pageSize) + 1;
     const end = (this.state.currentPage + 1) * this.state.pageSize;
     return (
-      <div className={`explorer-table ${this.props.className}`}>
+      <div className={`dataset-browser-table ${this.props.className}`}>
         {(this.props.isLocked) ? <React.Fragment />
-          : <p className='explorer-table__description'>{`${totalCount || 0} matching datasets found`}</p> }
+          : <p className='dataset-browser-table__description'>{`${totalCount || 0} matching datasets found`}</p> }
         <ReactTable
           columns={columnsConfig}
           manual

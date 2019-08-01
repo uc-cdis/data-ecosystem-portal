@@ -106,7 +106,7 @@ class Explorer extends React.Component {
     const filterTabs = this.getFilterTabs();
     const filterConfig = {
       tabs: [{
-        title: 'Supported Data Resources',
+        title: 'Filters',
         fields: [
           'project',
           'study',

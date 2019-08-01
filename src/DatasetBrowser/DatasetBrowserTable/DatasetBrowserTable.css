@@ -4,6 +4,8 @@
 
 .dataset-browser-table__description {
   margin-bottom: 10px;
+  font-weight:bold;
+  font-size:15px;
 }
 
 .dataset-browser-table .ReactTable.-striped .rt-tr.-odd {
