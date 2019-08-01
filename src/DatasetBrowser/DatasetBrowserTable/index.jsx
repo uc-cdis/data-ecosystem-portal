@@ -75,7 +75,7 @@ class DatasetBrowserTable extends React.Component {
   render() {
     if (!this.props.tableConfig.fields || this.props.tableConfig.fields.length === 0) return null;
     const columnsConfig = this.props.tableConfig.fields.map((field) => {
-      const fieldMappingEntry = []; // guppyConfig.fieldMapping && guppyConfig.fieldMapping.find(i => i.field === field);
+      const fieldMappingEntry = guppyConfig.fieldMapping && guppyConfig.fieldMapping.find(i => i.field === field);
       const name = fieldMappingEntry ? fieldMappingEntry.name : capitalizeFirstLetter(field);
       return {
         Header: name,
@@ -87,7 +87,7 @@ class DatasetBrowserTable extends React.Component {
           : <div><span title={row.value}>{row.value}</span></div>),
       };
     });
-    const { totalCount } = this.props;
+    const totalCount = this.props.totalCount;
     const { pageSize } = this.state;
     const totalPages = Math.floor(totalCount / pageSize) + ((totalCount % pageSize === 0) ? 0 : 1);
     const SCROLL_SIZE = 10000;

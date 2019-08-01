@@ -236,17 +236,23 @@
         "rightIcon": "download"
       }
     ],
-    "arrangerConfig": {
-      "projectId": "search",
-      "graphqlField": "subject",
-      "index": "",
-      "manifestMapping": {
-        "resourceIndexType": "file",
-        "resourceIdField": "object_id",
-        "referenceIdFieldInResourceIndex": "subject_id",
-        "referenceIdFieldInDataIndex": "node_id"
-      },
-      "nodeCountField": "subject_id"
+    "guppy": {
+      "indices": [
+        {
+          "index": "niaid",
+          "type": "subject"
+        },
+        {
+          "index": "niaid_follow_up",
+          "type": "follow_up"
+        },
+        {
+          "index": "niaid_file",
+          "type": "file"
+        }
+      ],
+      "config_index": "niaid_array-config",
+      "auth_filter_field": "auth_resource_path"
     }
   }
 }
