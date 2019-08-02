@@ -76,6 +76,38 @@ class Explorer extends React.Component {
       tab: tabIndex > 0 ? tabIndex : 0,
     };
     this.filterGroupRef = React.createRef();
+
+    this.state.rawData = [
+      {
+        'dataset' : 'MACS',
+        'supported_data_resource' : 'NDC: DAIDs Data Commons',
+        'research_focus' : 'AIDS',
+        'description': 'Having published over 1300 publications, the MACS has made significant contributions to understanding the science of HIV, the AIDS epidemic, and the effects of therapy. Many of these MACS publications have guided Public Health Policy.',
+        'link' : 'https://daids.niaiddata.org'
+      },
+      {
+        'dataset' : 'WIHS',
+        'supported_data_resource' : 'NDC: DAIDs Data Commons',
+        'research_focus' : 'AIDS',
+        'description': 'The Women’s Interagency HIV Study (WIHS) is a large, comprehensive prospective cohort study designed to investigate the progression of HIV disease in women. The WIHS began in 1993 in response to growing concern about the impact of HIV on women. The core study visit includes a detailed and structured interview, physical and gynecologic examinations, and laboratory testing. After more than 20 years, the WIHS continues to investigate questions at the forefront of HIV research, spanning topics such as women’s reproductive health, clinical outcomes (for example, cardiovascular disease, diabetes, and others), and the effectiveness of antiretroviral therapy.',
+        'link' : 'https://daids.niaiddata.org'
+      } 
+    ];
+  }
+
+  fetchAndUpdateRawData = () => {
+    console.log('here i am');
+    const mergedData = [];
+
+    fetch("https://api.immport.org/data/query/study/findAllStudyAccessions")
+      .then(response => response.json())
+      .then(data => {
+        console.log('hi: ', data)
+      });
+
+
+    this.setState({rawData: mergedData});
+    return Promise.resolve({});
   }
 
   /**
@@ -224,33 +256,17 @@ class Explorer extends React.Component {
 
     const summaries = [supportedDataResourceCount, datasetCount];
 
-    const rawData = [
-      {
-        'dataset' : 'MACS',
-        'supported_data_resource' : 'NDC: DAIDs Data Commons',
-        'research_focus' : 'AIDS',
-        'description': 'Having published over 1300 publications, the MACS has made significant contributions to understanding the science of HIV, the AIDS epidemic, and the effects of therapy. Many of these MACS publications have guided Public Health Policy.',
-        'link' : 'https://daids.niaiddata.org'
-      },
-      {
-        'dataset' : 'WIHS',
-        'supported_data_resource' : 'NDC: DAIDs Data Commons',
-        'research_focus' : 'AIDS',
-        'description': 'The Women’s Interagency HIV Study (WIHS) is a large, comprehensive prospective cohort study designed to investigate the progression of HIV disease in women. The WIHS began in 1993 in response to growing concern about the impact of HIV on women. The core study visit includes a detailed and structured interview, physical and gynecologic examinations, and laboratory testing. After more than 20 years, the WIHS continues to investigate questions at the forefront of HIV research, spanning topics such as women’s reproductive health, clinical outcomes (for example, cardiovascular disease, diabetes, and others), and the effectiveness of antiretroviral therapy.',
-        'link' : 'https://daids.niaiddata.org'
-      } 
-    ];
-
-    const totalCount = rawData.length;
+    const totalCount = this.state.rawData.length;
 
     const config = {
-        'fieldMapping' : {
-          'dataset' : 'Dataset',
+        'fieldMapping' :
+          {
+          'dataset': 'Dataset',
           'supported_data_resource' : 'Supported Data Resource',
           'research_focus' : 'Research Focus',
           'description': 'Description of Dataset',
           'link' : 'Action'
-        }
+          }
       }
     
     console.log(config);
@@ -283,8 +299,8 @@ class Explorer extends React.Component {
             <DatasetBrowserTable
                 className='guppy-explorer-visualization__table'
                 tableConfig={tableConfig}
-                fetchAndUpdateRawData={this.props.fetchAndUpdateRawData}
-                rawData={rawData}
+                fetchAndUpdateRawData={this.fetchAndUpdateRawData}
+                rawData={this.state.rawData}
                 totalCount={this.props.totalCount}
                 guppyConfig={config}
                 isLocked={false}
