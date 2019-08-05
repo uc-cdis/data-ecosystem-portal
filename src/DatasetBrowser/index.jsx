@@ -101,7 +101,7 @@ class Explorer extends React.Component {
 
     const immportURL = "https://api.immport.org/data/query/study/findAllStudyAccessions";
     const tbURL = ""
-    const googleURL = "https://google.com"
+    const googleURL = "https://google.com/"
 
     fetch(googleURL)
       .then(response => { 
