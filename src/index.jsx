@@ -172,7 +172,7 @@ async function init() {
                           props => (
                             <ProtectedContent
                               public={explorerPublic}
-                              component={useGuppyForExplorer ? GuppyDataExplorer : DataExplorer}
+                              component={GuppyDataExplorer}
                               {...props}
                             />
                           )

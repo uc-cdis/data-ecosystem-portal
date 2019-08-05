@@ -99,8 +99,16 @@ class Explorer extends React.Component {
     console.log('here i am');
     const mergedData = [];
 
-    fetch("https://api.immport.org/data/query/study/findAllStudyAccessions")
-      .then(response => response.json())
+    const immportURL = "https://api.immport.org/data/query/study/findAllStudyAccessions";
+    const tbURL = ""
+    const googleURL = "https://google.com"
+
+    fetch(googleURL)
+      .then(response => { 
+        console.log(response);
+        console.log(response.text);
+        return response.text()
+      })
       .then(data => {
         console.log('hi: ', data)
       });

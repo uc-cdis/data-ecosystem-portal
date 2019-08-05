@@ -54,6 +54,7 @@ const plugins = [
       if (typeof process.env.INDEXD_URL !== 'undefined') {
         rv[(new URL(process.env.INDEXD_URL)).origin] = true;
       }
+      rv[(new URL("https://api.immport.org")).origin] = true;
       return Object.keys(rv).join(' ');
     })(),
     hash: true
