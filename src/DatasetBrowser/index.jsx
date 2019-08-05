@@ -95,11 +95,34 @@ class Explorer extends React.Component {
     ];
   }
 
+  sleep = (ms) => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  corsFetch = (URL) => {
+    const corsAnywhereURL = "https://crossorigin.me/";
+    return fetch(corsAnywhereURL + URL);
+  }
+
+  obtainImmportStudyDetails = async (studyAccessions) => {
+    // Immport Docs are here http://docs.immport.org/#API/DataQueryAPI/dataqueryapi/
+    let promiseArray = [];
+    const summaryURL = 'https://api.immport.org/data/query/study/summary/';
+    for (let i = 0; i <= studyAccessions.length; i++) {
+      promiseArray.push(this.corsFetch(summaryURL + studyAccessions[0]).then(function(response) {
+        console.log(response);
+        return response.json();
+      }));
+      await sleep(2000);
+    }
+    return Promise.all(promiseArray);
+  }
+
   fetchAndUpdateRawData = () => {
     console.log('here i am');
     const mergedData = [];
 
-    const corsAnywhereURL = "https://cors-anywhere.herokuapp.com/";
+    const corsAnywhereURL = "https://crossorigin.me/";
     const immportURL = "https://api.immport.org/data/query/study/findAllStudyAccessions";
     const tbURL = ""
     const googleURL = "https://google.com/"
@@ -107,11 +130,14 @@ class Explorer extends React.Component {
     fetch(corsAnywhereURL + immportURL)
       .then(response => { 
         console.log(response);
-        console.log(response.text);
-        return response.text()
+        return response.json();
       })
       .then(data => {
-        console.log('hi: ', data)
+        console.log('hi: ', data);
+        if (data.studyAccessions && data.studyAccessions.length > 0) {
+          const promiseArray = this.obtainImmportStudyDetails(data.studyAccessions);
+          console.log(promiseArray);
+        }
       });
 
 
