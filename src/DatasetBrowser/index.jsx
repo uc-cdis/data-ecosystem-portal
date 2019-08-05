@@ -99,11 +99,12 @@ class Explorer extends React.Component {
     console.log('here i am');
     const mergedData = [];
 
+    const corsAnywhereURL = "https://cors-anywhere.herokuapp.com/";
     const immportURL = "https://api.immport.org/data/query/study/findAllStudyAccessions";
     const tbURL = ""
     const googleURL = "https://google.com/"
 
-    fetch(googleURL)
+    fetch(corsAnywhereURL + immportURL)
       .then(response => { 
         console.log(response);
         console.log(response.text);
