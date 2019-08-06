@@ -51,6 +51,7 @@ class DatasetBrowserTable extends React.Component {
   }
 
   fetchData = (state) => {
+    return;
     console.log('fetching data');
     this.setState({ loading: true });
     const offset = state.page * state.pageSize;

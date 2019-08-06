@@ -427,10 +427,10 @@ ExplorerButtonGroup.propTypes = {
   buttonConfig: ButtonConfigType.isRequired,
   guppyConfig: GuppyConfigType.isRequired,
   history: PropTypes.object.isRequired,
-  submitJob: PropTypes.func.isRequired,
-  resetJobState: PropTypes.func.isRequired,
-  checkJobStatus: PropTypes.func.isRequired,
-  fetchJobResult: PropTypes.func.isRequired,
+  // submitJob: PropTypes.func.isRequired,
+  // resetJobState: PropTypes.func.isRequired,
+  // checkJobStatus: PropTypes.func.isRequired,
+  // fetchJobResult: PropTypes.func.isRequired,
   isLocked: PropTypes.bool.isRequired,
 };
 

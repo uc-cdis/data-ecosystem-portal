@@ -56,7 +56,7 @@ async function init() {
   );
   // FontAwesome icons
   library.add(faAngleUp, faAngleDown);
-
+  
   render(
     <div>
       <Provider store={store}>
@@ -159,6 +159,7 @@ async function init() {
                       component={
                         props => (
                           <ProtectedContent
+                            public
                             component={DatasetBrowser}
                             {...props}
                           />
@@ -171,7 +172,7 @@ async function init() {
                         component={
                           props => (
                             <ProtectedContent
-                              public={explorerPublic}
+                              public
                               component={GuppyDataExplorer}
                               {...props}
                             />

@@ -4,7 +4,7 @@ import ExplorerButtonGroup from '../ExplorerButtonGroup';
 // from '../../Analysis/AnalysisJob';
 
 const mapStateToProps = state => ({
-  job: state.analysis.job,
+  // job: state.analysis.job,
 });
 
 const mapDispatchToProps = null;
