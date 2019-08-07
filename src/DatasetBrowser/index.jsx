@@ -618,21 +618,35 @@ class Explorer extends React.Component {
 
     const totalCount = this.state.rawData.length;
 
+    // const config = {
+    //     'fieldMapping' :
+    //       {
+    //       'dataset': 'Dataset',
+    //       'supported_data_resource' : 'Supported Data Resource',
+    //       'research_focus' : 'Research Focus',
+    //       'description': 'Description of Dataset',
+    //       'link' : 'Action'
+    //       }
+    //   }
+
     const config = {
-        'fieldMapping' :
-          {
-          'dataset': 'Dataset',
-          'supported_data_resource' : 'Supported Data Resource',
-          'research_focus' : 'Research Focus',
-          'description': 'Description of Dataset',
-          'link' : 'Action'
-          }
-      }
+      'fieldMapping' : [
+        { 'field': 'dataset', 'name': 'Dataset' },
+        { 'field': 'supported_data_resource', 'name': 'Supported Data Resource' },
+        { 'field': 'research_focus', 'name': 'Research Focus' },
+        { 'field': 'description', 'name': 'Description of Dataset' },
+        { 'field': 'link', 'name': 'Action' }
+      ]
+    }
     
     console.log(config);
     console.log(config.fieldMapping);
 
-    const tableConfig = { fields: Object.keys(config.fieldMapping) };
+    let fields = [];
+    for(let j = 0; j < config.fieldMapping.length; j++) {
+      fields.push(config.fieldMapping[j].field);
+    }
+    const tableConfig = { fields: fields };
 
     
     // if (!filterTabs || filterTabs.length === 0) {

@@ -5,6 +5,7 @@ import 'react-table/react-table.css';
 // import { GuppyConfigType, TableConfigType } from '../configTypeDef';
 import { capitalizeFirstLetter } from '../../utils';
 import './DatasetBrowserTable.css';
+import IconicLink from '../../components/buttons/IconicLink';
 import LockIcon from '../../img/icons/lock.svg';
 
 const guppyConfig = {
@@ -76,15 +77,22 @@ class DatasetBrowserTable extends React.Component {
   render() {
     if (!this.props.tableConfig.fields || this.props.tableConfig.fields.length === 0) return null;
     const columnsConfig = this.props.tableConfig.fields.map((field) => {
-      const fieldMappingEntry = guppyConfig.fieldMapping && guppyConfig.fieldMapping.find(i => i.field === field);
+      const fieldMappingEntry = this.props.guppyConfig.fieldMapping && this.props.guppyConfig.fieldMapping.find(i => i.field === field);
       const name = fieldMappingEntry ? fieldMappingEntry.name : capitalizeFirstLetter(field);
       return {
         Header: name,
         accessor: field,
         maxWidth: 400,
+        render: ({ row }) => (<button onClick={(e) => this.handleButtonClick(e, row)}>Click Me</button>),
         width: this.getWidthForColumn(field, name),
-        Cell: row => (guppyConfig.downloadAccessor === field ?
-          <div><span title={row.value}><a href={`/files/${row.value}`}>{row.value}</a></span></div>
+        Cell: row => ('link' === field ?
+          <IconicLink
+            link={row.value}
+            className='index-button-bar__item'
+            caption='Check Dataset'
+            target='_blank'
+            isExternal={true}
+          />
           : <div><span title={row.value}>{row.value}</span></div>),
       };
     });
