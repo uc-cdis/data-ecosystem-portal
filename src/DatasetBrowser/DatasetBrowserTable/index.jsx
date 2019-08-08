@@ -31,7 +31,7 @@ class DatasetBrowserTable extends React.Component {
 
   getWidthForColumn = (field, columnName) => {
     // some magic numbers that work fine for table columns width
-    const minWidth = 100;
+    const minWidth = 150;
     const maxWidth = 400;
     const letterWidth = 8;
     const spacing = 20;
@@ -74,6 +74,13 @@ class DatasetBrowserTable extends React.Component {
     });
   };
 
+  truncateTextIfNecessary(text) {
+    if (text.length < 405) {
+      return text;
+    }
+    return text.slice(0, 405) + '...';
+  }
+
   render() {
     if (!this.props.tableConfig.fields || this.props.tableConfig.fields.length === 0) return null;
     const columnsConfig = this.props.tableConfig.fields.map((field) => {
@@ -93,7 +100,7 @@ class DatasetBrowserTable extends React.Component {
             target='_blank'
             isExternal={true}
           />
-          : <div><span title={row.value}>{row.value}</span></div>),
+          : <div><span title={row.value}>{this.truncateTextIfNecessary(row.value)}</span></div>),
       };
     });
     const totalCount = this.props.totalCount;

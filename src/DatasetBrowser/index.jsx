@@ -941,7 +941,7 @@ class Explorer extends React.Component {
       label: 'Supported Data Resources',
       value: this.state.counts['supported_data_resource']
     };
-    console.log()
+    
     const datasetCount = {
       label: 'Datasets',
       value: this.state.counts['dataset']
