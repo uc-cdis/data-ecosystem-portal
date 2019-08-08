@@ -66,6 +66,7 @@ const routes = [
 
 function action(input) {
   console.log(input);
+  console.log('hey');
 }
 
 class Explorer extends React.Component {
@@ -94,10 +95,27 @@ class Explorer extends React.Component {
       } 
     ];
 
-    this.state.rawData = this.mergeRawDataWithImmportResults(rawData);
+    this.state.rawData = this.mergeRawDataWithImmPortResults(rawData);
+    this.state.filteredData = this.state.rawData;
+
+    this.state.counts = { 
+      'supported_data_resource': this.calculateSummaryCounts('supported_data_resource', this.state.filteredData),
+      'dataset': this.calculateSummaryCounts('dataset', this.state.filteredData)
+    }
   }
 
-  authWithImmport = () => {
+  calculateSummaryCounts(field, filteredData) {
+    const values = [];
+    for(let j = 0; j < filteredData.length; j++) {
+      values.push(filteredData[j][field]);
+    }
+    const uniqueValues = values.filter(
+      (value, index) => values.indexOf(value) === index 
+    );
+    return uniqueValues.length;
+  }
+
+  authWithImmPort = () => {
     const immportAuthURL = "https://auth.immport.org/auth/token";
     const corsAnywhereURL = "https://cors-anywhere.herokuapp.com/";
 
@@ -123,8 +141,8 @@ class Explorer extends React.Component {
     return fetch(corsAnywhereURL + URL);
   }
 
-  obtainImmportStudyDetails = async (studyAccessions) => {
-    // Immport Docs are here http://docs.immport.org/#API/DataQueryAPI/dataqueryapi/
+  obtainImmPortStudyDetails = async (studyAccessions) => {
+    // ImmPort Docs are here http://docs.immport.org/#API/DataQueryAPI/dataqueryapi/
     let promiseArray = [];
     const summaryURL = 'https://api.immport.org/data/query/study/summary/';
     for (let i = 0; i <= studyAccessions.length; i++) {
@@ -137,8 +155,7 @@ class Explorer extends React.Component {
     return Promise.all(promiseArray);
   }
 
-  mergeRawDataWithImmportResults = (rawData) => {
-    console.log('139');
+  mergeRawDataWithImmPortResults = (rawData) => {
     const immportResults = [
       {
       "studyAccession" : "SDY1",
@@ -423,6 +440,307 @@ class Explorer extends React.Component {
         },
         "definition" : "Tolerance Assay Group"
       } ]
+    }, 
+    {
+      "studyAccession" : "SDY2",
+      "doi" : "10.21430/M3G33VVU77",
+      "title" : "Immune Response to Varicella Vaccination in Subjects with Atopic Dermatitis Compared to Nonatopic Controls (VAR 05)",
+      "pi" : "Lynda Schneider - Children's Hospital, Boston",
+      "conditionStudied" : "Immune Response to Varicella Vaccination in Subjects with Atopic Dermatitis",
+      "briefDescription" : "Young children have the highest prevalence of atopic dermatitis (AD) and are at significant risk complications from vaccinia. As a surrogate, we believe investigating the immune response to varicella vaccination will yield important information about alterations in the immune response to live virus vaccines  subjects with AD. Evaluation of 30 analyzable children with AD and 30 analyzable nonatopic controls is planned. Subjects immunized with varicella vaccine will have blood drawn for laboratory evaluations 3 weeks after immunization. The immune response to varicella will be assessed by measuring the proportion of varicella-zoster virus (VZV)-specific T cells, perforin production, and VZV-specific antibody titers. Because of the and systemic T helper cell 2 (Th2) polarization of subjects with AD, an altered response to varicella vaccination expected. Specifically, it is expected that AD subjects will exhibit decreased cell-mediated responses, but exhibit normal to increased humoral responses as evidenced by production of VZV-specific antibodies.",
+      "startDate" : "",
+      "detailedDescription" : "This is a mechanistic, double-aim, non-randomized study that will be conducted at 2 sites, Children's Hospital Boston and National Jewish Medical and Research Center. Study participants 12 to 36 months of age with AD and without AD will be enrolled to assess immune response after varicella vaccination.<br/><br/>Estimated Study Duration:<br/><br/>The study is scheduled to be completed in 36 months. Subjects will only complete one scheduled study visit.<br/><br/>Study Population:<br/><br/>Subjects will be enrolled over a 12 month period. Subjects will be recruited at Children's Hospital Boston and National Jewish Medical and Research Center.<br/>",
+      "objectives" : "Primary Objective:<br/>To determine if children with AD have VZV-specific cell mediated immune (CMI) responses to varicella vaccination that differ from those of nonatopic controls.<br/><br/>Secondary Objective:<br/>To determine if children with AD have VZV-specific humoral responses to varicella vaccination that differ from those of nonatopic controls.",
+      "endpoints" : "Primary Endpoint:<br/>Cell-mediated immune responses as assessed by measurement of numbers of VZV-specific T cells utilizing an interferon (IFN)-gamma enzyme-linked immunosorbent spot (ELISPOT) assay and perforin generation using 2-color flow cytometry staining for both CD8 and perforin.<br/><br/>Secondary Endpoint:<br/>Comparison of VZV-specific (immunoglobin class and type) antibody between AD and nonatopic, control groups.",
+      "genderIncluded" : "Female, Male",
+      "subjectsNumber" : 71,
+      "downloadPackages" : null,
+      "contractGrant" : "Atopic Dermatitis and Vaccinia Network (ADVN) Clinical Studies Consort-26629c",
+      "dataCompleteness" : "2 - Complete set of descriptive data and results, as ascertained by ImmPort.",
+      "studyLinks" : [ {
+        "studyLinkId" : 68,
+        "name" : "ClinicalTrials.gov",
+        "type" : "website",
+        "value" : "http://clinicaltrials.gov/ct2/show/study/NCT00406081"
+      } ],
+      "studyPubmeds" : [ ],
+      "studyGlossarys" : [ {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "ACIP"
+        },
+        "definition" : "Advisory Committee on Immunization Practices "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "AD"
+        },
+        "definition" : "Atopic Dermatitis "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "ADVN"
+        },
+        "definition" : "Atopic Dermatitis Vaccinia Network "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "AE"
+        },
+        "definition" : "Adverse Event "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "Arms"
+        },
+        "definition" : "This includes the external axillae and hands."
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "CBC"
+        },
+        "definition" : "Complete Blood Count "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "CDC"
+        },
+        "definition" : "Centers for Disease Control "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "CLIA"
+        },
+        "definition" : "Clinical Laboratory Improvement Amendments "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "CMI"
+        },
+        "definition" : "Cell-mediated Immunity "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "CRF"
+        },
+        "definition" : "Case Report Form "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "CTCAE"
+        },
+        "definition" : "Common Terminology Criteria for Adverse Events "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "CTL"
+        },
+        "definition" : "Cytotoxic T Lymphocyte "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "DAIT"
+        },
+        "definition" : "Division of Allergy, Immunology, and Transplantation "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "DSMB"
+        },
+        "definition" : "Data and Safety Monitoring Board "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "EASI"
+        },
+        "definition" : "Eczema Area and Severity Index "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "EDC"
+        },
+        "definition" : "Electronic Data Capture "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "EH"
+        },
+        "definition" : "Eczema Herpeticum "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "ELISA"
+        },
+        "definition" : "Enzyme-linked Immunosorbent Assay "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "ELISPOT"
+        },
+        "definition" : "Enzyme-linked Immunosorbent Spot "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "EV"
+        },
+        "definition" : "Eczema Vaccinatum "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "FDA"
+        },
+        "definition" : "Food and Drug Administration "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "GCP"
+        },
+        "definition" : "Good Clinical Practice "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "Head"
+        },
+        "definition" : "This includes the head and neck."
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "HSV"
+        },
+        "definition" : "Herpes Simplex Virus "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "ICH"
+        },
+        "definition" : "International Conference on Harmonisation"
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "IFN"
+        },
+        "definition" : "Interferon "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "Ig"
+        },
+        "definition" : "Immunoglobulin "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "IL"
+        },
+        "definition" : "Interleukin "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "IND"
+        },
+        "definition" : "Investigational New Drug "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "IRB"
+        },
+        "definition" : "Institutional Review Board "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "Legs"
+        },
+        "definition" : "This area includes the buttocks and feet."
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "MC"
+        },
+        "definition" : "Molluscum Contagiosum "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "MHC"
+        },
+        "definition" : "Major Histocompatibility Complex "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "NIAID"
+        },
+        "definition" : "National Institute of Allergy and Infectious Diseases "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "NK"
+        },
+        "definition" : "Natural Killer "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "PBMC"
+        },
+        "definition" : "Peripheral Blood Mononuclear Cell "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "RAST"
+        },
+        "definition" : "Radioallergosorbent Assay "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "SAE"
+        },
+        "definition" : "Serious Adverse Event "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "SDCC"
+        },
+        "definition" : "Statistical and Data Coordinating Center "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "Th"
+        },
+        "definition" : "T Helper Cell "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "TNF"
+        },
+        "definition" : "Tumor Necrosis Factor "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "Trunk"
+        },
+        "definition" : "This area includes the internal axillae and groin."
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "USA"
+        },
+        "definition" : "United States of America "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "VZIG"
+        },
+        "definition" : "Varicella Zoster Immune Globulin "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "VZV"
+        },
+        "definition" : "Varicella-zoster Virus "
+      }, {
+        "id" : {
+          "studyAccession" : "SDY2",
+          "term" : "WHO"
+        },
+        "definition" : "World Health Organization "
+      } ]
     }
     ];
     
@@ -432,7 +750,7 @@ class Explorer extends React.Component {
         'description': immportResults[i].briefDescription,
         'research_focus': immportResults[i].conditionStudied,
         'link': 'https://www.immport.org/shared/study/' + immportResults[i].studyAccession,
-        'supported_data_resource': 'Immport'
+        'supported_data_resource': 'ImmPort'
       };
       rawData.push(newObject);
     }
@@ -444,7 +762,7 @@ class Explorer extends React.Component {
     console.log('here i am');
     const mergedData = [];
 
-    // this.authWithImmport();
+    // this.authWithImmPort();
 
     const corsAnywhereURL = "https://cors-anywhere.herokuapp.com/";
     const immportURL = "https://api.immport.org/data/query/study/findAllStudyAccessions";
@@ -459,7 +777,7 @@ class Explorer extends React.Component {
       .then(data => {
         console.log('hi: ', data);
         if (data.studyAccessions && data.studyAccessions.length > 0) {
-          const promiseArray = this.obtainImmportStudyDetails(data.studyAccessions);
+          const promiseArray = this.obtainImmPortStudyDetails(data.studyAccessions);
           console.log(promiseArray);
 
         }
@@ -494,33 +812,47 @@ class Explorer extends React.Component {
     return tabs;
   }
 
+  checkIfFiltersApply(filtersApplied, row) {
+    for (var property in filtersApplied) {
+      const filtersApplyMatch = filtersApplied[property].selectedValues.map(
+        x => x.toLowerCase()
+      ).includes(
+        row[property].toLowerCase()
+      );
+      const filtersApplyContains = filtersApplied[property].selectedValues.filter(
+        x => row[property].toLowerCase().includes(x.toLowerCase())
+      );
+      filtersApplyContains = filtersApplyContains.length > 0;
+      const filtersApply = filtersApplyMatch || filtersApplyContains;
+      if (!filtersApply) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  handleFilterChange(filtersApplied) {
+    const rawData = this.state.rawData;
+    let filteredData = [];
+    for(let j = 0; j < rawData.length; j++) {
+      const isMatch = this.checkIfFiltersApply(filtersApplied, rawData[j]);
+      if(isMatch) {
+        filteredData.push(rawData[j]);
+      }
+    }
+    
+    this.setState({
+      filteredData : filteredData,
+      'counts' : 
+        { 
+          'supported_data_resource': this.calculateSummaryCounts('supported_data_resource', filteredData),
+          'dataset': this.calculateSummaryCounts('dataset', filteredData)
+        }
+    });
+  }
+
   render() {
     const filterTabs = this.getFilterTabs();
-    const filterConfig = {
-      tabs: [{
-        title: 'Filters',
-        fields: [
-          'project',
-          'study',
-        ],
-      },
-      {
-        title: 'Subject',
-        fields: [
-          'race',
-          'ethnicity',
-          'gender',
-          'age',
-        ],
-      },
-      {
-        title: 'File',
-        fields: [
-          'file_type',
-          'file_count',
-        ],
-      }],
-    };
 
     const projectOptions = [
       { text: 'NDC: TB Data Commons', filterType: 'singleSelect', count: 123 },
@@ -532,7 +864,8 @@ class Explorer extends React.Component {
       { text: 'AIDS', filterType: 'singleSelect', count: 123 },
       { text: 'TB', filterType: 'singleSelect', count: 123 },
       { text: 'Immune Response', filterType: 'singleSelect', count: 123 },
-      { text: 'Atopy/Allergy', filterType: 'singleSelect', count: 123 },
+      { text: 'Allergy', filterType: 'singleSelect', count: 123 },
+      { text: 'Atopy', filterType: 'singleSelect', count: 123 },
       { text: 'Infection Response', filterType: 'singleSelect', count: 123 },
       { text: 'Vaccine Response', filterType: 'singleSelect', count: 123 },
       { text: 'Transplantation', filterType: 'singleSelect', count: 123 },
@@ -606,28 +939,17 @@ class Explorer extends React.Component {
     
     const supportedDataResourceCount = {
       label: 'Supported Data Resources',
-      value:  1
+      value: this.state.counts['supported_data_resource']
     };
-
+    console.log()
     const datasetCount = {
       label: 'Datasets',
-      value: 2
+      value: this.state.counts['dataset']
     };
 
     const summaries = [supportedDataResourceCount, datasetCount];
 
     const totalCount = this.state.rawData.length;
-
-    // const config = {
-    //     'fieldMapping' :
-    //       {
-    //       'dataset': 'Dataset',
-    //       'supported_data_resource' : 'Supported Data Resource',
-    //       'research_focus' : 'Research Focus',
-    //       'description': 'Description of Dataset',
-    //       'link' : 'Action'
-    //       }
-    //   }
 
     const config = {
       'fieldMapping' : [
@@ -638,9 +960,6 @@ class Explorer extends React.Component {
         { 'field': 'link', 'name': 'Action' }
       ]
     }
-    
-    console.log(config);
-    console.log(config.fieldMapping);
 
     let fields = [];
     for(let j = 0; j < config.fieldMapping.length; j++) {
@@ -648,21 +967,24 @@ class Explorer extends React.Component {
     }
     const tableConfig = { fields: fields };
 
-    
-    // if (!filterTabs || filterTabs.length === 0) {
-    //   return null;
-    // }
+    const filterConfig = {
+      tabs: [{
+        title: 'Filters',
+        fields: ["supported_data_resource", "research_focus"],
+      }],
+    };
+
     return (
       <React.Fragment>
         <div className='ndef-page-title'>
           Datasets Browser
         </div>
         <div className='dataset-browser'>
-          <div className='data-explorer__filters'>
+          <div className='dataset-browser__filters'>
             <FilterGroup
               tabs={tabs}
               filterConfig={filterConfig}
-              onFilterChange={action('filter change')}
+              onFilterChange={ (e) => this.handleFilterChange(e) }
             />
           </div>
           <div className='data-explorer__visualizations'>
@@ -675,7 +997,7 @@ class Explorer extends React.Component {
                 className='guppy-explorer-visualization__table'
                 tableConfig={tableConfig}
                 fetchAndUpdateRawData={this.fetchAndUpdateRawData}
-                rawData={this.state.rawData}
+                filteredData={this.state.filteredData}
                 totalCount={this.props.totalCount}
                 guppyConfig={config}
                 isLocked={false}

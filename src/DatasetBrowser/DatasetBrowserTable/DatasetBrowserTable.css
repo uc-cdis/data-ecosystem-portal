@@ -50,3 +50,10 @@
 .dataset-browser-table .ReactTable .rt-tbody .rt-td:first-child {
   padding-left: 20px;
 }
+
+
+.dataset-browser-table .index-button-bar__item {
+  margin:auto;
+  display:block;
+  padding-top:10px;
+}

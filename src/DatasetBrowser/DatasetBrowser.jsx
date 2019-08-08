@@ -41,7 +41,7 @@ class DatasetBrowser extends React.Component {
           rawDataFields={this.props.tableConfig.fields}
           accessibleFieldCheckList={this.props.guppyConfig.accessibleFieldCheckList}>
           <DatasetBrowserFilter
-            className='guppy-data-explorer__filter'
+            className='guppy-dataset-browser__filter'
             guppyConfig={this.props.guppyConfig}
             getAccessButtonLink={this.props.getAccessButtonLink}
             tierAccessLevel={this.props.tierAccessLevel}

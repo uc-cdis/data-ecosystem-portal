@@ -35,11 +35,11 @@ class DatasetBrowserTable extends React.Component {
     const maxWidth = 400;
     const letterWidth = 8;
     const spacing = 20;
-    if (!this.props.rawData || this.props.rawData.length === 0) {
+    if (!this.props.filteredData || this.props.filteredData.length === 0) {
       return minWidth;
     }
     let maxLetterLen = columnName.length;
-    this.props.rawData.forEach((d) => {
+    this.props.filteredData.forEach((d) => {
       if (d[field] === null || typeof d[field] === 'undefined') {
         return;
       }
@@ -60,12 +60,12 @@ class DatasetBrowserTable extends React.Component {
       [i.id]: i.desc ? 'desc' : 'asc',
     }));
     const size = state.pageSize;
-    this.props.fetchAndUpdateRawData({
+    this.props.fetchAndUpdatefilteredData({
       offset,
       size,
       sort,
     }).then(() => {
-      // Guppy fetched and loaded raw data into "this.props.rawData" already
+      // Guppy fetched and loaded raw data into "this.props.filteredData" already
       this.setState({
         loading: false,
         pageSize: size,
@@ -110,7 +110,7 @@ class DatasetBrowserTable extends React.Component {
         <ReactTable
           columns={columnsConfig}
           manual
-          data={(this.props.isLocked || !this.props.rawData) ? [] : this.props.rawData}
+          data={(this.props.isLocked || !this.props.filteredData) ? [] : this.props.filteredData}
           showPageSizeOptions={!this.props.isLocked}
           // eslint-disable-next-line max-len
           pages={(this.props.isLocked) ? 0 : visiblePages} // Total number of pages, don't show 10000+ records in table
@@ -135,8 +135,8 @@ class DatasetBrowserTable extends React.Component {
 }
 
 DatasetBrowserTable.propTypes = {
-  // rawData: PropTypes.array, // from GuppyWrapper
-  // fetchAndUpdateRawData: PropTypes.func.isRequired, // from GuppyWrapper
+  // filteredData: PropTypes.array, // from GuppyWrapper
+  // fetchAndUpdatefilteredData: PropTypes.func.isRequired, // from GuppyWrapper
   // totalCount: PropTypes.number.isRequired, // from GuppyWrapper
   // isLocked: PropTypes.bool.isRequired,
   // className: PropTypes.string,
@@ -146,7 +146,7 @@ DatasetBrowserTable.propTypes = {
 };
 
 DatasetBrowserTable.defaultProps = {
-  rawData: [],
+  filteredData: [],
   className: '',
   defaultPageSize: 20,
 };
