@@ -11,6 +11,7 @@ import FilterGroup from '@gen3/ui-component/dist/components/filters/FilterGroup'
 import FilterList from '@gen3/ui-component/dist/components/filters/FilterList';
 import SummaryChartGroup from '@gen3/ui-component/dist/components/charts/SummaryChartGroup';
 import './DatasetBrowser.less';
+import { immportApiPath } from '../localconf';
 
 const defaultConfig = {
   charts: {},
@@ -85,8 +86,6 @@ class Explorer extends React.Component {
       'dataset': 0
     }
 
-    this.initializeData();
-
     // this.state.rawData = this.mergeRawDataWithImmPortResults(immportData, rawData);
     // this.state.filteredData = this.state.rawData;
 
@@ -96,16 +95,36 @@ class Explorer extends React.Component {
     // }
   }
 
-  initializeData = async () => {
-    const immportData = await this.obtainImmPortStudies();
+  componentWillMount() {
+    console.log('103!!');
+    this.initializeData();
+  }
 
-    this.setState( {
-      'rawData': await this.mergeRawDataWithImmPortResults(immportData, this.state.rawData),
-      'counts': {
-        'supported_data_resource': this.calculateSummaryCounts('supported_data_resource', this.state.filteredData),
-        'dataset': this.calculateSummaryCounts('dataset', this.state.filteredData)
-      }
+  initializeData = () => {
+    console.log('108');
+    // const immportData = await this.obtainImmPortStudies();
+    // console.log('immportData obtained: ', immportData);
+
+    // this.setState( {
+    //   'rawData': await this.mergeRawDataWithImmPortResults(immportData, this.state.rawData),
+    //   'counts': {
+    //     'supported_data_resource': this.calculateSummaryCounts('supported_data_resource', this.state.filteredData),
+    //     'dataset': this.calculateSummaryCounts('dataset', this.state.filteredData)
+    //   }
+    // });
+
+    this.obtainImmPortStudies().then(result => {
+      console.log('120: ', result);
+
+      // this.setState({
+      //   'rawData': await this.mergeRawDataWithImmPortResults(immportData, this.state.rawData),
+      //   'counts': {
+      //     'supported_data_resource': this.calculateSummaryCounts('supported_data_resource', this.state.filteredData),
+      //     'dataset': this.calculateSummaryCounts('dataset', this.state.filteredData)
+      //   }
+      // });
     });
+
   }
 
   fetchSubCommonsData() {
@@ -166,48 +185,50 @@ class Explorer extends React.Component {
     return fetch(corsAnywhereURL + URL);
   }
 
-  obtainImmPortStudyDetails = async () => {
+  obtainImmPortStudyDetails = async (studyAccessions) => {
     // ImmPort Docs are here http://docs.immport.org/#API/DataQueryAPI/dataqueryapi/
     console.log('169');
     let promiseArray = [];
-    const summaryURL = 'https://api.immport.org/data/query/study/summary/';
+    const token = '';
     for (let i = 0; i <= studyAccessions.length; i++) {
-      promiseArray.push(this.corsFetch(summaryURL + studyAccessions[i]).then(function(response) {
-        console.log('study summary response: ', response);
+      promiseArray.push(
+        fetch(immportApiPath + studyAccessions[i], { 
+          headers: new Headers({
+            'Authorization': 'bearer ' + token
+          })
+        }).then(function(response) {
         return response.json();
       }));
-      await this.sleep(2000);
     }
     return Promise.all(promiseArray);
   }
 
   obtainImmPortStudies = async () => {
-    const immportListStudiesURL = "/immport-list-studies";
+    console.log('the path: ', immportApiPath);
 
-    fetch(immportListStudiesURL)
+    return fetch(immportApiPath)
       .then(response => { 
-        console.log(response);
+        console.log('215');
         return response.json();
       })
       .then(data => {
-        console.log('hi: ', data);
         if (data.studyAccessions && data.studyAccessions.length > 0) {
-          const promiseArray = this.obtainImmPortStudyDetails(data.studyAccessions);
-          console.log(promiseArray);
-
+          console.log('219');
+          return this.obtainImmPortStudyDetails(data.studyAccessions);
         }
+      }).then(result => {
+        console.log('222: ', result);
+        return result
       });
-
-    
   }
 
   mergeRawDataWithImmPortResults = (immportData, rawData) => {
-    for (let i = 0; i < immportResults.length; i++) {
+    for (let i = 0; i < immportData.length; i++) {
       const newObject = {
-        'dataset': immportResults[i].studyAccession,
-        'description': immportResults[i].briefDescription,
-        'research_focus': immportResults[i].conditionStudied,
-        'link': 'https://www.immport.org/shared/study/' + immportResults[i].studyAccession,
+        'dataset': immportData[i].studyAccession,
+        'description': immportData[i].briefDescription,
+        'research_focus': immportData[i].conditionStudied,
+        'link': 'https://www.immport.org/shared/study/' + immportData[i].studyAccession,
         'supported_data_resource': 'ImmPort'
       };
       rawData.push(newObject);

@@ -141,7 +141,13 @@ module.exports = {
       graphql: path.resolve('./node_modules/graphql'),
       react: path.resolve('./node_modules/react') // Same issue.
     },
-    extensions: ['.mjs', '.js', '.jsx', '.json',]
+    extensions: ['.mjs', '.js', '.jsx', '.json', '.webpack.js', '.web.js',]
+  },
+  node: {
+    console: true,
+    fs: 'empty',
+    net: 'empty',
+    tls: 'empty'
   },
   plugins,
   externals: [{
