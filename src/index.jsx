@@ -56,7 +56,7 @@ async function init() {
   );
   // FontAwesome icons
   library.add(faAngleUp, faAngleDown);
-  
+
   render(
     <div>
       <Provider store={store}>
@@ -159,7 +159,7 @@ async function init() {
                       component={
                         props => (
                           <ProtectedContent
-                            public
+                            // public // A code change is required in Guppy to make this page public. - Zakir
                             component={DatasetBrowser}
                             {...props}
                           />
