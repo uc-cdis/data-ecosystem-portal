@@ -26,13 +26,16 @@ class DatasetBrowserTable extends React.Component {
       loading: false,
       pageSize: props.defaultPageSize,
       currentPage: 0,
+      filteredData: this.props.filteredData,
+      paginatedData: this.props.filteredData,
     };
   }
 
   getWidthForColumn = (field, columnName) => {
+    
     // some magic numbers that work fine for table columns width
     const minWidth = 150;
-    const maxWidth = 400;
+    const maxWidth = 300;
     const letterWidth = 8;
     const spacing = 20;
     if (!this.props.filteredData || this.props.filteredData.length === 0) {
@@ -51,31 +54,30 @@ class DatasetBrowserTable extends React.Component {
     return resWidth;
   }
 
-  fetchData = (state) => {
-    return;
-    console.log('fetching data');
-    this.setState({ loading: true });
-    const offset = state.page * state.pageSize;
-    const sort = state.sorted.map(i => ({
-      [i.id]: i.desc ? 'desc' : 'asc',
-    }));
+  updateData = (filteredData) => {
+    const paginatedData = this.makePaginatedData({'page': 0, 'pageSize': 10}, filteredData);
+    this.setState({filteredData: filteredData, paginatedData: paginatedData});
+  }
+
+  makePaginatedData = (state, filteredData) => {
     const size = state.pageSize;
-    this.props.fetchAndUpdatefilteredData({
-      offset,
-      size,
-      sort,
-    }).then(() => {
-      // Guppy fetched and loaded raw data into "this.props.filteredData" already
-      this.setState({
-        loading: false,
-        pageSize: size,
-        currentPage: state.page,
-      });
-    });
+    const offset = state.page * state.pageSize;
+    // const sort = this.state.sorted.map(i => ({
+    //   [i.id]: i.desc ? 'desc' : 'asc',
+    // }));
+    return filteredData.slice(offset, offset+size);
+  }
+
+  paginate = (state) => {
+    this.setState({ loading: true });
+
+    const paginatedData = this.makePaginatedData(state, this.state.filteredData);
+    this.setState({ paginatedData: paginatedData, loading: false });
+    return;
   };
 
   truncateTextIfNecessary(text) {
-    if (text.length < 405) {
+    if (!text || text.length < 405) {
       return text;
     }
     return text.slice(0, 405) + '...';
@@ -103,26 +105,26 @@ class DatasetBrowserTable extends React.Component {
           : <div><span title={row.value}>{this.truncateTextIfNecessary(row.value)}</span></div>),
       };
     });
-    const totalCount = this.props.totalCount;
+    const { totalCount } = this.props;
     const { pageSize } = this.state;
     const totalPages = Math.floor(totalCount / pageSize) + ((totalCount % pageSize === 0) ? 0 : 1);
     const SCROLL_SIZE = 10000;
     const visiblePages = Math.min(totalPages, Math.round((SCROLL_SIZE / pageSize) + 0.49));
     const start = (this.state.currentPage * this.state.pageSize) + 1;
-    const end = (this.state.currentPage + 1) * this.state.pageSize;
+    const end = Math.min((this.state.currentPage + 1) * this.state.pageSize, totalCount);
     return (
       <div className={`dataset-browser-table ${this.props.className}`}>
         {(this.props.isLocked) ? <React.Fragment />
-          : <p className='dataset-browser-table__description'>{`${totalCount || 0} matching datasets found`}</p> }
+          : <p className='dataset-browser-table__description'>{`Showing ${start} - ${end} of ${totalCount || 0} matching datasets`}</p> }
         <ReactTable
           columns={columnsConfig}
           manual
-          data={(this.props.isLocked || !this.props.filteredData) ? [] : this.props.filteredData}
+          data={(this.props.isLocked || !this.state.paginatedData) ? [] : this.state.paginatedData}
           showPageSizeOptions={!this.props.isLocked}
           // eslint-disable-next-line max-len
           pages={(this.props.isLocked) ? 0 : visiblePages} // Total number of pages, don't show 10000+ records in table
           loading={this.state.loading}
-          onFetchData={this.fetchData}
+          onFetchData={this.paginate}
           defaultPageSize={this.props.defaultPageSize}
           className={'-striped -highlight '}
           minRows={3} // make room for no data component
@@ -155,7 +157,7 @@ DatasetBrowserTable.propTypes = {
 DatasetBrowserTable.defaultProps = {
   filteredData: [],
   className: '',
-  defaultPageSize: 20,
+  defaultPageSize: 10,
 };
 
 export default DatasetBrowserTable;

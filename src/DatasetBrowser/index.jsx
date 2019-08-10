@@ -12,6 +12,8 @@ import FilterList from '@gen3/ui-component/dist/components/filters/FilterList';
 import SummaryChartGroup from '@gen3/ui-component/dist/components/charts/SummaryChartGroup';
 import './DatasetBrowser.less';
 import { immportApiPath } from '../localconf';
+import { fetchWithCreds } from '../actions';
+import { guppyGraphQLUrl } from '../configs';
 
 const defaultConfig = {
   charts: {},
@@ -65,11 +67,6 @@ const routes = [
   '/files',
 ];
 
-function action(input) {
-  console.log(input);
-  console.log('hey');
-}
-
 class Explorer extends React.Component {
   constructor(props) {
     super(props);
@@ -78,12 +75,14 @@ class Explorer extends React.Component {
       tab: tabIndex > 0 ? tabIndex : 0,
     };
     this.filterGroupRef = React.createRef();
+    this.tableRef = React.createRef();
 
     this.state.rawData = [];
     this.state.filteredData = [];
+    this.state.paginatedData = [];
     this.state.counts = {
       'supported_data_resource': 0,
-      'dataset': 0
+      'dataset_name': 0
     }
 
     // this.state.rawData = this.mergeRawDataWithImmPortResults(immportData, rawData);
@@ -91,38 +90,79 @@ class Explorer extends React.Component {
 
     // this.state.counts = { 
     //   'supported_data_resource': this.calculateSummaryCounts('supported_data_resource', this.state.filteredData),
-    //   'dataset': this.calculateSummaryCounts('dataset', this.state.filteredData)
+    //   'dataset_name': this.calculateSummaryCounts('dataset_name', this.state.filteredData)
     // }
   }
 
   componentWillMount() {
-    console.log('103!!');
     this.initializeData();
   }
 
+  obtainSubCommonsData = () => {
+    console.log('yuh');
+    const graphModelQueryURL = 'api/v0/submission/graphql';
+    const subcommonURL = 'https://niaid.bionimbus.org/';
+    const subcommonName = 'NDC: TB Data Commons';
+    const queryString = `
+      {
+        study {
+          study_design
+          study_doi
+          study_objective
+          study_setup
+          study_description
+          study_organization
+          submitter_id
+        }
+      }
+    `;
+    const headers = {
+      'Authorization': 'bearer <access token>'
+    };
+    return fetch(subcommonURL + graphModelQueryURL, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({
+        query: queryString,
+      })
+    }).then(result => result.json()
+    ).then(result => {
+      const reformatted = [];
+      const studies = result.data.study;
+      for(let j = 0; j < studies.length; j++) {
+        reformatted.push({
+          'description': studies[j]['study_description'],
+          'dataset_name': studies[j]['submitter_id'],
+          'research_focus': studies[j]['study_design'],
+          'link': subcommonURL,
+          'supported_data_resource': subcommonName
+        });
+      }
+      return reformatted;
+    });
+  }
+
   initializeData = () => {
-    console.log('108');
-    // const immportData = await this.obtainImmPortStudies();
-    // console.log('immportData obtained: ', immportData);
-
-    // this.setState( {
-    //   'rawData': await this.mergeRawDataWithImmPortResults(immportData, this.state.rawData),
-    //   'counts': {
-    //     'supported_data_resource': this.calculateSummaryCounts('supported_data_resource', this.state.filteredData),
-    //     'dataset': this.calculateSummaryCounts('dataset', this.state.filteredData)
-    //   }
-    // });
-
+    this.allData = [];
     this.obtainImmPortStudies().then(result => {
-      console.log('120: ', result);
+      const immportData = result.data.dataset;
+      this.allData = this.allData.concat(immportData);
+      
+      return this.obtainSubCommonsData();
+    }).then(subCommonsData => {
+      console.log('136: ', subCommonsData);
+      this.allData = this.allData.concat(subCommonsData);
 
-      // this.setState({
-      //   'rawData': await this.mergeRawDataWithImmPortResults(immportData, this.state.rawData),
-      //   'counts': {
-      //     'supported_data_resource': this.calculateSummaryCounts('supported_data_resource', this.state.filteredData),
-      //     'dataset': this.calculateSummaryCounts('dataset', this.state.filteredData)
-      //   }
-      // });
+      this.setState({
+        'filteredData': this.allData,
+        'rawData': this.allData,
+        'counts': {
+          'supported_data_resource': this.calculateSummaryCounts('supported_data_resource', this.allData),
+          'dataset_name': this.calculateSummaryCounts('dataset_name', this.allData)
+        }
+      })
+
+      this.tableRef.current.updateData(this.allData);
     });
 
   }
@@ -130,14 +170,14 @@ class Explorer extends React.Component {
   fetchSubCommonsData() {
     return [
       {
-        'dataset' : 'MACS',
+        'dataset_name' : 'MACS',
         'supported_data_resource' : 'NDC: DAIDs Data Commons',
         'research_focus' : 'AIDS',
         'description': 'Having published over 1300 publications, the MACS has made significant contributions to understanding the science of HIV, the AIDS epidemic, and the effects of therapy. Many of these MACS publications have guided Public Health Policy.',
         'link' : 'https://daids.niaiddata.org'
       },
       {
-        'dataset' : 'WIHS',
+        'dataset_name' : 'WIHS',
         'supported_data_resource' : 'NDC: DAIDs Data Commons',
         'research_focus' : 'AIDS',
         'description': 'The Women’s Interagency HIV Study (WIHS) is a large, comprehensive prospective cohort study designed to investigate the progression of HIV disease in women. The WIHS began in 1993 in response to growing concern about the impact of HIV on women. The core study visit includes a detailed and structured interview, physical and gynecologic examinations, and laboratory testing. After more than 20 years, the WIHS continues to investigate questions at the forefront of HIV research, spanning topics such as women’s reproductive health, clinical outcomes (for example, cardiovascular disease, diabetes, and others), and the effectiveness of antiretroviral therapy.',
@@ -159,23 +199,6 @@ class Explorer extends React.Component {
     return uniqueValues.length;
   }
 
-  authWithImmPort = () => {
-    const immportAuthURL = "https://auth.immport.org/auth/token";
-    const corsAnywhereURL = "https://cors-anywhere.herokuapp.com/";
-
-    const data = {
-        username: "",
-        password: ""
-    };
-
-    fetch(corsAnywhereURL + immportAuthURL, {
-      method: "POST", 
-      body: JSON.stringify(data)
-    }).then(res => {
-      console.log("Request complete! response:", res);
-    });
-  }
-
   sleep = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
@@ -185,47 +208,35 @@ class Explorer extends React.Component {
     return fetch(corsAnywhereURL + URL);
   }
 
-  obtainImmPortStudyDetails = async (studyAccessions) => {
-    // ImmPort Docs are here http://docs.immport.org/#API/DataQueryAPI/dataqueryapi/
-    console.log('169');
-    let promiseArray = [];
-    const token = '';
-    for (let i = 0; i <= studyAccessions.length; i++) {
-      promiseArray.push(
-        fetch(immportApiPath + studyAccessions[i], { 
-          headers: new Headers({
-            'Authorization': 'bearer ' + token
-          })
-        }).then(function(response) {
-        return response.json();
-      }));
-    }
-    return Promise.all(promiseArray);
-  }
-
   obtainImmPortStudies = async () => {
-    console.log('the path: ', immportApiPath);
-
-    return fetch(immportApiPath)
-      .then(response => { 
-        console.log('215');
-        return response.json();
-      })
-      .then(data => {
-        if (data.studyAccessions && data.studyAccessions.length > 0) {
-          console.log('219');
-          return this.obtainImmPortStudyDetails(data.studyAccessions);
+    const queryString = `
+      query {
+        dataset(first: 10000) {
+          dataset_name
+          supported_data_resource
+          auth_resource_path
+          research_focus
+          link
+          description
         }
-      }).then(result => {
-        console.log('222: ', result);
-        return result
-      });
+      }
+    `;
+
+    return fetchWithCreds({
+      path: `${guppyGraphQLUrl}`,
+      body: JSON.stringify({
+        query: queryString,
+      }),
+      method: 'POST',
+    }).then(
+      ({ status, data }) => data, // eslint-disable-line no-unused-vars
+    );
   }
 
   mergeRawDataWithImmPortResults = (immportData, rawData) => {
     for (let i = 0; i < immportData.length; i++) {
       const newObject = {
-        'dataset': immportData[i].studyAccession,
+        'dataset_name': immportData[i].studyAccession,
         'description': immportData[i].briefDescription,
         'research_focus': immportData[i].conditionStudied,
         'link': 'https://www.immport.org/shared/study/' + immportData[i].studyAccession,
@@ -238,32 +249,6 @@ class Explorer extends React.Component {
 
   fetchAndUpdateRawData = () => {
     return;
-    console.log('here i am');
-    const mergedData = [];
-
-    // this.authWithImmPort();
-
-    const immportListStudiesURL = "/immport-list-studies";
-    const tbURL = ""
-    const googleURL = "https://google.com/"
-
-    fetch(immportListStudiesURL)
-      .then(response => { 
-        console.log(response);
-        return response.json();
-      })
-      .then(data => {
-        console.log('hi: ', data);
-        if (data.studyAccessions && data.studyAccessions.length > 0) {
-          const promiseArray = this.obtainImmPortStudyDetails(data.studyAccessions);
-          console.log(promiseArray);
-
-        }
-      });
-
-
-    this.setState({rawData: mergedData});
-    return Promise.resolve({});
   }
 
   /**
@@ -292,6 +277,9 @@ class Explorer extends React.Component {
 
   checkIfFiltersApply(filtersApplied, row) {
     for (var property in filtersApplied) {
+      if (!row[property]) {
+        return false;
+      }
       const filtersApplyMatch = filtersApplied[property].selectedValues.map(
         x => x.toLowerCase()
       ).includes(
@@ -324,9 +312,12 @@ class Explorer extends React.Component {
       'counts' : 
         { 
           'supported_data_resource': this.calculateSummaryCounts('supported_data_resource', filteredData),
-          'dataset': this.calculateSummaryCounts('dataset', filteredData)
+          'dataset_name': this.calculateSummaryCounts('dataset_name', filteredData)
         }
     });
+
+    this.tableRef.current.updateData(filteredData);
+    // this.tableRef.current.paginate({'page': 0, 'pageSize': 10});
   }
 
   render() {
@@ -422,16 +413,16 @@ class Explorer extends React.Component {
 
     const datasetCount = {
       label: 'Datasets',
-      value: this.state.counts['dataset']
+      value: this.state.counts['dataset_name']
     };
 
     const summaries = [supportedDataResourceCount, datasetCount];
 
-    const totalCount = this.state.rawData.length;
+    const totalCount = this.state.filteredData.length;
 
     const config = {
       'fieldMapping' : [
-        { 'field': 'dataset', 'name': 'Dataset' },
+        { 'field': 'dataset_name', 'name': 'Dataset' },
         { 'field': 'supported_data_resource', 'name': 'Supported Data Resource' },
         { 'field': 'research_focus', 'name': 'Research Focus' },
         { 'field': 'description', 'name': 'Description of Dataset' },
@@ -472,6 +463,7 @@ class Explorer extends React.Component {
               </div>
             }
             <DatasetBrowserTable
+                ref={this.tableRef}
                 className='guppy-explorer-visualization__table'
                 tableConfig={tableConfig}
                 fetchAndUpdateRawData={this.fetchAndUpdateRawData}
