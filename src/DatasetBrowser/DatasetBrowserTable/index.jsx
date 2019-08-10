@@ -48,17 +48,36 @@ class DatasetBrowserTable extends React.Component {
   }
 
   updateData = (filteredData) => {
-    const paginatedData = this.makePaginatedData({'page': 0, 'pageSize': 10}, filteredData);
+    const paginatedData = this.makePaginatedData(
+      {'page': 0, 'pageSize': 10, 'sorted': []}
+    , filteredData);
     this.setState({filteredData: filteredData, paginatedData: paginatedData});
   }
 
   makePaginatedData = (state, filteredData) => {
     const size = state.pageSize;
     const offset = state.page * state.pageSize;
-    // const sort = this.state.sorted.map(i => ({
-    //   [i.id]: i.desc ? 'desc' : 'asc',
-    // }));
-    return filteredData.slice(offset, offset+size);
+    const sort = state.sorted.map(i => ({
+      [i.id]: i.desc ? 'desc' : 'asc',
+    }));
+    var sortedData = filteredData;
+
+    if (sort.length > 0) {
+      const propertyToSortBy = Object.keys(sort[0])[0];
+      const sortDirection = sort[0][propertyToSortBy];
+      const modifier = (sortDirection == 'desc') ? 1 : -1;
+      sortedData = filteredData.sort(function(a,b){
+        if (a[propertyToSortBy] < b[propertyToSortBy]) {
+          return -1 * modifier;
+        }
+        if (a[propertyToSortBy] > b[propertyToSortBy]) {
+          return 1 * modifier;
+        }
+        return 0;
+      });
+    }
+
+    return sortedData.slice(offset, offset+size);
   }
 
   paginate = (state) => {
