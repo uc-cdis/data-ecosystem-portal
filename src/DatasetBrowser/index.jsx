@@ -117,7 +117,7 @@ class Explorer extends React.Component {
       }
     `;
     const headers = {
-      'Authorization': 'bearer <access token>'
+      'Authorization': 'bearer '
     };
     return fetch(subcommonURL + graphModelQueryURL, {
       method: 'POST',
@@ -128,6 +128,9 @@ class Explorer extends React.Component {
     }).then(result => result.json()
     ).then(result => {
       const reformatted = [];
+      if (!result.data) {
+        return [];
+      }
       const studies = result.data.study;
       for(let j = 0; j < studies.length; j++) {
         reformatted.push({
