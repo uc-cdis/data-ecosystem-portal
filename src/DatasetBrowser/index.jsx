@@ -119,28 +119,6 @@ class Explorer extends React.Component {
 
       this.tableRef.current.updateData(this.allData);
     });
-
-  }
-
-  fetchSubCommonsData() {
-    return [
-      {
-        'dataset_name' : 'MACS',
-        'supported_data_resource' : 'NDC: DAIDs Data Commons',
-        'research_focus' : 'AIDS',
-        'description': 'Having published over 1300 publications, the MACS has made significant contributions to understanding the science of HIV, the AIDS epidemic, and the effects of therapy. Many of these MACS publications have guided Public Health Policy.',
-        'link' : 'https://daids.niaiddata.org'
-      },
-      {
-        'dataset_name' : 'WIHS',
-        'supported_data_resource' : 'NDC: DAIDs Data Commons',
-        'research_focus' : 'AIDS',
-        'description': 'The Women’s Interagency HIV Study (WIHS) is a large, comprehensive prospective cohort study designed to investigate the progression of HIV disease in women. The WIHS began in 1993 in response to growing concern about the impact of HIV on women. The core study visit includes a detailed and structured interview, physical and gynecologic examinations, and laboratory testing. After more than 20 years, the WIHS continues to investigate questions at the forefront of HIV research, spanning topics such as women’s reproductive health, clinical outcomes (for example, cardiovascular disease, diabetes, and others), and the effectiveness of antiretroviral therapy.',
-        'link' : 'https://daids.niaiddata.org'
-      } 
-    ];
-
-    // const subCommons = ['https://niaid.bionimbus.org'];
   }
 
   calculateSummaryCounts(field, filteredData) {
@@ -152,15 +130,6 @@ class Explorer extends React.Component {
       (value, index) => values.indexOf(value) === index 
     );
     return uniqueValues.length;
-  }
-
-  sleep = (ms) => {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  corsFetch = (URL) => {
-    const corsAnywhereURL = "https://cors-anywhere.herokuapp.com/";
-    return fetch(corsAnywhereURL + URL);
   }
 
   obtainImmPortStudies = async () => {
@@ -200,34 +169,6 @@ class Explorer extends React.Component {
       rawData.push(newObject);
     }
     return rawData;
-  }
-
-  fetchAndUpdateRawData = () => {
-    return;
-  }
-
-  /**
-   * This function contains partial rendering logic for filter components.
-   * It transfers aggregation data (`this.state.receivedAggsData`) to items inside filters.
-   * But before that, the function first calls `this.props.onProcessFilterAggsData`, which is
-   * a callback function passed by `ConnectedFilter`'s parent component, so that the parent
-   * component could do some pre-processing modification about filter.
-   */
-  getFilterTabs() {
-    return [];
-    const processedTabsOptions = this.props.onProcessFilterAggsData(this.state.receivedAggsData);
-    if (!processedTabsOptions || Object.keys(processedTabsOptions).length === 0) return null;
-    const { fieldMapping } = this.props;
-    const tabs = this.props.filterConfig.tabs.map(({ fields }, index) => (
-      <FilterList
-        key={index}
-        sections={
-          getFilterSections(fields, fieldMapping, processedTabsOptions, this.state.initialAggsData)
-        }
-        tierAccessLimit={this.props.tierAccessLimit}
-      />
-    ));
-    return tabs;
   }
 
   checkIfFiltersApply(filtersApplied, row) {
@@ -276,7 +217,7 @@ class Explorer extends React.Component {
   }
 
   render() {
-    const filterTabs = this.getFilterTabs();
+    const filterTabs = [];
 
     const projectOptions = [
       { text: 'NDC: TB Data Commons', filterType: 'singleSelect', count: 123 },
@@ -298,69 +239,15 @@ class Explorer extends React.Component {
       { text: 'Preterm Birth', filterType: 'singleSelect', count: 123 }
     ];
 
-    const genderOptions = [
-      { text: 'Male', filterType: 'singleSelect', count: 123 },
-      { text: 'Female', filterType: 'singleSelect', count: 123 },
-    ];
-
-    const raceOptions = [
-      { text: 'White', filterType: 'singleSelect', count: 123 },
-      { text: 'Black', filterType: 'singleSelect', count: 123 },
-      {
-        text: 'American Indian or Alaskan Nativ',
-        filterType: 'singleSelect',
-        count: 123,
-      },
-      { text: 'Asian/Pacific Islander', filterType: 'singleSelect', count: 123 },
-      { text: 'Multiracial', filterType: 'singleSelect', count: 123 },
-      { text: 'Other', filterType: 'singleSelect', count: 123 },
-    ];
-
-    const ethnicityOptions = [
-      { text: 'Hispanic or Latino', filterType: 'singleSelect', count: 123, accessible: true },
-      { text: 'Not Hispanic or Latino', filterType: 'singleSelect', count: 123, accessible: false },
-      { text: 'Unknown', filterType: 'singleSelect', count: 123, accessible: true },
-      { text: 'Not Specified', filterType: 'singleSelect', count: -1, accessible: true },
-    ];
-
-    const ageOptions = [
-      { min: 2, max: 97, filterType: 'range' },
-    ];
-
-    const fileTypeOptions = [
-      { text: 'mRNA Array', filterType: 'singleSelect', count: 123 },
-      { text: 'Unaligned Reads', filterType: 'singleSelect', count: 123 },
-      { text: 'Lipidomic MS', filterType: 'singleSelect', count: 123 },
-      { text: 'Proteomic MS', filterType: 'singleSelect', count: 123 },
-      { text: 'Metabolomic MS', filterType: 'singleSelect', count: 123 },
-    ];
-
-    const fileCountOptions = [
-      { min: 2, max: 97, filterType: 'range' },
-    ];
-
     const projectSections = [
       { title: 'Supported Data Resources', options: projectOptions },
       { title: 'Research Focus', options: studyOptions },
     ];
 
-    const subjectSections = [
-      { title: 'Gender', options: genderOptions },
-      { title: 'Race', options: raceOptions },
-      { title: 'Ethnicity', options: ethnicityOptions },
-      { title: 'Age', options: ageOptions },
-    ];
-
-    const fileSections = [
-      { title: 'File Types', options: fileTypeOptions },
-      { title: 'File Counts', options: fileCountOptions },
-    ];
-
     const tabs = [
-      <FilterList key={0} sections={projectSections} /> //, <FilterList key={1} sections={subjectSections} />, <FilterList key={2} sections={fileSections} />,
+      <FilterList key={0} sections={projectSections} />
     ];
 
-    
     const supportedDataResourceCount = {
       label: 'Supported Data Resources',
       value: this.state.counts['supported_data_resource']
@@ -421,7 +308,6 @@ class Explorer extends React.Component {
                 ref={this.tableRef}
                 className='guppy-explorer-visualization__table'
                 tableConfig={tableConfig}
-                fetchAndUpdateRawData={this.fetchAndUpdateRawData}
                 filteredData={this.state.filteredData}
                 totalCount={this.props.totalCount}
                 guppyConfig={config}
