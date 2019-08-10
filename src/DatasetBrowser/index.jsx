@@ -13,82 +13,39 @@ import { fetchWithCreds } from '../actions';
 import { guppyGraphQLUrl } from '../configs';
 
 const defaultConfig = {
-  charts: {},
   filters: { tabs: [] },
   table: {
     enabled: true,
     fields: [],
   },
   guppyConfig: {
-    dataType: 'subject',
-    fieldMapping: [],
-    manifestMapping: {
-      resourceIndexType: 'file',
-      resourceIdField: 'file_id', // TODO: change to object_id
-      referenceIdFieldInResourceIndex: 'subject_id',
-      referenceIdFieldInDataIndex: 'subject_id', // TODO: change to node_id
-    },
-  },
-  buttons: [],
-  dropdowns: {},
-};
-
-const defaultFileConfig = {
-  charts: {},
-  filters: { tabs: [] },
-  table: {
-    enabled: true,
-    fields: [],
-  },
-  guppyConfig: {
-    dataType: 'file',
-    fieldMapping: [],
-    manifestMapping: {
-      resourceIndexType: 'subject',
-      resourceIdField: 'subject_id',
-      referenceIdFieldInResourceIndex: 'file_id', // TODO: change to object_id
-      referenceIdFieldInDataIndex: 'file_id', // TODO: change to object_id
-    },
+    dataType: 'dataset',
+    fieldMapping: []
   },
   buttons: [],
   dropdowns: {},
 };
 
 const datasetBrowserConfig = [
-  _.merge(defaultConfig, config.dataExplorerConfig),
-  _.merge(defaultFileConfig, config.fileExplorerConfig),
-];
-
-const routes = [
-  '/explorer',
-  '/files',
+  _.merge(defaultConfig, config.dataExplorerConfig)
 ];
 
 class Explorer extends React.Component {
   constructor(props) {
     super(props);
-    const tabIndex = routes.indexOf(props.location.pathname);
+    const tabIndex = 0;
     this.state = {
       tab: tabIndex > 0 ? tabIndex : 0,
+      rawData: [],
+      filteredData: [],
+      paginatedData: [],
+      counts: {
+        'supported_data_resource': 0,
+        'dataset_name': 0
+      }
     };
     this.filterGroupRef = React.createRef();
     this.tableRef = React.createRef();
-
-    this.state.rawData = [];
-    this.state.filteredData = [];
-    this.state.paginatedData = [];
-    this.state.counts = {
-      'supported_data_resource': 0,
-      'dataset_name': 0
-    }
-
-    // this.state.rawData = this.mergeRawDataWithImmPortResults(immportData, rawData);
-    // this.state.filteredData = this.state.rawData;
-
-    // this.state.counts = { 
-    //   'supported_data_resource': this.calculateSummaryCounts('supported_data_resource', this.state.filteredData),
-    //   'dataset_name': this.calculateSummaryCounts('dataset_name', this.state.filteredData)
-    // }
   }
 
   componentWillMount() {
