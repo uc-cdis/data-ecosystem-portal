@@ -1,10 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-// import DatasetBrowser from './DatasetBrowser';
 import { config } from '../params';
-// import { guppyUrl, tierAccessLevel, tierAccessLimit } from '../localconf';
-// import './GuppyExplorer.css';
 import DatasetBrowserTable from './DatasetBrowserTable/';
 import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import FilterGroup from '@gen3/ui-component/dist/components/filters/FilterGroup';
@@ -99,7 +96,6 @@ class Explorer extends React.Component {
   }
 
   obtainSubCommonsData = () => {
-    console.log('yuh');
     const graphModelQueryURL = 'api/v0/submission/graphql';
     const subcommonURL = 'https://niaid.bionimbus.org/';
     const subcommonName = 'NDC: TB Data Commons';
@@ -153,7 +149,6 @@ class Explorer extends React.Component {
       
       return this.obtainSubCommonsData();
     }).then(subCommonsData => {
-      console.log('136: ', subCommonsData);
       this.allData = this.allData.concat(subCommonsData);
 
       this.setState({

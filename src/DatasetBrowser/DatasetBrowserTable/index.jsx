@@ -9,15 +9,9 @@ import IconicLink from '../../components/buttons/IconicLink';
 import LockIcon from '../../img/icons/lock.svg';
 
 const guppyConfig = {
-    dataType: 'file',
-    fieldMapping: [],
-    manifestMapping: {
-      resourceIndexType: 'subject',
-      resourceIdField: 'subject_id',
-      referenceIdFieldInResourceIndex: 'file_id', // TODO: change to object_id
-      referenceIdFieldInDataIndex: 'file_id', // TODO: change to object_id
-    },
-  };
+  dataType: 'dataset',
+  fieldMapping: []
+};
 
 class DatasetBrowserTable extends React.Component {
   constructor(props) {
@@ -32,7 +26,6 @@ class DatasetBrowserTable extends React.Component {
   }
 
   getWidthForColumn = (field, columnName) => {
-    
     // some magic numbers that work fine for table columns width
     const minWidth = 150;
     const maxWidth = 300;
@@ -144,14 +137,13 @@ class DatasetBrowserTable extends React.Component {
 }
 
 DatasetBrowserTable.propTypes = {
-  // filteredData: PropTypes.array, // from GuppyWrapper
-  // fetchAndUpdatefilteredData: PropTypes.func.isRequired, // from GuppyWrapper
-  // totalCount: PropTypes.number.isRequired, // from GuppyWrapper
-  // isLocked: PropTypes.bool.isRequired,
-  // className: PropTypes.string,
-  // defaultPageSize: PropTypes.number,
-  // tableConfig: TableConfigType.isRequired,
-  // guppyConfig: GuppyConfigType.isRequired,
+  filteredData: PropTypes.array,
+  totalCount: PropTypes.number.isRequired,
+  isLocked: PropTypes.bool.isRequired,
+  className: PropTypes.string,
+  defaultPageSize: PropTypes.number,
+  tableConfig: PropTypes.object.isRequired,
+  guppyConfig: PropTypes.object.isRequired,
 };
 
 DatasetBrowserTable.defaultProps = {
