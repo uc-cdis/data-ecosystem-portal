@@ -18,6 +18,7 @@ import ProtectedContent from './Login/ProtectedContent';
 import HomePage from './Homepage/page';
 import DocumentPage from './Document/page';
 // import ExplorerPage from './Explorer/ExplorerPage';
+import DatasetBrowser from './DatasetBrowser/';
 import IndexPage from './Index/page';
 import UserProfile, { fetchAccess } from './UserProfile/ReduxUserProfile';
 // import UserAgreementCert from './UserAgreement/ReduxCertPopup';
@@ -25,13 +26,9 @@ import theme from './theme';
 import getReduxStore from './reduxStore';
 import { ReduxNavBar, ReduxTopBar, ReduxFooter } from './Layout/reduxer';
 import ReduxQueryNode, { submitSearchForm } from './QueryNode/ReduxQueryNode';
-import { basename, dev, gaDebug, 
-  indexPublic, useGuppyForExplorer, explorerPublic,
-} from './localconf';
+import { basename, dev, gaDebug, indexPublic } from './localconf';
 import { gaTracking, components } from './params';
 import GA, { RouteTracker } from './components/GoogleAnalytics';
-import DataExplorer from './DataExplorer/.';
-import GuppyDataExplorer from './GuppyDataExplorer/.';
 import isEnabled from './helpers/featureFlags';
 import sessionMonitor from './SessionMonitor';
 import './index.less';
@@ -153,21 +150,18 @@ async function init() {
                         }
                       }
                     />
-                    {isEnabled('explorer') ?
-                      <Route
-                        path='/explorer'
-                        component={
-                          props => (
-                            <ProtectedContent
-                              public={explorerPublic}
-                              component={useGuppyForExplorer ? GuppyDataExplorer : DataExplorer}
-                              {...props}
-                            />
-                          )
-                        }
-                      />
-                      : null
-                    }
+                    <Route
+                      path='/datasets'
+                      component={
+                        props => (
+                          <ProtectedContent
+                            // A code change is required in Guppy to make this page public.
+                            component={DatasetBrowser}
+                            {...props}
+                          />
+                        )
+                      }
+                    />
                   </Switch>
                 </div>
                 <ReduxFooter logos={components.footerLogos} />

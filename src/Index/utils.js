@@ -20,8 +20,8 @@
 //   },
 // );
 
-const getProjectNodeCounts = async () => { //async (callback) => {
-  return;
+const getProjectNodeCounts = async () => { // async (callback) => {
+
 
   // const resultStatus = { needLogin: false };
   // if (typeof homepageChartNodes === 'undefined') {

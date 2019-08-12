@@ -2,32 +2,46 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
-import { GuppyConfigType, TableConfigType } from '../configTypeDef';
 import { capitalizeFirstLetter } from '../../utils';
-import './ExplorerTable.css';
+import './DatasetBrowserTable.css';
+import IconicLink from '../../components/buttons/IconicLink';
 import LockIcon from '../../img/icons/lock.svg';
+import dictIcons from '../../img/icons/index';
 
-class ExplorerTable extends React.Component {
+function truncateTextIfNecessary(text) {
+  if (!text || text.length < 405) {
+    return text;
+  }
+  return `${text.slice(0, 405)}...`;
+}
+
+class DatasetBrowserTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       loading: false,
       pageSize: props.defaultPageSize,
       currentPage: 0,
+      filteredData: this.props.filteredData,
+      paginatedData: this.props.filteredData,
     };
   }
 
   getWidthForColumn = (field, columnName) => {
+    if (field === 'link') {
+      return 80;
+    }
+
     // some magic numbers that work fine for table columns width
-    const minWidth = 100;
-    const maxWidth = 400;
+    const minWidth = 150;
+    const maxWidth = 300;
     const letterWidth = 8;
     const spacing = 20;
-    if (!this.props.rawData || this.props.rawData.length === 0) {
+    if (!this.props.filteredData || this.props.filteredData.length === 0) {
       return minWidth;
     }
     let maxLetterLen = columnName.length;
-    this.props.rawData.forEach((d) => {
+    this.props.filteredData.forEach((d) => {
       if (d[field] === null || typeof d[field] === 'undefined') {
         return;
       }
@@ -36,28 +50,47 @@ class ExplorerTable extends React.Component {
       maxLetterLen = len > maxLetterLen ? len : maxLetterLen;
     });
     const resWidth = Math.min((maxLetterLen * letterWidth) + spacing, maxWidth);
+
     return resWidth;
   }
 
-  fetchData = (state) => {
-    this.setState({ loading: true });
+  updateData = (filteredData) => {
+    const paginatedData = this.makePaginatedData(
+      { page: 0, pageSize: 10, sorted: [] }
+      , filteredData);
+    this.setState({ filteredData, paginatedData });
+  }
+
+  makePaginatedData = (state, filteredData) => {
+    const size = state.pageSize;
     const offset = state.page * state.pageSize;
     const sort = state.sorted.map(i => ({
       [i.id]: i.desc ? 'desc' : 'asc',
     }));
-    const size = state.pageSize;
-    this.props.fetchAndUpdateRawData({
-      offset,
-      size,
-      sort,
-    }).then(() => {
-      // Guppy fetched and loaded raw data into "this.props.rawData" already
-      this.setState({
-        loading: false,
-        pageSize: size,
-        currentPage: state.page,
+    let sortedData = filteredData;
+
+    if (sort.length > 0) {
+      const propertyToSortBy = Object.keys(sort[0])[0];
+      const sortDirection = sort[0][propertyToSortBy];
+      const modifier = (sortDirection === 'desc') ? 1 : -1;
+      sortedData = filteredData.sort((a, b) => {
+        if (a[propertyToSortBy] < b[propertyToSortBy]) {
+          return -1 * modifier;
+        }
+        if (a[propertyToSortBy] > b[propertyToSortBy]) {
+          return 1 * modifier;
+        }
+        return 0;
       });
-    });
+    }
+
+    return sortedData.slice(offset, offset + size);
+  }
+
+  paginate = (state) => {
+    this.setState({ loading: true });
+    const paginatedData = this.makePaginatedData(state, this.state.filteredData);
+    this.setState({ paginatedData, loading: false });
   };
 
   render() {
@@ -70,10 +103,22 @@ class ExplorerTable extends React.Component {
         Header: name,
         accessor: field,
         maxWidth: 400,
+        render: ({ row }) => (
+          <button onClick={e => this.handleButtonClick(e, row)}>Click Me</button>
+        ),
         width: this.getWidthForColumn(field, name),
-        Cell: row => (this.props.guppyConfig.downloadAccessor === field ?
-          <div><span title={row.value}><a href={`/files/${row.value}`}>{row.value}</a></span></div>
-          : <div><span title={row.value}>{row.value}</span></div>),
+        Cell: row => (field === 'link' ?
+          <IconicLink
+            link={row.value}
+            className='dataset-browser-link'
+            buttonClassName='dataset-browser-link-button'
+            icon='exit'
+            dictIcons={dictIcons}
+            iconColor='#606060'
+            target='_blank'
+            isExternal
+          />
+          : <div><span title={row.value}>{truncateTextIfNecessary(row.value)}</span></div>),
       };
     });
     const { totalCount } = this.props;
@@ -82,20 +127,20 @@ class ExplorerTable extends React.Component {
     const SCROLL_SIZE = 10000;
     const visiblePages = Math.min(totalPages, Math.round((SCROLL_SIZE / pageSize) + 0.49));
     const start = (this.state.currentPage * this.state.pageSize) + 1;
-    const end = (this.state.currentPage + 1) * this.state.pageSize;
+    const end = Math.min((this.state.currentPage + 1) * this.state.pageSize, totalCount);
     return (
-      <div className={`explorer-table ${this.props.className}`}>
+      <div className={`dataset-browser-table ${this.props.className}`}>
         {(this.props.isLocked) ? <React.Fragment />
-          : <p className='explorer-table__description'>{`Showing ${start} - ${end} of ${totalCount} ${this.props.guppyConfig.dataType}s`}</p> }
+          : <p className='dataset-browser-table__description'>{`Showing ${start} - ${end} of ${totalCount} matching datasets`}</p> }
         <ReactTable
           columns={columnsConfig}
           manual
-          data={(this.props.isLocked || !this.props.rawData) ? [] : this.props.rawData}
+          data={(this.props.isLocked || !this.state.paginatedData) ? [] : this.state.paginatedData}
           showPageSizeOptions={!this.props.isLocked}
           // eslint-disable-next-line max-len
           pages={(this.props.isLocked) ? 0 : visiblePages} // Total number of pages, don't show 10000+ records in table
           loading={this.state.loading}
-          onFetchData={this.fetchData}
+          onFetchData={this.paginate}
           defaultPageSize={this.props.defaultPageSize}
           className={'-striped -highlight '}
           minRows={3} // make room for no data component
@@ -114,21 +159,20 @@ class ExplorerTable extends React.Component {
   }
 }
 
-ExplorerTable.propTypes = {
-  rawData: PropTypes.array, // from GuppyWrapper
-  fetchAndUpdateRawData: PropTypes.func.isRequired, // from GuppyWrapper
-  totalCount: PropTypes.number.isRequired, // from GuppyWrapper
+DatasetBrowserTable.propTypes = {
+  filteredData: PropTypes.array,
+  totalCount: PropTypes.number.isRequired,
   isLocked: PropTypes.bool.isRequired,
   className: PropTypes.string,
   defaultPageSize: PropTypes.number,
-  tableConfig: TableConfigType.isRequired,
-  guppyConfig: GuppyConfigType.isRequired,
+  tableConfig: PropTypes.object.isRequired,
+  guppyConfig: PropTypes.object.isRequired,
 };
 
-ExplorerTable.defaultProps = {
-  rawData: [],
+DatasetBrowserTable.defaultProps = {
+  filteredData: [],
   className: '',
-  defaultPageSize: 20,
+  defaultPageSize: 10,
 };
 
-export default ExplorerTable;
+export default DatasetBrowserTable;

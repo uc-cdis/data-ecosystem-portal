@@ -40,14 +40,14 @@ const helperSingleton = {
     {% endfor %}
   }`,
 
-  explorerPageQuery: graphql`query gqlHelperExplorerPageQuery{
+  datasetBrowserPageQuery: graphql`query gqlHelperDatasetBrowserPageQuery{
     viewer {
-      ...gqlHelperExplorerFragment
+      ...gqlHelperDatasetBrowserFragment
     }
   }`,
 
-  explorerPageFragment: graphql`
-  fragment gqlHelperExplorerFragment on viewer
+  datasetBrowserPageFragment: graphql`
+  fragment gqlHelperDatasetBrowserFragment on viewer
   @argumentDefinitions(
     {% for fType in fileTypeList %}firstValue_{{ fType }}: {type: "Int", defaultValue: 100},
     cursor_{{ fType }}: {type: "Int"},
@@ -70,8 +70,8 @@ const helperSingleton = {
     }{% endfor %}
   }
   `,
-  explorerRefreshQuery: graphql`
-    query gqlHelperExplorerRefreshQuery (
+  datasetBrowserRefreshQuery: graphql`
+    query gqlHelperDatasetBrowserRefreshQuery (
       {% for fType in fileTypeList %}$firstValue_{{ fType }}: Int,
       $cursor_{{ fType }}: Int,
       {% endfor %}
@@ -81,7 +81,7 @@ const helperSingleton = {
     )
     {
       viewer {
-        ...gqlHelperExplorerFragment @arguments(
+        ...gqlHelperDatasetBrowserFragment @arguments(
           {% for fType in fileTypeList %}firstValue_{{ fType }}: $firstValue_{{ fType }},
           cursor_{{ fType }}: $cursor_{{ fType }},
           {% endfor %}
@@ -152,7 +152,7 @@ export class GQLHelper {
     return helperSingleton;
   }
 
-  static getExplorerVariables(selectedFilters, pageSize, cursors) {
+  static getDatasetBrowserVariables(selectedFilters, pageSize, cursors) {
     return {
       {% for fType in fileTypeList %}firstValue_{{ fType }}: pageSize,
       cursor_{{ fType }}: ('{{ fType }}' in cursors) ? cursors.{{ fType }} : 0,

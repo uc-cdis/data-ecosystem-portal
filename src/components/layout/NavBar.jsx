@@ -67,7 +67,7 @@ class NavBar extends Component {
                 onClick={() => this.props.onActiveTab('')}
                 onKeyPress={() => this.props.onActiveTab('')}
               >
-                <Logo className='nav-bar__logo-img'/>
+                <Logo className='nav-bar__logo-img' />
               </Link>
             </div>
             {
