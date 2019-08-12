@@ -104,9 +104,9 @@ class Explorer extends React.Component {
 
   initializeData = () => {
     this.allData = [];
-    this.obtainImmPortStudies().then(result => {
-      const immportData = result.data.dataset;
-      this.allData = this.allData.concat(immportData);
+    this.obtainParentCommonsStudies().then(result => {
+      const parentCommonsData = result.data.dataset;
+      this.allData = this.allData.concat(parentCommonsData);
       return this.obtainAllSubcommonsData();
     }).then(subCommonsData => {
       const data = subCommonsData.flat();
@@ -138,7 +138,7 @@ class Explorer extends React.Component {
     return uniqueValues.length;
   }
 
-  obtainImmPortStudies = async () => {
+  obtainParentCommonsStudies = async () => {
     const queryString = `
       query {
         dataset(first: 10000) {
