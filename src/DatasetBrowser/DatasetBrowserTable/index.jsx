@@ -6,12 +6,13 @@ import { capitalizeFirstLetter } from '../../utils';
 import './DatasetBrowserTable.css';
 import IconicLink from '../../components/buttons/IconicLink';
 import LockIcon from '../../img/icons/lock.svg';
+import dictIcons from '../../img/icons/index';
 
 function truncateTextIfNecessary(text) {
   if (!text || text.length < 405) {
     return text;
   }
-  return text.slice(0, 405) + '...';
+  return `${text.slice(0, 405)}...`;
 }
 
 class DatasetBrowserTable extends React.Component {
@@ -27,6 +28,10 @@ class DatasetBrowserTable extends React.Component {
   }
 
   getWidthForColumn = (field, columnName) => {
+    if (field === 'link') {
+      return 80;
+    }
+
     // some magic numbers that work fine for table columns width
     const minWidth = 150;
     const maxWidth = 300;
@@ -45,14 +50,15 @@ class DatasetBrowserTable extends React.Component {
       maxLetterLen = len > maxLetterLen ? len : maxLetterLen;
     });
     const resWidth = Math.min((maxLetterLen * letterWidth) + spacing, maxWidth);
+
     return resWidth;
   }
 
   updateData = (filteredData) => {
     const paginatedData = this.makePaginatedData(
-      {'page': 0, 'pageSize': 10, 'sorted': []}
-    , filteredData);
-    this.setState({filteredData: filteredData, paginatedData: paginatedData});
+      { page: 0, pageSize: 10, sorted: [] }
+      , filteredData);
+    this.setState({ filteredData, paginatedData });
   }
 
   makePaginatedData = (state, filteredData) => {
@@ -61,13 +67,13 @@ class DatasetBrowserTable extends React.Component {
     const sort = state.sorted.map(i => ({
       [i.id]: i.desc ? 'desc' : 'asc',
     }));
-    var sortedData = filteredData;
+    let sortedData = filteredData;
 
     if (sort.length > 0) {
       const propertyToSortBy = Object.keys(sort[0])[0];
       const sortDirection = sort[0][propertyToSortBy];
       const modifier = (sortDirection === 'desc') ? 1 : -1;
-      sortedData = filteredData.sort(function(a,b){
+      sortedData = filteredData.sort((a, b) => {
         if (a[propertyToSortBy] < b[propertyToSortBy]) {
           return -1 * modifier;
         }
@@ -78,20 +84,19 @@ class DatasetBrowserTable extends React.Component {
       });
     }
 
-    return sortedData.slice(offset, offset+size);
+    return sortedData.slice(offset, offset + size);
   }
 
   paginate = (state) => {
     this.setState({ loading: true });
     const paginatedData = this.makePaginatedData(state, this.state.filteredData);
-    this.setState({ paginatedData: paginatedData, loading: false });
-    return;
+    this.setState({ paginatedData, loading: false });
   };
 
   render() {
     if (!this.props.tableConfig.fields || this.props.tableConfig.fields.length === 0) return null;
     const columnsConfig = this.props.tableConfig.fields.map((field) => {
-      const fieldMappingEntry = this.props.guppyConfig.fieldMapping 
+      const fieldMappingEntry = this.props.guppyConfig.fieldMapping
         && this.props.guppyConfig.fieldMapping.find(i => i.field === field);
       const name = fieldMappingEntry ? fieldMappingEntry.name : capitalizeFirstLetter(field);
       return {
@@ -99,16 +104,19 @@ class DatasetBrowserTable extends React.Component {
         accessor: field,
         maxWidth: 400,
         render: ({ row }) => (
-          <button onClick={(e) => this.handleButtonClick(e, row)}>Click Me</button>
+          <button onClick={e => this.handleButtonClick(e, row)}>Click Me</button>
         ),
         width: this.getWidthForColumn(field, name),
         Cell: row => (field === 'link' ?
           <IconicLink
             link={row.value}
-            className='index-button-bar__item'
-            caption='Check Dataset'
+            className='dataset-browser-link'
+            buttonClassName='dataset-browser-link-button'
+            icon='exit'
+            dictIcons={dictIcons}
+            iconColor='#606060'
             target='_blank'
-            isExternal={true}
+            isExternal
           />
           : <div><span title={row.value}>{truncateTextIfNecessary(row.value)}</span></div>),
       };

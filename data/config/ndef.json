@@ -164,11 +164,11 @@
       }
     ],
     "fieldMapping" : [
+      { "field": "link", "name": "View" },
       { "field": "dataset_name", "name": "Dataset" },
       { "field": "supported_data_resource", "name": "Supported Data Resource" },
       { "field": "research_focus", "name": "Research Focus" },
-      { "field": "description", "name": "Description of Dataset" },
-      { "field": "link", "name": "Action" }
+      { "field": "description", "name": "Description of Dataset" }
     ],
     "filterConfig": {
       "tabs": [{

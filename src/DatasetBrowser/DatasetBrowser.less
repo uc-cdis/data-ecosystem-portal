@@ -14,3 +14,35 @@
 	padding-left: 20px;
 	width: 80%;
 }
+
+.dataset-browser-link-button svg {
+	width:15px;
+	height:15px;
+	top:-7px;
+	position:relative;
+}
+
+.dataset-browser-link-button svg, .dataset-browser-link-button svg path {
+	color: #606060;
+	fill: #606060;
+	transition: color .2s, fill.2s;
+	--webkit-transition: color .2s, fill.2s;
+	display:block;
+	margin:auto;
+}
+
+.dataset-browser-link-button {
+	border:solid #606060 1px;
+	transition: border-color .2s;
+	--webkit-transition: border-color .2s;
+	width:40px;
+}
+
+.dataset-browser-link-button:hover {
+	border-color: #3283c8;
+}
+
+.dataset-browser-link-button:hover svg path, .dataset-browser-link-button:hover svg {
+	color: #3283c8;
+	fill: #3283c8;
+}

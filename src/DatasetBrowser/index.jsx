@@ -10,11 +10,11 @@ import { guppyGraphQLUrl } from '../configs';
 
 function calculateSummaryCounts(field, filteredData) {
   const values = [];
-  for(let j = 0; j < filteredData.length; j+= 1) {
+  for (let j = 0; j < filteredData.length; j += 1) {
     values.push(filteredData[j][field]);
   }
   const uniqueValues = values.filter(
-    (value, index) => values.indexOf(value) === index 
+    (value, index) => values.indexOf(value) === index,
   );
   return uniqueValues.length;
 }
@@ -27,12 +27,12 @@ function checkIfFiltersApply(filtersApplied, row) {
       return false;
     }
     const filtersApplyMatch = filtersApplied[property].selectedValues.map(
-      x => x.toLowerCase()
+      x => x.toLowerCase(),
     ).includes(
-      row[property].toLowerCase()
+      row[property].toLowerCase(),
     );
     let filtersApplyContains = filtersApplied[property].selectedValues.filter(
-      x => row[property].toLowerCase().includes(x.toLowerCase())
+      x => row[property].toLowerCase().includes(x.toLowerCase()),
     );
     filtersApplyContains = filtersApplyContains.length > 0;
     const filtersApply = filtersApplyMatch || filtersApplyContains;
@@ -53,9 +53,9 @@ class DatasetBrowser extends React.Component {
       filteredData: [],
       paginatedData: [],
       counts: {
-        'supported_data_resource': 0,
-        'dataset_name': 0
-      }
+        supported_data_resource: 0,
+        dataset_name: 0,
+      },
     };
     this.filterGroupRef = React.createRef();
     this.tableRef = React.createRef();
@@ -82,23 +82,23 @@ class DatasetBrowser extends React.Component {
       method: 'POST',
       body: JSON.stringify({
         query: queryString,
-      })
+      }),
     }).then(
-      result => result.json(), 
+      result => result.json(),
       reason => [ ] // eslint-disable-line
-    ).then(result => {
+    ).then((result) => {
       const reformatted = [];
       if (!result.data) {
         return [];
       }
       const studies = result.data.study;
-      for(let j = 0; j < studies.length; j+= 1) {
+      for (let j = 0; j < studies.length; j += 1) {
         reformatted.push({
-          'description': studies[j]['study_description'],
-          'dataset_name': studies[j]['submitter_id'],
-          'research_focus': studies[j]['study_design'],
-          'link': subcommonsURL,
-          'supported_data_resource': subcommonsName
+          description: studies[j].study_description,
+          dataset_name: studies[j].submitter_id,
+          research_focus: studies[j].study_design,
+          link: subcommonsURL,
+          supported_data_resource: subcommonsName,
         });
       }
       return reformatted;
@@ -108,9 +108,9 @@ class DatasetBrowser extends React.Component {
   obtainAllSubcommonsData = () => {
     const promiseArray = [];
     const n = Object.keys(config.subcommons).length;
-    for (let j = 0; j < n; j+= 1) {
+    for (let j = 0; j < n; j += 1) {
       promiseArray.push(
-        this.obtainSubcommonsData(config.subcommons[j])
+        this.obtainSubcommonsData(config.subcommons[j]),
       );
     }
     return Promise.all(promiseArray);
@@ -118,24 +118,24 @@ class DatasetBrowser extends React.Component {
 
   initializeData = () => {
     this.allData = [];
-    this.obtainParentCommonsStudies().then(result => {
+    this.obtainParentCommonsStudies().then((result) => {
       const parentCommonsData = result.data.dataset;
       this.allData = this.allData.concat(parentCommonsData);
       return this.obtainAllSubcommonsData();
-    }).then(subCommonsData => {
+    }).then((subCommonsData) => {
       const data = subCommonsData.flat();
-      if(data.length > 0) {
+      if (data.length > 0) {
         this.allData = this.allData.concat(data);
       }
 
       this.setState({
-        'filteredData': this.allData,
-        'rawData': this.allData,
-        'counts': {
-          'supported_data_resource': calculateSummaryCounts('supported_data_resource', this.allData),
-          'dataset_name': calculateSummaryCounts('dataset_name', this.allData)
-        }
-      })
+        filteredData: this.allData,
+        rawData: this.allData,
+        counts: {
+          supported_data_resource: calculateSummaryCounts('supported_data_resource', this.allData),
+          dataset_name: calculateSummaryCounts('dataset_name', this.allData),
+        },
+      });
 
       this.tableRef.current.updateData(this.allData);
     });
@@ -168,62 +168,62 @@ class DatasetBrowser extends React.Component {
 
   handleFilterChange(filtersApplied) {
     const rawData = this.state.rawData;
-    let filteredData = [];
-    for(let j = 0; j < rawData.length; j+= 1) {
+    const filteredData = [];
+    for (let j = 0; j < rawData.length; j += 1) {
       const isMatch = checkIfFiltersApply(filtersApplied, rawData[j]);
-      if(isMatch) {
+      if (isMatch) {
         filteredData.push(rawData[j]);
       }
     }
-    
+
     this.setState({
-      filteredData : filteredData,
-      'counts' : 
-        { 
-          'supported_data_resource': calculateSummaryCounts('supported_data_resource', filteredData),
-          'dataset_name': calculateSummaryCounts('dataset_name', filteredData)
-        }
+      filteredData,
+      counts:
+        {
+          supported_data_resource: calculateSummaryCounts('supported_data_resource', filteredData),
+          dataset_name: calculateSummaryCounts('dataset_name', filteredData),
+        },
     });
 
     this.tableRef.current.updateData(filteredData);
   }
 
   render() {
-    let filterSections = config.datasetBrowserConfig.filterSections;
-    for(let k = 0; k < filterSections.length; k+= 1) {
-      let options = filterSections[k].options.slice();
-      let n = Object.keys(options).length;
-      for(let m = 0; m < n; m+= 1) {
+    const filterSections = config.datasetBrowserConfig.filterSections;
+    for (let k = 0; k < filterSections.length; k += 1) {
+      const options = filterSections[k].options.slice();
+      const n = Object.keys(options).length;
+      for (let m = 0; m < n; m += 1) {
         options[m].count = 1;
       }
       filterSections[k].options = options;
     }
-    
+
     const fieldMapping = config.datasetBrowserConfig.fieldMapping;
 
     const tabs = [
-      <FilterList key={0} sections={filterSections} />
+      <FilterList key={0} sections={filterSections} />,
     ];
 
     const supportedDataResourceCount = {
       label: 'Supported Data Resources',
-      value: this.state.counts['supported_data_resource']
+      value: this.state.counts.supported_data_resource,
     };
 
     const datasetCount = {
       label: 'Datasets',
-      value: this.state.counts['dataset_name']
+      value: this.state.counts.dataset_name,
     };
 
     const summaries = [supportedDataResourceCount, datasetCount];
 
     const totalCount = this.state.filteredData.length;
 
-    let fields = [];
-    for(let j = 0; j < fieldMapping.length; j+= 1) {
+    const fields = [];
+    for (let j = 0; j < fieldMapping.length; j += 1) {
       fields.push(fieldMapping[j].field);
     }
-    const tableConfig = { fields: fields };
+    const tableConfig = { fields };
 
     return (
       <React.Fragment>
@@ -235,7 +235,7 @@ class DatasetBrowser extends React.Component {
             <FilterGroup
               tabs={tabs}
               filterConfig={config.datasetBrowserConfig.filterConfig}
-              onFilterChange={ (e) => this.handleFilterChange(e) }
+              onFilterChange={e => this.handleFilterChange(e)}
             />
           </div>
           <div className='dataset-browser__visualizations'>
@@ -245,14 +245,14 @@ class DatasetBrowser extends React.Component {
               </div>
             }
             <DatasetBrowserTable
-                ref={this.tableRef}
-                className='guppy-explorer-visualization__table'
-                tableConfig={tableConfig}
-                filteredData={this.state.filteredData}
-                totalCount={totalCount}
-                guppyConfig={config.datasetBrowserConfig}
-                isLocked={false}
-              />
+              ref={this.tableRef}
+              className='guppy-explorer-visualization__table'
+              tableConfig={tableConfig}
+              filteredData={this.state.filteredData}
+              totalCount={totalCount}
+              guppyConfig={config.datasetBrowserConfig}
+              isLocked={false}
+            />
           </div>
         </div>
       </React.Fragment>

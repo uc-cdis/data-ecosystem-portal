@@ -13,26 +13,26 @@ class IndexButtonBar extends Component {
   render() {
     return (
       <React.Fragment>
-      <div className='index-button-bar__header'>
-        {this.props.buttons.length} Supported Data Resources
-      </div>
-      <div className='index-button-bar'> 
-        {
-          this.props.buttons.map(
-            item => (
-              <div className='index-button-bar__thumbnail-button' key={item.name}>
-                <div className='h3-typo index-button-bar__thumbnail-title'>{item.name}</div>
-                <div className='index-button-bar__icon'>
-                 { typeof item.icon !== 'undefined' ?
-                  <IconComponent
-                    dictIcons={this.props.dictIcons}
-                    iconName={item.icon}
-                    height='90px'
-                  /> : <img height='90px' src={item.logo} alt=""/> }
-                </div>
-                <div className='body-typo index-button-bar__thumbnail-text'>{item.body}</div>
-                <div className='index-button-bar__button-group'>
-                  { Object.prototype.hasOwnProperty.call(item, "internal_link") && 
+        <div className='index-button-bar__header'>
+          {this.props.buttons.length} Supported Data Resources
+        </div>
+        <div className='index-button-bar'>
+          {
+            this.props.buttons.map(
+              item => (
+                <div className='index-button-bar__thumbnail-button' key={item.name}>
+                  <div className='h3-typo index-button-bar__thumbnail-title'>{item.name}</div>
+                  <div className='index-button-bar__icon'>
+                    { typeof item.icon !== 'undefined' ?
+                      <IconComponent
+                        dictIcons={this.props.dictIcons}
+                        iconName={item.icon}
+                        height='90px'
+                      /> : <img height='90px' src={item.logo} alt='' /> }
+                  </div>
+                  <div className='body-typo index-button-bar__thumbnail-text'>{item.body}</div>
+                  <div className='index-button-bar__button-group'>
+                    { Object.prototype.hasOwnProperty.call(item, 'internal_link') &&
                     <Button
                       className='index-button-bar__item'
                       onClick={() => {
@@ -42,22 +42,22 @@ class IndexButtonBar extends Component {
                       label={item.label}
                       buttonType='secondary'
                     />
-                  }
-                  { Object.prototype.hasOwnProperty.call(item, "external_link") && 
+                    }
+                    { Object.prototype.hasOwnProperty.call(item, 'external_link') &&
                     <IconicLink
                       link={item.external_link}
                       className='index-button-bar__item'
                       caption='Visit Website'
                       target='_blank'
-                      isExternal={true}
+                      isExternal
                     />
-                  }
+                    }
+                  </div>
                 </div>
-              </div>
-            ),
-          )
-        }
-      </div>
+              ),
+            )
+          }
+        </div>
       </React.Fragment>
     );
   }

@@ -5,7 +5,7 @@ import './Introduction.less';
 
 class Introduction extends Component {
   static propTypes = {
-    data: PropTypes.object.isRequired
+    data: PropTypes.object.isRequired,
     // dictIcons: PropTypes.object.isRequired,
   };
 

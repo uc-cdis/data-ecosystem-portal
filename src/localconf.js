@@ -42,7 +42,7 @@ function buildConfig(opts) {
   } = Object.assign({}, defaults, opts);
 
   function ensureTailingSlash(url) {
-    let u = new URL(url);
+    const u = new URL(url);
     u.pathname += u.pathname.endsWith('/') ? '' : '/';
     u.hash = '';
     u.search = '';
@@ -80,12 +80,10 @@ function buildConfig(opts) {
   const manifestServiceApiPath = `${hostname}manifests/`;
   // backward compatible: homepageChartNodes not set means using graphql query,
   // which will return 401 UNAUTHORIZED if not logged in, thus not making public
-  let indexPublic = true;
+  const indexPublic = true;
   // if (typeof components.index.homepageChartNodes === 'undefined') {
   //   indexPublic = false;
   // }
-
-  let useGuppyForExplorer = true;
 
   // for "libre" data commons, explorer page is public
   let explorerPublic = false;
@@ -242,7 +240,6 @@ function buildConfig(opts) {
     guppyGraphQLUrl,
     manifestServiceApiPath,
     wtsPath,
-    useGuppyForExplorer,
     analysisApps,
     tierAccessLevel,
     tierAccessLimit,

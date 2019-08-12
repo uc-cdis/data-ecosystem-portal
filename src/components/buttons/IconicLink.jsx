@@ -35,13 +35,12 @@ class IconicLink extends React.Component {
           { this.renderButton(styles) }
         </a>
       );
-    } else {
-      return (
-          <Link className={this.props.className} to={this.props.link} target={this.props.target}>
-            { this.renderButton(styles) }
-          </Link>
-      );
     }
+    return (
+      <Link className={this.props.className} to={this.props.link} target={this.props.target}>
+        { this.renderButton(styles) }
+      </Link>
+    );
   }
 }
 
