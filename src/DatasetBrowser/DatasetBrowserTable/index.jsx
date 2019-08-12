@@ -8,10 +8,12 @@ import './DatasetBrowserTable.css';
 import IconicLink from '../../components/buttons/IconicLink';
 import LockIcon from '../../img/icons/lock.svg';
 
-const guppyConfig = {
-  dataType: 'dataset',
-  fieldMapping: []
-};
+truncateTextIfNecessary(text) {
+  if (!text || text.length < 405) {
+    return text;
+  }
+  return text.slice(0, 405) + '...';
+}
 
 class DatasetBrowserTable extends React.Component {
   constructor(props) {
@@ -65,7 +67,7 @@ class DatasetBrowserTable extends React.Component {
     if (sort.length > 0) {
       const propertyToSortBy = Object.keys(sort[0])[0];
       const sortDirection = sort[0][propertyToSortBy];
-      const modifier = (sortDirection == 'desc') ? 1 : -1;
+      const modifier = (sortDirection === 'desc') ? 1 : -1;
       sortedData = filteredData.sort(function(a,b){
         if (a[propertyToSortBy] < b[propertyToSortBy]) {
           return -1 * modifier;
@@ -87,23 +89,21 @@ class DatasetBrowserTable extends React.Component {
     return;
   };
 
-  truncateTextIfNecessary(text) {
-    if (!text || text.length < 405) {
-      return text;
-    }
-    return text.slice(0, 405) + '...';
-  }
+ 
 
   render() {
     if (!this.props.tableConfig.fields || this.props.tableConfig.fields.length === 0) return null;
     const columnsConfig = this.props.tableConfig.fields.map((field) => {
-      const fieldMappingEntry = this.props.guppyConfig.fieldMapping && this.props.guppyConfig.fieldMapping.find(i => i.field === field);
+      const fieldMappingEntry = this.props.guppyConfig.fieldMapping 
+        && this.props.guppyConfig.fieldMapping.find(i => i.field === field);
       const name = fieldMappingEntry ? fieldMappingEntry.name : capitalizeFirstLetter(field);
       return {
         Header: name,
         accessor: field,
         maxWidth: 400,
-        render: ({ row }) => (<button onClick={(e) => this.handleButtonClick(e, row)}>Click Me</button>),
+        render: ({ row }) => (
+          <button onClick={(e) => this.handleButtonClick(e, row)}>Click Me</button>
+        ),
         width: this.getWidthForColumn(field, name),
         Cell: row => ('link' === field ?
           <IconicLink
@@ -113,7 +113,7 @@ class DatasetBrowserTable extends React.Component {
             target='_blank'
             isExternal={true}
           />
-          : <div><span title={row.value}>{this.truncateTextIfNecessary(row.value)}</span></div>),
+          : <div><span title={row.value}>{truncateTextIfNecessary(row.value)}</span></div>),
       };
     });
     const { totalCount } = this.props;

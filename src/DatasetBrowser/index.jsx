@@ -1,12 +1,11 @@
 import React from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
+import FilterGroup from '@gen3/ui-component/dist/components/filters/FilterGroup';
+import FilterList from '@gen3/ui-component/dist/components/filters/FilterList';
 import { config } from '../params';
 import DatasetBrowserTable from './DatasetBrowserTable/';
 import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
-import FilterGroup from '@gen3/ui-component/dist/components/filters/FilterGroup';
-import FilterList from '@gen3/ui-component/dist/components/filters/FilterList';
-import SummaryChartGroup from '@gen3/ui-component/dist/components/charts/SummaryChartGroup';
 import './DatasetBrowser.less';
 import { fetchWithCreds } from '../actions';
 import { guppyGraphQLUrl } from '../configs';
@@ -25,9 +24,38 @@ const defaultConfig = {
   dropdowns: {},
 };
 
-const datasetBrowserConfig = [
-  _.merge(defaultConfig, config.datasetBrowserConfig)
-];
+calculateSummaryCounts(field, filteredData) {
+  const values = [];
+  for(let j = 0; j < filteredData.length; j+= 1) {
+    values.push(filteredData[j][field]);
+  }
+  const uniqueValues = values.filter(
+    (value, index) => values.indexOf(value) === index 
+  );
+  return uniqueValues.length;
+}
+
+checkIfFiltersApply(filtersApplied, row) {
+  for (let property in filtersApplied) {
+    if (!row[property]) {
+      return false;
+    }
+    const filtersApplyMatch = filtersApplied[property].selectedValues.map(
+      x => x.toLowerCase()
+    ).includes(
+      row[property].toLowerCase()
+    );
+    const filtersApplyContains = filtersApplied[property].selectedValues.filter(
+      x => row[property].toLowerCase().includes(x.toLowerCase())
+    );
+    filtersApplyContains = filtersApplyContains.length > 0;
+    const filtersApply = filtersApplyMatch || filtersApplyContains;
+    if (!filtersApply) {
+      return false;
+    }
+  }
+  return true;
+}
 
 class DatasetBrowser extends React.Component {
   constructor(props) {
@@ -71,14 +99,14 @@ class DatasetBrowser extends React.Component {
       })
     }).then(
       result => result.json(), 
-      reason => [ ]
+      reason => [ ] // eslint-disable no-unused-vars
     ).then(result => {
       const reformatted = [];
       if (!result.data) {
         return [];
       }
       const studies = result.data.study;
-      for(let j = 0; j < studies.length; j++) {
+      for(let j = 0; j < studies.length; j+= 1) {
         reformatted.push({
           'description': studies[j]['study_description'],
           'dataset_name': studies[j]['submitter_id'],
@@ -94,7 +122,7 @@ class DatasetBrowser extends React.Component {
   obtainAllSubcommonsData = () => {
     const promiseArray = [];
     const n = Object.keys(config.subcommons).length;
-    for (let j = 0; j < n; j++) {
+    for (let j = 0; j < n; j+= 1) {
       promiseArray.push(
         this.obtainSubcommonsData(config.subcommons[j])
       );
@@ -118,24 +146,13 @@ class DatasetBrowser extends React.Component {
         'filteredData': this.allData,
         'rawData': this.allData,
         'counts': {
-          'supported_data_resource': this.calculateSummaryCounts('supported_data_resource', this.allData),
-          'dataset_name': this.calculateSummaryCounts('dataset_name', this.allData)
+          'supported_data_resource': calculateSummaryCounts('supported_data_resource', this.allData),
+          'dataset_name': calculateSummaryCounts('dataset_name', this.allData)
         }
       })
 
       this.tableRef.current.updateData(this.allData);
     });
-  }
-
-  calculateSummaryCounts(field, filteredData) {
-    const values = [];
-    for(let j = 0; j < filteredData.length; j++) {
-      values.push(filteredData[j][field]);
-    }
-    const uniqueValues = values.filter(
-      (value, index) => values.indexOf(value) === index 
-    );
-    return uniqueValues.length;
   }
 
   obtainParentCommonsStudies = async () => {
@@ -163,33 +180,11 @@ class DatasetBrowser extends React.Component {
     );
   }
 
-  checkIfFiltersApply(filtersApplied, row) {
-    for (var property in filtersApplied) {
-      if (!row[property]) {
-        return false;
-      }
-      const filtersApplyMatch = filtersApplied[property].selectedValues.map(
-        x => x.toLowerCase()
-      ).includes(
-        row[property].toLowerCase()
-      );
-      const filtersApplyContains = filtersApplied[property].selectedValues.filter(
-        x => row[property].toLowerCase().includes(x.toLowerCase())
-      );
-      filtersApplyContains = filtersApplyContains.length > 0;
-      const filtersApply = filtersApplyMatch || filtersApplyContains;
-      if (!filtersApply) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   handleFilterChange(filtersApplied) {
     const rawData = this.state.rawData;
     let filteredData = [];
-    for(let j = 0; j < rawData.length; j++) {
-      const isMatch = this.checkIfFiltersApply(filtersApplied, rawData[j]);
+    for(let j = 0; j < rawData.length; j+= 1) {
+      const isMatch = checkIfFiltersApply(filtersApplied, rawData[j]);
       if(isMatch) {
         filteredData.push(rawData[j]);
       }
@@ -199,8 +194,8 @@ class DatasetBrowser extends React.Component {
       filteredData : filteredData,
       'counts' : 
         { 
-          'supported_data_resource': this.calculateSummaryCounts('supported_data_resource', filteredData),
-          'dataset_name': this.calculateSummaryCounts('dataset_name', filteredData)
+          'supported_data_resource': calculateSummaryCounts('supported_data_resource', filteredData),
+          'dataset_name': calculateSummaryCounts('dataset_name', filteredData)
         }
     });
 
@@ -208,11 +203,11 @@ class DatasetBrowser extends React.Component {
   }
 
   render() {
-    var filterSections = config.datasetBrowserConfig.filterSections;
-    for(let k = 0; k < filterSections.length; k++) {
+    let filterSections = config.datasetBrowserConfig.filterSections;
+    for(let k = 0; k < filterSections.length; k+= 1) {
       let options = filterSections[k].options.slice();
       let n = Object.keys(options).length;
-      for(let m = 0; m < n; m++) {
+      for(let m = 0; m < n; m+= 1) {
         options[m].count = 1;
       }
       filterSections[k].options = options;
@@ -239,7 +234,7 @@ class DatasetBrowser extends React.Component {
     const totalCount = this.state.filteredData.length;
 
     let fields = [];
-    for(let j = 0; j < fieldMapping.length; j++) {
+    for(let j = 0; j < fieldMapping.length; j+= 1) {
       fields.push(fieldMapping[j].field);
     }
     const tableConfig = { fields: fields };
@@ -275,10 +270,9 @@ class DatasetBrowser extends React.Component {
                 className='guppy-explorer-visualization__table'
                 tableConfig={tableConfig}
                 filteredData={this.state.filteredData}
-                totalCount={this.props.totalCount}
+                totalCount={totalCount}
                 guppyConfig={config.datasetBrowserConfig}
                 isLocked={false}
-                totalCount={totalCount}
               />
           </div>
         </div>

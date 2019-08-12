@@ -26,12 +26,9 @@ import theme from './theme';
 import getReduxStore from './reduxStore';
 import { ReduxNavBar, ReduxTopBar, ReduxFooter } from './Layout/reduxer';
 import ReduxQueryNode, { submitSearchForm } from './QueryNode/ReduxQueryNode';
-import { basename, dev, gaDebug, 
-  indexPublic, useGuppyForExplorer, explorerPublic,
-} from './localconf';
+import { basename, dev, gaDebug, indexPublic } from './localconf';
 import { gaTracking, components } from './params';
 import GA, { RouteTracker } from './components/GoogleAnalytics';
-import DataExplorer from './DataExplorer/.';
 import GuppyDataExplorer from './GuppyDataExplorer/.';
 import isEnabled from './helpers/featureFlags';
 import sessionMonitor from './SessionMonitor';
@@ -159,7 +156,7 @@ async function init() {
                       component={
                         props => (
                           <ProtectedContent
-                            // public // A code change is required in Guppy to make this page public.
+                            // A code change is required in Guppy to make this page public.
                             component={DatasetBrowser}
                             {...props}
                           />
