@@ -8,7 +8,6 @@ import FilterGroup from '@gen3/ui-component/dist/components/filters/FilterGroup'
 import FilterList from '@gen3/ui-component/dist/components/filters/FilterList';
 import SummaryChartGroup from '@gen3/ui-component/dist/components/charts/SummaryChartGroup';
 import './DatasetBrowser.less';
-import { immportApiPath } from '../localconf';
 import { fetchWithCreds } from '../actions';
 import { guppyGraphQLUrl } from '../configs';
 
@@ -52,33 +51,27 @@ class Explorer extends React.Component {
     this.initializeData();
   }
 
-  obtainSubCommonsData = () => {
+  obtainSubcommonsData = (subcommonsConfig) => {
+    const subcommonsURL = subcommonsConfig.URL;
+    const subcommonsName = subcommonsConfig.name;
     const graphModelQueryURL = 'api/v0/submission/graphql';
-    const subcommonURL = 'https://niaid.bionimbus.org/';
-    const subcommonName = 'NDC: TB Data Commons';
     const queryString = `
       {
         study {
-          study_design
-          study_doi
-          study_objective
-          study_setup
           study_description
-          study_organization
           submitter_id
+          study_design
         }
       }
     `;
-    const headers = {
-      'Authorization': 'bearer '
-    };
-    return fetch(subcommonURL + graphModelQueryURL, {
+    return fetch(subcommonsURL + graphModelQueryURL, {
       method: 'POST',
-      headers: headers,
       body: JSON.stringify({
         query: queryString,
       })
-    }).then(result => result.json()
+    }).then(
+      result => result.json(), 
+      reason => [ ]
     ).then(result => {
       const reformatted = [];
       if (!result.data) {
@@ -90,12 +83,23 @@ class Explorer extends React.Component {
           'description': studies[j]['study_description'],
           'dataset_name': studies[j]['submitter_id'],
           'research_focus': studies[j]['study_design'],
-          'link': subcommonURL,
-          'supported_data_resource': subcommonName
+          'link': subcommonsURL,
+          'supported_data_resource': subcommonsName
         });
       }
       return reformatted;
     });
+  }
+
+  obtainAllSubcommonsData = () => {
+    const promiseArray = [];
+    const n = Object.keys(config.subcommons).length;
+    for (let j = 0; j < n; j++) {
+      promiseArray.push(
+        this.obtainSubcommonsData(config.subcommons[j])
+      );
+    }
+    return Promise.all(promiseArray);
   }
 
   initializeData = () => {
@@ -103,10 +107,12 @@ class Explorer extends React.Component {
     this.obtainImmPortStudies().then(result => {
       const immportData = result.data.dataset;
       this.allData = this.allData.concat(immportData);
-      
-      return this.obtainSubCommonsData();
+      return this.obtainAllSubcommonsData();
     }).then(subCommonsData => {
-      this.allData = this.allData.concat(subCommonsData);
+      const data = subCommonsData.flat();
+      if(data.length > 0) {
+        this.allData = this.allData.concat(data);
+      }
 
       this.setState({
         'filteredData': this.allData,
@@ -155,20 +161,6 @@ class Explorer extends React.Component {
     }).then(
       ({ status, data }) => data, // eslint-disable-line no-unused-vars
     );
-  }
-
-  mergeRawDataWithImmPortResults = (immportData, rawData) => {
-    for (let i = 0; i < immportData.length; i++) {
-      const newObject = {
-        'dataset_name': immportData[i].studyAccession,
-        'description': immportData[i].briefDescription,
-        'research_focus': immportData[i].conditionStudied,
-        'link': 'https://www.immport.org/shared/study/' + immportData[i].studyAccession,
-        'supported_data_resource': 'ImmPort'
-      };
-      rawData.push(newObject);
-    }
-    return rawData;
   }
 
   checkIfFiltersApply(filtersApplied, row) {

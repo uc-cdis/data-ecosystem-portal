@@ -1,4 +1,14 @@
 {
+  "subcommons": [ 
+    {
+      "URL": "https://tb.niaiddata.org/",
+      "name": "NDC: TB Data Commons"
+    }, 
+    {
+      "URL": "https://daids.niaiddata.org/",
+      "name": "NDC: DAIDs Data Commons"
+    }
+  ],
   "gaTrackingId": "undefined",
   "graphql": {
     "boardCounts": [
