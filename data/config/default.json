@@ -122,6 +122,12 @@
         ]
       }
     ],
-    "fieldMapping" : []
+    "fieldMapping" : [],
+    "filterConfig": {
+      "tabs": [{
+        "title": "Filters",
+        "fields": [ ]
+      }]
+    }
   }
 }

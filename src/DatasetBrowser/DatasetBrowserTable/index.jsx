@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
-// import { GuppyConfigType, TableConfigType } from '../configTypeDef';
 import { capitalizeFirstLetter } from '../../utils';
 import './DatasetBrowserTable.css';
 import IconicLink from '../../components/buttons/IconicLink';
@@ -103,7 +102,7 @@ class DatasetBrowserTable extends React.Component {
           <button onClick={(e) => this.handleButtonClick(e, row)}>Click Me</button>
         ),
         width: this.getWidthForColumn(field, name),
-        Cell: row => ('link' === field ?
+        Cell: row => (field === 'link' ?
           <IconicLink
             link={row.value}
             className='index-button-bar__item'
@@ -124,7 +123,7 @@ class DatasetBrowserTable extends React.Component {
     return (
       <div className={`dataset-browser-table ${this.props.className}`}>
         {(this.props.isLocked) ? <React.Fragment />
-          : <p className='dataset-browser-table__description'>{`Showing ${start} - ${end} of ${totalCount || 0} matching datasets`}</p> }
+          : <p className='dataset-browser-table__description'>{`Showing ${start} - ${end} of ${totalCount} matching datasets`}</p> }
         <ReactTable
           columns={columnsConfig}
           manual

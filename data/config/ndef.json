@@ -169,6 +169,12 @@
       { "field": "research_focus", "name": "Research Focus" },
       { "field": "description", "name": "Description of Dataset" },
       { "field": "link", "name": "Action" }
-    ]
+    ],
+    "filterConfig": {
+      "tabs": [{
+        "title": "Filters",
+        "fields": ["supported_data_resource", "research_focus"]
+      }]
+    }
   }
 }

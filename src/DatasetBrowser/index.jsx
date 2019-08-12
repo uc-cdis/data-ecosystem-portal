@@ -225,13 +225,6 @@ class DatasetBrowser extends React.Component {
     }
     const tableConfig = { fields: fields };
 
-    const filterConfig = {
-      tabs: [{
-        title: 'Filters',
-        fields: ["supported_data_resource", "research_focus"],
-      }],
-    };
-
     return (
       <React.Fragment>
         <div className='ndef-page-title'>
@@ -241,7 +234,7 @@ class DatasetBrowser extends React.Component {
           <div className='dataset-browser__filters'>
             <FilterGroup
               tabs={tabs}
-              filterConfig={filterConfig}
+              filterConfig={config.datasetBrowserConfig.filterConfig}
               onFilterChange={ (e) => this.handleFilterChange(e) }
             />
           </div>
