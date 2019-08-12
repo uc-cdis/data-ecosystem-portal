@@ -24,7 +24,7 @@ const defaultConfig = {
   dropdowns: {},
 };
 
-calculateSummaryCounts(field, filteredData) {
+function calculateSummaryCounts(field, filteredData) {
   const values = [];
   for(let j = 0; j < filteredData.length; j+= 1) {
     values.push(filteredData[j][field]);
@@ -35,7 +35,7 @@ calculateSummaryCounts(field, filteredData) {
   return uniqueValues.length;
 }
 
-checkIfFiltersApply(filtersApplied, row) {
+function checkIfFiltersApply(filtersApplied, row) {
   for (let property in filtersApplied) {
     if (!row[property]) {
       return false;
@@ -259,7 +259,7 @@ class DatasetBrowser extends React.Component {
               onFilterChange={ (e) => this.handleFilterChange(e) }
             />
           </div>
-          <div className='data-explorer__visualizations'>
+          <div className='dataset-browser__visualizations'>
             {
               <div className='guppy-explorer-visualization__charts'>
                 <DataSummaryCardGroup summaryItems={summaries} connected />

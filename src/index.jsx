@@ -29,7 +29,6 @@ import ReduxQueryNode, { submitSearchForm } from './QueryNode/ReduxQueryNode';
 import { basename, dev, gaDebug, indexPublic } from './localconf';
 import { gaTracking, components } from './params';
 import GA, { RouteTracker } from './components/GoogleAnalytics';
-import GuppyDataExplorer from './GuppyDataExplorer/.';
 import isEnabled from './helpers/featureFlags';
 import sessionMonitor from './SessionMonitor';
 import './index.less';
@@ -163,21 +162,6 @@ async function init() {
                         )
                       }
                     />
-                    {isEnabled('explorer') ?
-                      <Route
-                        path='/explorer'
-                        component={
-                          props => (
-                            <ProtectedContent
-                              public
-                              component={GuppyDataExplorer}
-                              {...props}
-                            />
-                          )
-                        }
-                      />
-                      : null
-                    }
                   </Switch>
                 </div>
                 <ReduxFooter logos={components.footerLogos} />

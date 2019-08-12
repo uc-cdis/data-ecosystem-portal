@@ -8,7 +8,7 @@ import './DatasetBrowserTable.css';
 import IconicLink from '../../components/buttons/IconicLink';
 import LockIcon from '../../img/icons/lock.svg';
 
-truncateTextIfNecessary(text) {
+function truncateTextIfNecessary(text) {
   if (!text || text.length < 405) {
     return text;
   }
@@ -88,8 +88,6 @@ class DatasetBrowserTable extends React.Component {
     this.setState({ paginatedData: paginatedData, loading: false });
     return;
   };
-
- 
 
   render() {
     if (!this.props.tableConfig.fields || this.props.tableConfig.fields.length === 0) return null;
