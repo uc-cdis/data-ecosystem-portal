@@ -205,39 +205,23 @@ class Explorer extends React.Component {
     });
 
     this.tableRef.current.updateData(filteredData);
-    // this.tableRef.current.paginate({'page': 0, 'pageSize': 10});
   }
 
   render() {
-    const filterTabs = [];
-
-    const projectOptions = [
-      { text: 'NDC: TB Data Commons', filterType: 'singleSelect', count: 123 },
-      { text: 'ImmPort', filterType: 'singleSelect', count: 123 },
-      { text: 'NDC: DAIDs Data Commons', filterType: 'singleSelect', count: 123 }
-    ];
-
-    const studyOptions = [
-      { text: 'AIDS', filterType: 'singleSelect', count: 123 },
-      { text: 'TB', filterType: 'singleSelect', count: 123 },
-      { text: 'Immune Response', filterType: 'singleSelect', count: 123 },
-      { text: 'Allergy', filterType: 'singleSelect', count: 123 },
-      { text: 'Atopy', filterType: 'singleSelect', count: 123 },
-      { text: 'Infection Response', filterType: 'singleSelect', count: 123 },
-      { text: 'Vaccine Response', filterType: 'singleSelect', count: 123 },
-      { text: 'Transplantation', filterType: 'singleSelect', count: 123 },
-      { text: 'Oncology', filterType: 'singleSelect', count: 123 },
-      { text: 'Autoimmune', filterType: 'singleSelect', count: 123 },
-      { text: 'Preterm Birth', filterType: 'singleSelect', count: 123 }
-    ];
-
-    const projectSections = [
-      { title: 'Supported Data Resources', options: projectOptions },
-      { title: 'Research Focus', options: studyOptions },
-    ];
+    var filterSections = config.datasetBrowserConfig.filterSections;
+    for(let k = 0; k < filterSections.length; k++) {
+      let options = filterSections[k].options.slice();
+      let n = Object.keys(options).length;
+      for(let m = 0; m < n; m++) {
+        options[m].count = 1;
+      }
+      filterSections[k].options = options;
+    }
+    
+    const fieldMapping = config.datasetBrowserConfig.fieldMapping;
 
     const tabs = [
-      <FilterList key={0} sections={projectSections} />
+      <FilterList key={0} sections={filterSections} />
     ];
 
     const supportedDataResourceCount = {
@@ -254,19 +238,9 @@ class Explorer extends React.Component {
 
     const totalCount = this.state.filteredData.length;
 
-    const config = {
-      'fieldMapping' : [
-        { 'field': 'dataset_name', 'name': 'Dataset' },
-        { 'field': 'supported_data_resource', 'name': 'Supported Data Resource' },
-        { 'field': 'research_focus', 'name': 'Research Focus' },
-        { 'field': 'description', 'name': 'Description of Dataset' },
-        { 'field': 'link', 'name': 'Action' }
-      ]
-    }
-
     let fields = [];
-    for(let j = 0; j < config.fieldMapping.length; j++) {
-      fields.push(config.fieldMapping[j].field);
+    for(let j = 0; j < fieldMapping.length; j++) {
+      fields.push(fieldMapping[j].field);
     }
     const tableConfig = { fields: fields };
 
@@ -302,7 +276,7 @@ class Explorer extends React.Component {
                 tableConfig={tableConfig}
                 filteredData={this.state.filteredData}
                 totalCount={this.props.totalCount}
-                guppyConfig={config}
+                guppyConfig={config.datasetBrowserConfig}
                 isLocked={false}
                 totalCount={totalCount}
               />

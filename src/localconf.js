@@ -85,10 +85,7 @@ function buildConfig(opts) {
   //   indexPublic = false;
   // }
 
-  let useGuppyForExplorer = false;
-  if (config.dataExplorerConfig.guppyConfig) {
-    useGuppyForExplorer = true;
-  }
+  let useGuppyForExplorer = true;
 
   // for "libre" data commons, explorer page is public
   let explorerPublic = false;

@@ -82,7 +82,6 @@ class DatasetBrowserTable extends React.Component {
 
   paginate = (state) => {
     this.setState({ loading: true });
-
     const paginatedData = this.makePaginatedData(state, this.state.filteredData);
     this.setState({ paginatedData: paginatedData, loading: false });
     return;
