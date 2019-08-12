@@ -142,12 +142,6 @@ module.exports = {
     },
     extensions: ['.mjs', '.js', '.jsx', '.json', '.webpack.js', '.web.js',]
   },
-  node: {
-    console: true,
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty'
-  },
   plugins,
   externals: [{
     xmlhttprequest: '{XMLHttpRequest:XMLHttpRequest}'
