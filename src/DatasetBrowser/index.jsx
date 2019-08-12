@@ -26,10 +26,10 @@ const defaultConfig = {
 };
 
 const datasetBrowserConfig = [
-  _.merge(defaultConfig, config.dataExplorerConfig)
+  _.merge(defaultConfig, config.datasetBrowserConfig)
 ];
 
-class Explorer extends React.Component {
+class DatasetBrowser extends React.Component {
   constructor(props) {
     super(props);
     const tabIndex = 0;
@@ -287,9 +287,9 @@ class Explorer extends React.Component {
   }
 }
 
-Explorer.propTypes = {
+DatasetBrowser.propTypes = {
   history: PropTypes.object.isRequired, // inherited from ProtectedContent
   location: PropTypes.object.isRequired,
 };
 
-export default Explorer;
+export default DatasetBrowser;
