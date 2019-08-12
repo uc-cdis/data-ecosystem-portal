@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 import PropTypes from 'prop-types';
 import FilterGroup from '@gen3/ui-component/dist/components/filters/FilterGroup';
 import FilterList from '@gen3/ui-component/dist/components/filters/FilterList';
@@ -9,20 +8,6 @@ import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import './DatasetBrowser.less';
 import { fetchWithCreds } from '../actions';
 import { guppyGraphQLUrl } from '../configs';
-
-const defaultConfig = {
-  filters: { tabs: [] },
-  table: {
-    enabled: true,
-    fields: [],
-  },
-  guppyConfig: {
-    dataType: 'dataset',
-    fieldMapping: []
-  },
-  buttons: [],
-  dropdowns: {},
-};
 
 function calculateSummaryCounts(field, filteredData) {
   const values = [];
@@ -36,7 +21,9 @@ function calculateSummaryCounts(field, filteredData) {
 }
 
 function checkIfFiltersApply(filtersApplied, row) {
-  for (let property in filtersApplied) {
+  const attributes = Object.keys(filtersApplied);
+  for (let i = 0; i < attributes.length; i += 1) {
+    const property = attributes[i];
     if (!row[property]) {
       return false;
     }
@@ -45,7 +32,7 @@ function checkIfFiltersApply(filtersApplied, row) {
     ).includes(
       row[property].toLowerCase()
     );
-    const filtersApplyContains = filtersApplied[property].selectedValues.filter(
+    let filtersApplyContains = filtersApplied[property].selectedValues.filter(
       x => row[property].toLowerCase().includes(x.toLowerCase())
     );
     filtersApplyContains = filtersApplyContains.length > 0;
@@ -99,7 +86,7 @@ class DatasetBrowser extends React.Component {
       })
     }).then(
       result => result.json(), 
-      reason => [ ] // eslint-disable no-unused-vars
+      reason => [ ] // eslint-disable-line
     ).then(result => {
       const reformatted = [];
       if (!result.data) {
@@ -280,10 +267,5 @@ class DatasetBrowser extends React.Component {
     );
   }
 }
-
-DatasetBrowser.propTypes = {
-  history: PropTypes.object.isRequired, // inherited from ProtectedContent
-  location: PropTypes.object.isRequired,
-};
 
 export default DatasetBrowser;
