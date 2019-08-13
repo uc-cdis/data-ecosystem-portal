@@ -5,7 +5,6 @@ import certificate from './UserAgreement/reducers';
 import homepage from './Homepage/reducers';
 import queryNodes from './QueryNode/reducers';
 import popups from './Popup/reducers';
-import explorer from './Explorer/reducers';
 import login from './Login/reducers';
 import bar from './Layout/reducers';
 import { logoutListener } from './Login/ProtectedContent';
@@ -59,7 +58,7 @@ export const removeDeletedNode = (state, id) => {
   return searchResult;
 };
 
-const reducers = combineReducers({ explorer,
+const reducers = combineReducers({ 
   bar,
   homepage,
   popups,

@@ -176,5 +176,55 @@
         "fields": ["supported_data_resource", "research_focus"]
       }]
     }
+  },
+  "dataExplorerConfig": {
+    "guppy": {
+      "indices": [
+        {
+          "index": "dataset_browser",
+          "type": "dataset"
+        }
+      ],
+      "auth_filter_field": "auth_resource_path"
+    },
+    "filterSections": [
+      { 
+        "title": "Supported Data Resources", 
+        "options": [
+          { "text": "NDC: TB Data Commons", "filterType": "singleSelect"},
+          { "text": "ImmPort", "filterType": "singleSelect"},
+          { "text": "NDC: DAIDs Data Commons", "filterType": "singleSelect"}
+        ]
+      },
+      { 
+        "title": "Research Focus",
+        "options": [
+          { "text": "AIDS", "filterType": "singleSelect"},
+          { "text": "TB", "filterType": "singleSelect"},
+          { "text": "Immune Response", "filterType": "singleSelect"},
+          { "text": "Allergy", "filterType": "singleSelect"},
+          { "text": "Atopy", "filterType": "singleSelect"},
+          { "text": "Infection Response", "filterType": "singleSelect"},
+          { "text": "Vaccine Response", "filterType": "singleSelect"},
+          { "text": "Transplantation", "filterType": "singleSelect"},
+          { "text": "Oncology", "filterType": "singleSelect"},
+          { "text": "Autoimmune", "filterType": "singleSelect"},
+          { "text": "Preterm Birth", "filterType": "singleSelect"}
+        ]
+      }
+    ],
+    "fieldMapping" : [
+      { "field": "link", "name": "View" },
+      { "field": "dataset_name", "name": "Dataset" },
+      { "field": "supported_data_resource", "name": "Supported Data Resource" },
+      { "field": "research_focus", "name": "Research Focus" },
+      { "field": "description", "name": "Description of Dataset" }
+    ],
+    "filterConfig": {
+      "tabs": [{
+        "title": "Filters",
+        "fields": ["supported_data_resource", "research_focus"]
+      }]
+    }
   }
 }
