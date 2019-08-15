@@ -3,12 +3,15 @@ import FilterGroup from '@gen3/ui-component/dist/components/filters/FilterGroup'
 import FilterList from '@gen3/ui-component/dist/components/filters/FilterList';
 import { config } from '../params';
 import ExplorerTable from './ExplorerTable/';
+import ExplorerCharts from './ExplorerCharts/';
 import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import './Explorer.less';
 import { fetchWithCreds } from '../actions';
 import { guppyGraphQLUrl } from '../configs';
 
-// console.log('config: ', config);
+import GuppyWrapper from '@gen3/guppy/dist/components/GuppyWrapper';
+import { guppyUrl, tierAccessLevel, tierAccessLimit } from '../localconf';
+
 var dataExplorerConfig2 = {
     "guppy": {
       "indices": [
@@ -64,7 +67,7 @@ var dataExplorerConfig2 = {
         "fields": ["ethnicity", "gender"]
       }]
     }
-  };
+};
 
 function calculateSummaryCounts(field, filteredData) {
   const values = [];
@@ -99,6 +102,18 @@ function checkIfFiltersApply(filtersApplied, row) {
     }
   }
   return true;
+}
+
+function addCountsToSectionList(filterSections) {
+  for (let k = 0; k < filterSections.length; k += 1) {
+    const options = filterSections[k].options.slice();
+    const n = Object.keys(options).length;
+    for (let m = 0; m < n; m += 1) {
+      options[m].count = 1;
+    }
+    filterSections[k].options = options;
+  }
+  return filterSections
 }
 
 class Explorer extends React.Component {
@@ -177,6 +192,7 @@ class Explorer extends React.Component {
   initializeData = () => {
     this.allData = [];
     this.obtainParentCommonsStudies().then((result) => {
+      console.log('parentCommonsData: ', parentCommonsData);
       const parentCommonsData = result.data.dataset;
       this.allData = this.allData.concat(parentCommonsData);
       return this.obtainAllSubcommonsData();
@@ -202,13 +218,22 @@ class Explorer extends React.Component {
   obtainParentCommonsStudies = async () => {
     const queryString = `
       query {
-        dataset(first: 10000) {
-          dataset_name
-          supported_data_resource
-          auth_resource_path
-          research_focus
-          link
-          description
+        subject(first: 10000) {
+          submitter_id
+          race
+          gender
+          ethnicity
+          species
+          ageUnit
+          age
+          phenotype
+          strain
+          armAccession
+          studyAccession
+          filePath
+          fileDetail
+          submitter_id
+          subjectAccession
         }
       }
     `;
@@ -246,21 +271,15 @@ class Explorer extends React.Component {
     this.tableRef.current.updateData(filteredData);
   }
 
-  addCountsToSectionList(filterSections) {
-    for (let k = 0; k < filterSections.length; k += 1) {
-      const options = filterSections[k].options.slice();
-      const n = Object.keys(options).length;
-      for (let m = 0; m < n; m += 1) {
-        options[m].count = 1;
-      }
-      filterSections[k].options = options;
-    }
-    return filterSections
-  }
+  handleReceiveNewAggsData = (newAggsData) => {
+    console.log('new aggsdata: ', newAggsData);
+    this.setState({ aggsData: newAggsData });
+  };
 
   render() {
-    const projectSections = this.addCountsToSectionList(dataExplorerConfig2.projectSections);
-    const subjectSections = this.addCountsToSectionList(dataExplorerConfig2.subjectSections);
+    // const chartData = this.buildChartData(this.props.aggsData, this.props.chartConfig, this.props.filter);
+    const projectSections = addCountsToSectionList(dataExplorerConfig2.projectSections);
+    const subjectSections = addCountsToSectionList(dataExplorerConfig2.subjectSections);
 
     const fieldMapping = dataExplorerConfig2.fieldMapping;
 
@@ -294,31 +313,39 @@ class Explorer extends React.Component {
         <div className='ndef-page-title'>
           Data Explorer
         </div>
-        <div className='explorer'>
-          <div className='explorer__filters'>
-            <FilterGroup
-              tabs={tabs}
-              filterConfig={dataExplorerConfig2.filterConfig}
-              onFilterChange={e => this.handleFilterChange(e)}
-            />
+        <GuppyWrapper
+            filterConfig={dataExplorerConfig2.filterConfig}
+            guppyConfig={{ type: 'subject', ...dataExplorerConfig2 }}
+            onReceiveNewAggsData={this.handleReceiveNewAggsData}
+            onFilterChange={this.handleFilterChange}
+            rawDataFields={tableConfig.fields}
+            accessibleFieldCheckList={tableConfig.fields}
+            >
+          <div className='explorer'>
+            <div className='guppy-explorer-visualization__charts'>
+              <DataSummaryCardGroup summaryItems={summaries} connected />
+            </div>
+            <div className='explorer__filters'>
+              <FilterGroup
+                tabs={tabs}
+                filterConfig={dataExplorerConfig2.filterConfig}
+                onFilterChange={e => this.handleFilterChange(e)}
+              />
+            </div>
+            <div className='explorer__visualizations'>
+              <ExplorerCharts/>
+              <ExplorerTable
+                ref={this.tableRef}
+                className='guppy-explorer-visualization__table'
+                tableConfig={tableConfig}
+                filteredData={this.state.filteredData}
+                totalCount={totalCount}
+                guppyConfig={dataExplorerConfig2}
+                isLocked={false}
+              />
+            </div>
           </div>
-          <div className='explorer__visualizations'>
-            {
-              <div className='guppy-explorer-visualization__charts'>
-                <DataSummaryCardGroup summaryItems={summaries} connected />
-              </div>
-            }
-            <ExplorerTable
-              ref={this.tableRef}
-              className='guppy-explorer-visualization__table'
-              tableConfig={tableConfig}
-              filteredData={this.state.filteredData}
-              totalCount={totalCount}
-              guppyConfig={dataExplorerConfig2}
-              isLocked={false}
-            />
-          </div>
-        </div>
+        </GuppyWrapper>
       </React.Fragment>
     );
   }
