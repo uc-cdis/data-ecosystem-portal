@@ -5,8 +5,8 @@
       "name": "NDC: TB Data Commons"
     }, 
     {
-      "URL": "https://daids.niaiddata.org/",
-      "name": "NDC: DAIDs Data Commons"
+      "URL": "https://aids.niaiddata.org/",
+      "name": "NDC: AIDs Data Commons"
     }
   ],
   "gaTrackingId": "undefined",
@@ -181,49 +181,59 @@
     "guppy": {
       "indices": [
         {
-          "index": "dataset_browser",
-          "type": "dataset"
+          "index": "data_explorer",
+          "type": "subject"
         }
       ],
       "auth_filter_field": "auth_resource_path"
     },
-    "filterSections": [
+    "projectSections": [
       { 
-        "title": "Supported Data Resources", 
+        "title": "Project/Dataset", 
         "options": [
-          { "text": "NDC: TB Data Commons", "filterType": "singleSelect"},
-          { "text": "ImmPort", "filterType": "singleSelect"},
-          { "text": "NDC: DAIDs Data Commons", "filterType": "singleSelect"}
+          { "text": "MARCS", "filterType": "singleSelect"},
+          { "text": "WIHS", "filterType": "singleSelect"},
+          { "text": "DEPOT: DAIDs Data Commons", "filterType": "singleSelect"},
+          { "text": "ImmPort", "filterType": "singleSelect"}
+        ]
+      }
+    ],
+    "subjectSections": [
+      { 
+        "title": "Ethnicity", 
+        "options": [
+          { "text": "Hispanic or Latino", "filterType": "singleSelect"},
+          { "text": "Not Hispanic or Latino", "filterType": "singleSelect"}
         ]
       },
       { 
-        "title": "Research Focus",
+        "title": "Gender",
         "options": [
-          { "text": "AIDS", "filterType": "singleSelect"},
-          { "text": "TB", "filterType": "singleSelect"},
-          { "text": "Immune Response", "filterType": "singleSelect"},
-          { "text": "Allergy", "filterType": "singleSelect"},
-          { "text": "Atopy", "filterType": "singleSelect"},
-          { "text": "Infection Response", "filterType": "singleSelect"},
-          { "text": "Vaccine Response", "filterType": "singleSelect"},
-          { "text": "Transplantation", "filterType": "singleSelect"},
-          { "text": "Oncology", "filterType": "singleSelect"},
-          { "text": "Autoimmune", "filterType": "singleSelect"},
-          { "text": "Preterm Birth", "filterType": "singleSelect"}
+          { "text": "Male", "filterType": "singleSelect"},
+          { "text": "Female", "filterType": "singleSelect"},
+          { "text": "Not Reported", "filterType": "singleSelect"}
         ]
       }
     ],
     "fieldMapping" : [
-      { "field": "link", "name": "View" },
-      { "field": "dataset_name", "name": "Dataset" },
-      { "field": "supported_data_resource", "name": "Supported Data Resource" },
-      { "field": "research_focus", "name": "Research Focus" },
-      { "field": "description", "name": "Description of Dataset" }
+      { "field": "race", "name": "Race" },
+      { "field": "gender", "name": "Gender" },
+      { "field": "ethnicity", "name": "Ethnicity" },
+      { "field": "species", "name": "Species" },
+      { "field": "age", "name": "Age" },
+      { "field": "phenotype", "name": "Phenotype" },
+      { "field": "strain", "name": "Strain" },
+      { "field": "studyAccession", "name": "Study Accession" },
+      { "field": "submitter_id", "name": "Submitter ID" }
     ],
     "filterConfig": {
       "tabs": [{
-        "title": "Filters",
-        "fields": ["supported_data_resource", "research_focus"]
+        "title": "Project",
+        "fields": ["dataset_name", "research_focus"]
+      }, 
+      {
+        "title": "Subject",
+        "fields": ["ethnicity", "gender"]
       }]
     }
   }

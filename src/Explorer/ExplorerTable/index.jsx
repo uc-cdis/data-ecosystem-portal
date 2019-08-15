@@ -110,8 +110,8 @@ class ExplorerTable extends React.Component {
         Cell: row => (field === 'link' ?
           <IconicLink
             link={row.value}
-            className='explorer-link'
-            buttonClassName='explorer-link-button'
+            className='dataset-browser-link'
+            buttonClassName='dataset-browser-link-button'
             icon='exit'
             dictIcons={dictIcons}
             iconColor='#606060'
@@ -129,9 +129,9 @@ class ExplorerTable extends React.Component {
     const start = (this.state.currentPage * this.state.pageSize) + 1;
     const end = Math.min((this.state.currentPage + 1) * this.state.pageSize, totalCount);
     return (
-      <div className={`explorer-table ${this.props.className}`}>
+      <div className={`dataset-browser-table ${this.props.className}`}>
         {(this.props.isLocked) ? <React.Fragment />
-          : <p className='explorer-table__description'>{`Showing ${start} - ${end} of ${totalCount} matching datasets`}</p> }
+          : <p className='dataset-browser-table__description'>{`Showing ${start} - ${end} of ${totalCount} matching datasets`}</p> }
         <ReactTable
           columns={columnsConfig}
           manual

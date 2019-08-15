@@ -3,21 +3,20 @@ import FilterGroup from '@gen3/ui-component/dist/components/filters/FilterGroup'
 import FilterList from '@gen3/ui-component/dist/components/filters/FilterList';
 import { config } from '../params';
 import ExplorerTable from './ExplorerTable/';
-import ExplorerCharts from './ExplorerCharts/';
 import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import './Explorer.less';
 import { fetchWithCreds } from '../actions';
 import { guppyGraphQLUrl } from '../configs';
-
-import GuppyWrapper from '@gen3/guppy/dist/components/GuppyWrapper';
-import { guppyUrl, tierAccessLevel, tierAccessLimit } from '../localconf';
+import { askGuppyForAggregationData } from '@gen3/guppy/dist/components/Utils/queries';
+import SummaryChartGroup from '@gen3/ui-component/dist/components/charts/SummaryChartGroup';
+import { components } from '../params';
 
 var dataExplorerConfig2 = {
     "guppy": {
       "indices": [
         {
-          "index": "dataset_browser",
-          "type": "dataset"
+          "index": "data_explorer",
+          "type": "subject"
         }
       ],
       "auth_filter_field": "auth_resource_path"
@@ -51,11 +50,15 @@ var dataExplorerConfig2 = {
       }
     ],
     "fieldMapping" : [
-      { "field": "link", "name": "View" },
-      { "field": "dataset_name", "name": "Dataset" },
-      { "field": "supported_data_resource", "name": "Supported Data Resource" },
-      { "field": "research_focus", "name": "Research Focus" },
-      { "field": "description", "name": "Description of Dataset" }
+      { "field": "race", "name": "Race" },
+      { "field": "gender", "name": "Gender" },
+      { "field": "ethnicity", "name": "Ethnicity" },
+      { "field": "species", "name": "Species" },
+      { "field": "age", "name": "Age" },
+      { "field": "phenotype", "name": "Phenotype" },
+      { "field": "strain", "name": "Strain" },
+      { "field": "studyAccession", "name": "Study Accession" },
+      { "field": "submitter_id", "name": "Submitter ID" }
     ],
     "filterConfig": {
       "tabs": [{
@@ -68,6 +71,49 @@ var dataExplorerConfig2 = {
       }]
     }
 };
+
+const fieldMapping = dataExplorerConfig2.fieldMapping;
+
+const fields = [];
+for (let j = 0; j < fieldMapping.length; j += 1) {
+  fields.push(fieldMapping[j].field);
+}
+const tableConfig = { fields };
+
+const chartConfig = { 
+  "project_id": {
+    "chartType": "count",
+    "title": "Projects"
+  },
+  "subject_id": {
+    "chartType": "count",
+    "title": "Subjects"
+  },
+  "gender": {
+    "chartType": "pie",
+    "title": "Gender"
+  },
+  "race": {
+    "chartType": "bar",
+    "title": "Race"
+  },
+  "ethnicity": {
+    "chartType": "bar",
+    "title": "Ethnicity"
+  }
+};
+
+function addCountsToSectionList(filterSections) {
+  for (let k = 0; k < filterSections.length; k += 1) {
+    const options = filterSections[k].options.slice();
+    const n = Object.keys(options).length;
+    for (let m = 0; m < n; m += 1) {
+      options[m].count = 1;
+    }
+    filterSections[k].options = options;
+  }
+  return filterSections
+}
 
 function calculateSummaryCounts(field, filteredData) {
   const values = [];
@@ -104,18 +150,6 @@ function checkIfFiltersApply(filtersApplied, row) {
   return true;
 }
 
-function addCountsToSectionList(filterSections) {
-  for (let k = 0; k < filterSections.length; k += 1) {
-    const options = filterSections[k].options.slice();
-    const n = Object.keys(options).length;
-    for (let m = 0; m < n; m += 1) {
-      options[m].count = 1;
-    }
-    filterSections[k].options = options;
-  }
-  return filterSections
-}
-
 class Explorer extends React.Component {
   constructor(props) {
     super(props);
@@ -129,6 +163,7 @@ class Explorer extends React.Component {
         supported_data_resource: 0,
         dataset_name: 0,
       },
+      chartData: { }
     };
     this.filterGroupRef = React.createRef();
     this.tableRef = React.createRef();
@@ -144,10 +179,21 @@ class Explorer extends React.Component {
     const graphModelQueryURL = 'api/v0/submission/graphql';
     const queryString = `
       {
-        study {
-          study_description
-          submitter_id
-          study_design
+        subject {
+          race
+          ethnicity
+          gender
+          spdecies
+          ageUnit
+          age
+          phenotype
+          strain
+          armAccession
+          studyAccession
+          filePath
+          fileDetail
+          submitter_Id
+          subjectAccession
         }
       }
     `;
@@ -189,10 +235,45 @@ class Explorer extends React.Component {
     return Promise.all(promiseArray);
   }
 
+  buildCharts = (aggsData, chartConfig) => {
+    const summaries = [];
+    const countItems = [];
+    const stackedBarCharts = [];
+    countItems.push({
+      label: 'Total Number of Subjects', // this.props.nodeCountTitle,
+      value: this.state.filteredData.length //this.props.totalCount,
+    });
+    Object.keys(chartConfig).forEach((field) => {
+      if (!aggsData || !aggsData[field] || !aggsData[field].histogram) return;
+      const { histogram } = aggsData[field];
+      switch (chartConfig[field].chartType) {
+      case 'pie':
+      case 'bar':
+      case 'stackedBar': {
+        const dataItem = {
+          type: chartConfig[field].chartType,
+          title: chartConfig[field].title,
+          data: histogram.map(i => ({ name: i.key, value: i.count })),
+        };
+        if (chartConfig[field].chartType === 'stackedBar') {
+          stackedBarCharts.push(dataItem);
+        } else {
+          summaries.push(dataItem);
+        }
+        break;
+      }
+      default:
+        throw new Error(`Invalid chartType ${chartConfig[field].chartType}`);
+      }
+    });
+    return { summaries, countItems, stackedBarCharts };
+  }
+
   initializeData = () => {
     this.allData = [];
+    var _this = this;
     this.obtainParentCommonsStudies().then((result) => {
-      console.log('parentCommonsData: ', parentCommonsData);
+      console.log('data: ', result);
       const parentCommonsData = result.data.dataset;
       this.allData = this.allData.concat(parentCommonsData);
       return this.obtainAllSubcommonsData();
@@ -206,23 +287,35 @@ class Explorer extends React.Component {
         filteredData: this.allData,
         rawData: this.allData,
         counts: {
-          supported_data_resource: calculateSummaryCounts('supported_data_resource', this.allData),
-          dataset_name: calculateSummaryCounts('dataset_name', this.allData),
+          supported_data_resource: 0, // calculateSummaryCounts('supported_data_resource', this.allData),
+          dataset_name: 0 //calculateSummaryCounts('dataset_name', this.allData),
         },
       });
 
-      this.tableRef.current.updateData(this.allData);
+      // this.tableRef.current.updateData(this.allData);
+    }).then(function() {
+       askGuppyForAggregationData(
+        '/guppy/',
+        'subject',
+        fields,
+        {},
+        '',
+      ).then((res) => {
+          console.log('yuh: ', res);
+          const chartData = _this.buildCharts(res.data._aggregation.subject, chartConfig);
+          _this.setState({'chartData': chartData});
+          console.log('chartData: ', chartData);
+        });
     });
   }
 
   obtainParentCommonsStudies = async () => {
     const queryString = `
-      query {
+      {
         subject(first: 10000) {
-          submitter_id
           race
-          gender
           ethnicity
+          gender
           species
           ageUnit
           age
@@ -268,20 +361,14 @@ class Explorer extends React.Component {
         },
     });
 
-    this.tableRef.current.updateData(filteredData);
+    // this.tableRef.current.updateData(filteredData);
   }
 
-  handleReceiveNewAggsData = (newAggsData) => {
-    console.log('new aggsdata: ', newAggsData);
-    this.setState({ aggsData: newAggsData });
-  };
-
   render() {
-    // const chartData = this.buildChartData(this.props.aggsData, this.props.chartConfig, this.props.filter);
+    console.log('rendering charts', this.state.chartData);
+
     const projectSections = addCountsToSectionList(dataExplorerConfig2.projectSections);
     const subjectSections = addCountsToSectionList(dataExplorerConfig2.subjectSections);
-
-    const fieldMapping = dataExplorerConfig2.fieldMapping;
 
     const tabs = [
       <FilterList key={0} sections={projectSections} />,
@@ -302,50 +389,70 @@ class Explorer extends React.Component {
 
     const totalCount = this.state.filteredData.length;
 
-    const fields = [];
-    for (let j = 0; j < fieldMapping.length; j += 1) {
-      fields.push(fieldMapping[j].field);
+    if (this.props.onFilterChange) {
+      this.props.onFilterChange(filterResults, this.state.accessibility);
     }
-    const tableConfig = { fields };
+
+    const barChartColor = components.categorical2Colors ? components.categorical2Colors[0] : null;
 
     return (
       <React.Fragment>
         <div className='ndef-page-title'>
           Data Explorer
         </div>
-        <GuppyWrapper
-            filterConfig={dataExplorerConfig2.filterConfig}
-            guppyConfig={{ type: 'subject', ...dataExplorerConfig2 }}
-            onReceiveNewAggsData={this.handleReceiveNewAggsData}
-            onFilterChange={this.handleFilterChange}
-            rawDataFields={tableConfig.fields}
-            accessibleFieldCheckList={tableConfig.fields}
-            >
-          <div className='explorer'>
-            <div className='guppy-explorer-visualization__charts'>
-              <DataSummaryCardGroup summaryItems={summaries} connected />
-            </div>
-            <div className='explorer__filters'>
-              <FilterGroup
-                tabs={tabs}
-                filterConfig={dataExplorerConfig2.filterConfig}
-                onFilterChange={e => this.handleFilterChange(e)}
-              />
-            </div>
-            <div className='explorer__visualizations'>
-              <ExplorerCharts/>
-              <ExplorerTable
-                ref={this.tableRef}
-                className='guppy-explorer-visualization__table'
-                tableConfig={tableConfig}
-                filteredData={this.state.filteredData}
-                totalCount={totalCount}
-                guppyConfig={dataExplorerConfig2}
-                isLocked={false}
-              />
-            </div>
+        <div className='explorer'>
+          <div className='explorer__filters'>
+            <FilterGroup
+              tabs={tabs}
+              filterConfig={dataExplorerConfig2.filterConfig}
+              onFilterChange={e => this.handleFilterChange(e)}
+            />
           </div>
-        </GuppyWrapper>
+          <div className='explorer__visualizations'>
+            {
+              <div className='guppy-explorer-visualization__charts'>
+                <DataSummaryCardGroup summaryItems={summaries} connected />
+              </div>
+            }
+
+            {
+              this.state.chartData.countItems && this.state.chartData.countItems.length > 0 && (
+                <div className='guppy-explorer-visualization__summary-cards'>
+                  <DataSummaryCardGroup summaryItems={this.state.chartData.countItems} connected />
+                </div>
+              )
+            }
+            {
+              this.state.chartData.summaries && this.state.chartData.summaries.length > 0 && (
+                <div className='guppy-explorer-visualization__charts'>
+                  <SummaryChartGroup
+                    summaries={this.state.chartData.summaries}
+                    lockMessage={'This chart is locked.'}
+                    barChartColor={barChartColor}
+                    useCustomizedColorMap={!!components.categorical9Colors}
+                    customizedColorMap={components.categorical9Colors || []}
+                  />
+                </div>
+              )
+            }
+            {
+              this.state.chartData.stackedBarCharts && this.state.chartData.stackedBarCharts.map((chart, i) => (
+                <PercentageStackedBarChart
+                  key={i}
+                  data={chart.data}
+                  title={chart.title}
+                  width='100%'
+                  lockMessage={'This chart is locked.'}
+                  useCustomizedColorMap={!!components.categorical9Colors}
+                  customizedColorMap={components.categorical9Colors || []}
+                />
+              ),
+              )
+            }
+
+            
+          </div>
+        </div>
       </React.Fragment>
     );
   }
