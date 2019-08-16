@@ -35,6 +35,7 @@ var dataExplorerConfig2 = {
     "subjectSections": [
       { 
         "title": "Ethnicity", 
+        "field": "ethnicity",
         "options": [
           { "text": "Hispanic or Latino", "filterType": "singleSelect"},
           { "text": "Not Hispanic or Latino", "filterType": "singleSelect"}
@@ -42,11 +43,22 @@ var dataExplorerConfig2 = {
       },
       { 
         "title": "Gender",
+        "field": "gender",
         "options": [
           { "text": "Male", "filterType": "singleSelect"},
           { "text": "Female", "filterType": "singleSelect"},
           { "text": "Not Reported", "filterType": "singleSelect"}
         ]
+      },
+      { 
+        "title": "Race",
+        "field": "race",
+        "options": []
+      },
+      { 
+        "title": "Species",
+        "field": "species",
+        "options": []
       }
     ],
     "fieldMapping" : [
@@ -68,7 +80,7 @@ var dataExplorerConfig2 = {
       }, 
       {
         "title": "Subject",
-        "fields": ["ethnicity", "gender"]
+        "fields": ["ethnicity", "gender", "race", "species"]
       }]
     }
 };
@@ -164,7 +176,8 @@ class Explorer extends React.Component {
         supported_data_resource: 0,
         dataset_name: 0,
       },
-      chartData: { }
+      chartData: { },
+      dataExplorerConfig: dataExplorerConfig2
     };
     this.filterGroupRef = React.createRef();
     this.tableRef = React.createRef();
@@ -271,6 +284,20 @@ class Explorer extends React.Component {
     return { summaries, countItems, stackedBarCharts };
   }
 
+  buildFilterFromData = (data, fieldName) => {
+    const uniqueValues = [...new Set(data.map(x => x[fieldName]))];
+    const options = [];
+    uniqueValues.forEach((x) => {
+      if(!x) return;
+      options.push({ "text": x, "filterType": "singleSelect", "count": 0});
+    });
+    return options.sort(function(a,b) {
+      if(a.text > b.text) return 1;
+      if(a.text < b.text) return -1;
+      return 0;
+    });
+  }
+
   initializeData = () => {
     this.allData = [];
     var _this = this;
@@ -284,6 +311,17 @@ class Explorer extends React.Component {
       //   this.allData = this.allData.concat(data);
       // }
 
+      const dataExplorerConfig = this.state.dataExplorerConfig;
+      const currentFilters = dataExplorerConfig.subjectSections;
+      currentFilters.forEach((x, index, theArray) => {
+        const options = this.buildFilterFromData(this.allData, x.field);
+        theArray[index].options = options;
+      });
+      dataExplorerConfig.subjectSections = currentFilters;
+      console.log('301:', dataExplorerConfig);
+      console.log('303:', currentFilters);
+
+
       this.setState({
         filteredData: this.allData,
         rawData: this.allData,
@@ -291,6 +329,7 @@ class Explorer extends React.Component {
           supported_data_resource: 0, // calculateSummaryCounts('supported_data_resource', this.allData),
           dataset_name: 0 //calculateSummaryCounts('dataset_name', this.allData),
         },
+        dataExplorerConfig: dataExplorerConfig
       });
 
       this.tableRef.current.updateData(this.allData);
@@ -369,6 +408,7 @@ class Explorer extends React.Component {
   }
 
   handleFilterChange(filtersApplied) {
+    console.log('389');
     const rawData = this.state.rawData;
     const filteredData = [];
     for (let j = 0; j < rawData.length; j += 1) {
@@ -391,8 +431,9 @@ class Explorer extends React.Component {
   }
 
   render() {
-    const projectSections = addCountsToSectionList(dataExplorerConfig2.projectSections);
-    const subjectSections = addCountsToSectionList(dataExplorerConfig2.subjectSections);
+    console.log('rerendering with ', this.state.dataExplorerConfig);
+    const projectSections = addCountsToSectionList(this.state.dataExplorerConfig.projectSections);
+    const subjectSections = addCountsToSectionList(this.state.dataExplorerConfig.subjectSections);
 
     const tabs = [
       <FilterList key={0} sections={projectSections} />,
@@ -416,7 +457,7 @@ class Explorer extends React.Component {
           <div className='explorer__filters'>
             <FilterGroup
               tabs={tabs}
-              filterConfig={dataExplorerConfig2.filterConfig}
+              filterConfig={this.state.dataExplorerConfig.filterConfig}
               onFilterChange={e => this.handleFilterChange(e)}
             />
           </div>
@@ -463,7 +504,7 @@ class Explorer extends React.Component {
               tableConfig={tableConfig}
               filteredData={this.state.filteredData}
               totalCount={totalCount}
-              guppyConfig={dataExplorerConfig2}
+              guppyConfig={this.state.dataExplorerConfig}
               isLocked={false}
             />
           </div>
