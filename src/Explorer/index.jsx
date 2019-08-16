@@ -23,7 +23,8 @@ var dataExplorerConfig2 = {
     },
     "projectSections": [
       { 
-        "title": "Project/Dataset", 
+        "title": "Project/Dataset",
+        "field": "dataset",
         "options": [
           { "text": "MARCS", "filterType": "singleSelect"},
           { "text": "WIHS", "filterType": "singleSelect"},
@@ -75,12 +76,12 @@ var dataExplorerConfig2 = {
     ],
     "filterConfig": {
       "tabs": [{
-        "title": "Project",
-        "fields": ["dataset", "research_focus"]
-      }, 
-      {
         "title": "Subject",
         "fields": ["ethnicity", "gender", "race", "species"]
+      },
+      {
+        "title": "Project",
+        "fields": ["dataset", "research_focus"]
       }]
     }
 };
@@ -177,7 +178,8 @@ class Explorer extends React.Component {
         dataset_name: 0,
       },
       chartData: { },
-      dataExplorerConfig: dataExplorerConfig2
+      dataExplorerConfig: dataExplorerConfig2,
+      datasetsCount: 0
     };
     this.filterGroupRef = React.createRef();
     this.tableRef = React.createRef();
@@ -255,8 +257,12 @@ class Explorer extends React.Component {
     const countItems = [];
     const stackedBarCharts = [];
     countItems.push({
-      label: 'Total Number of Subjects', // this.props.nodeCountTitle,
+      label: 'Subjects', // this.props.nodeCountTitle,
       value: this.state.filteredData.length //this.props.totalCount,
+    });
+    countItems.push({
+      label: 'Datasets', // this.props.nodeCountTitle,
+      value: this.state.datasetsCount //this.props.totalCount,
     });
     Object.keys(chartConfig).forEach((field) => {
       if (!aggsData || !aggsData[field] || !aggsData[field].histogram) return;
@@ -312,14 +318,23 @@ class Explorer extends React.Component {
       // }
 
       const dataExplorerConfig = this.state.dataExplorerConfig;
-      const currentFilters = dataExplorerConfig.subjectSections;
-      currentFilters.forEach((x, index, theArray) => {
+      const currentSubjectFilters = dataExplorerConfig.subjectSections;
+      currentSubjectFilters.forEach((x, index, theArray) => {
         const options = this.buildFilterFromData(this.allData, x.field);
         theArray[index].options = options;
       });
-      dataExplorerConfig.subjectSections = currentFilters;
-      console.log('301:', dataExplorerConfig);
-      console.log('303:', currentFilters);
+      dataExplorerConfig.subjectSections = currentSubjectFilters;
+      
+      const currentProjectFilters = dataExplorerConfig.projectSections;
+      let datasetsCount = 0;
+      currentProjectFilters.forEach((x, index, theArray) => {
+        const options = this.buildFilterFromData(this.allData, x.field);
+        theArray[index].options = options;
+        if(x.field == 'dataset') {
+          datasetsCount = options.length;
+        }
+      });
+      dataExplorerConfig.projectSections = currentProjectFilters;
 
 
       this.setState({
@@ -329,7 +344,8 @@ class Explorer extends React.Component {
           supported_data_resource: 0, // calculateSummaryCounts('supported_data_resource', this.allData),
           dataset_name: 0 //calculateSummaryCounts('dataset_name', this.allData),
         },
-        dataExplorerConfig: dataExplorerConfig
+        dataExplorerConfig: dataExplorerConfig,
+        datasetsCount: datasetsCount
       });
 
       this.tableRef.current.updateData(this.allData);
@@ -408,7 +424,6 @@ class Explorer extends React.Component {
   }
 
   handleFilterChange(filtersApplied) {
-    console.log('389');
     const rawData = this.state.rawData;
     const filteredData = [];
     for (let j = 0; j < rawData.length; j += 1) {
@@ -431,13 +446,12 @@ class Explorer extends React.Component {
   }
 
   render() {
-    console.log('rerendering with ', this.state.dataExplorerConfig);
     const projectSections = addCountsToSectionList(this.state.dataExplorerConfig.projectSections);
     const subjectSections = addCountsToSectionList(this.state.dataExplorerConfig.subjectSections);
 
     const tabs = [
-      <FilterList key={0} sections={projectSections} />,
-      <FilterList key={1} sections={subjectSections} />
+      <FilterList key={0} sections={subjectSections} />,
+      <FilterList key={1} sections={projectSections} />
     ];
 
     const totalCount = this.state.filteredData.length;
