@@ -6,7 +6,7 @@ import ExplorerTable from './ExplorerTable/';
 import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import './Explorer.less';
 import { fetchWithCreds } from '../actions';
-import { guppyGraphQLUrl } from '../configs';
+import { guppyDownloadUrl } from '../configs';
 import { askGuppyForAggregationData } from '@gen3/guppy/dist/components/Utils/queries';
 import SummaryChartGroup from '@gen3/ui-component/dist/components/charts/SummaryChartGroup';
 import { components } from '../params';
@@ -50,20 +50,21 @@ var dataExplorerConfig2 = {
       }
     ],
     "fieldMapping" : [
+      { "field": "dataset", "name": "Dataset" },
+      { "field": "studyAccession", "name": "Study Accession" },
+      { "field": "phenotype", "name": "Phenotype" },
+      { "field": "age", "name": "Age" },
       { "field": "race", "name": "Race" },
       { "field": "gender", "name": "Gender" },
       { "field": "ethnicity", "name": "Ethnicity" },
-      { "field": "species", "name": "Species" },
-      { "field": "age", "name": "Age" },
-      { "field": "phenotype", "name": "Phenotype" },
       { "field": "strain", "name": "Strain" },
-      { "field": "studyAccession", "name": "Study Accession" },
+      { "field": "species", "name": "Species" },
       { "field": "submitter_id", "name": "Submitter ID" }
     ],
     "filterConfig": {
       "tabs": [{
         "title": "Project",
-        "fields": ["dataset_name", "research_focus"]
+        "fields": ["dataset", "research_focus"]
       }, 
       {
         "title": "Subject",
@@ -194,6 +195,7 @@ class Explorer extends React.Component {
           fileDetail
           submitter_Id
           subjectAccession
+          dataset
         }
       }
     `;
@@ -272,16 +274,15 @@ class Explorer extends React.Component {
   initializeData = () => {
     this.allData = [];
     var _this = this;
-    this.obtainParentCommonsStudies().then((result) => {
-      console.log('data: ', result);
-      const parentCommonsData = result.data.dataset;
+    this.obtainParentCommonsSubjects().then((result) => {
+      const parentCommonsData = result; //.data.subject;
       this.allData = this.allData.concat(parentCommonsData);
       return this.obtainAllSubcommonsData();
     }).then((subCommonsData) => {
-      const data = subCommonsData.flat();
-      if (data.length > 0) {
-        this.allData = this.allData.concat(data);
-      }
+      // const data = subCommonsData.flat();
+      // if (data.length > 0) {
+      //   this.allData = this.allData.concat(data);
+      // }
 
       this.setState({
         filteredData: this.allData,
@@ -292,7 +293,7 @@ class Explorer extends React.Component {
         },
       });
 
-      // this.tableRef.current.updateData(this.allData);
+      this.tableRef.current.updateData(this.allData);
     }).then(function() {
        askGuppyForAggregationData(
         '/guppy/',
@@ -301,15 +302,13 @@ class Explorer extends React.Component {
         {},
         '',
       ).then((res) => {
-          console.log('yuh: ', res);
           const chartData = _this.buildCharts(res.data._aggregation.subject, chartConfig);
           _this.setState({'chartData': chartData});
-          console.log('chartData: ', chartData);
         });
     });
   }
 
-  obtainParentCommonsStudies = async () => {
+  obtainParentCommonsSubjects = async () => {
     const queryString = `
       {
         subject(first: 10000) {
@@ -327,18 +326,45 @@ class Explorer extends React.Component {
           fileDetail
           submitter_id
           subjectAccession
+          dataset
         }
       }
     `;
+    
+    const queryObject = {
+      "type": "subject",
+      "fields": [
+        "race",
+        "ethnicity",
+        "gender",
+        "species",
+        "ageUnit",
+        "age",
+        "phenotype",
+        "strain",
+        "armAccession",
+        "studyAccession",
+        "filePath",
+        "fileDetail",
+        "submitter_id",
+        "subjectAccession",
+        "dataset"
+      ]
+    };
+
 
     return fetchWithCreds({
-      path: `${guppyGraphQLUrl}`,
-      body: JSON.stringify({
-        query: queryString,
-      }),
+      path: `${guppyDownloadUrl}`, // `${guppyDownloadUrl}`,
+      body: JSON.stringify(queryObject),
+
+      // JSON.stringify({
+      //   query: queryString,
+      // }),
       method: 'POST',
     }).then(
-      ({ status, data }) => data, // eslint-disable-line no-unused-vars
+      ({ status, data }) => { 
+        return data; // eslint-disable-line no-unused-vars
+      }
     );
   }
 
@@ -353,7 +379,7 @@ class Explorer extends React.Component {
     }
 
     this.setState({
-      filteredData,
+      filteredData: filteredData,
       counts:
         {
           supported_data_resource: calculateSummaryCounts('supported_data_resource', filteredData),
@@ -361,12 +387,10 @@ class Explorer extends React.Component {
         },
     });
 
-    // this.tableRef.current.updateData(filteredData);
+    this.tableRef.current.updateData(filteredData);
   }
 
   render() {
-    console.log('rendering charts', this.state.chartData);
-
     const projectSections = addCountsToSectionList(dataExplorerConfig2.projectSections);
     const subjectSections = addCountsToSectionList(dataExplorerConfig2.subjectSections);
 
@@ -374,18 +398,6 @@ class Explorer extends React.Component {
       <FilterList key={0} sections={projectSections} />,
       <FilterList key={1} sections={subjectSections} />
     ];
-
-    const supportedDataResourceCount = {
-      label: 'Supported Data Resources',
-      value: this.state.counts.supported_data_resource,
-    };
-
-    const datasetCount = {
-      label: 'Datasets',
-      value: this.state.counts.dataset_name,
-    };
-
-    const summaries = [supportedDataResourceCount, datasetCount];
 
     const totalCount = this.state.filteredData.length;
 
@@ -410,12 +422,6 @@ class Explorer extends React.Component {
           </div>
           <div className='explorer__visualizations'>
             {
-              <div className='guppy-explorer-visualization__charts'>
-                <DataSummaryCardGroup summaryItems={summaries} connected />
-              </div>
-            }
-
-            {
               this.state.chartData.countItems && this.state.chartData.countItems.length > 0 && (
                 <div className='guppy-explorer-visualization__summary-cards'>
                   <DataSummaryCardGroup summaryItems={this.state.chartData.countItems} connected />
@@ -431,6 +437,7 @@ class Explorer extends React.Component {
                     barChartColor={barChartColor}
                     useCustomizedColorMap={!!components.categorical9Colors}
                     customizedColorMap={components.categorical9Colors || []}
+                    maximumDisplayItem={6}
                   />
                 </div>
               )
@@ -445,12 +452,20 @@ class Explorer extends React.Component {
                   lockMessage={'This chart is locked.'}
                   useCustomizedColorMap={!!components.categorical9Colors}
                   customizedColorMap={components.categorical9Colors || []}
+                  maximumDisplayItem={6}
                 />
               ),
               )
             }
-
-            
+            <ExplorerTable
+              ref={this.tableRef}
+              className='guppy-explorer-visualization__table'
+              tableConfig={tableConfig}
+              filteredData={this.state.filteredData}
+              totalCount={totalCount}
+              guppyConfig={dataExplorerConfig2}
+              isLocked={false}
+            />
           </div>
         </div>
       </React.Fragment>

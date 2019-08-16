@@ -9,7 +9,7 @@ import LockIcon from '../../img/icons/lock.svg';
 import dictIcons from '../../img/icons/index';
 
 function truncateTextIfNecessary(text) {
-  if (!text || text.length < 405) {
+  if (typeof text !== 'string' || !text || text.length < 405) {
     return text;
   }
   return `${text.slice(0, 405)}...`;
@@ -33,7 +33,7 @@ class ExplorerTable extends React.Component {
     }
 
     // some magic numbers that work fine for table columns width
-    const minWidth = 150;
+    const minWidth = 100;
     const maxWidth = 300;
     const letterWidth = 8;
     const spacing = 20;
@@ -49,7 +49,8 @@ class ExplorerTable extends React.Component {
       const len = str ? str.length : 0;
       maxLetterLen = len > maxLetterLen ? len : maxLetterLen;
     });
-    const resWidth = Math.min((maxLetterLen * letterWidth) + spacing, maxWidth);
+    let resWidth = Math.min((maxLetterLen * letterWidth) + spacing, maxWidth);
+    resWidth = Math.max(resWidth, minWidth);
 
     return resWidth;
   }
