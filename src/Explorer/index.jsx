@@ -194,6 +194,7 @@ class Explorer extends React.Component {
   }
 
   obtainSubcommonsData = (subcommonsConfig) => {
+    console.log('197: ', subcommonsConfig);
     const subcommonsURL = subcommonsConfig.URL;
     const subcommonsName = subcommonsConfig.name;
     const graphModelQueryURL = 'api/v0/submission/graphql';
@@ -203,22 +204,17 @@ class Explorer extends React.Component {
           race
           ethnicity
           gender
-          spdecies
+          species
           ageUnit
           age
           phenotype
           strain
-          armAccession
-          studyAccession
-          filePath
-          fileDetail
-          submitter_Id
-          subjectAccession
-          dataset
+          submitter_id
         }
       }
     `;
-    return fetch(subcommonsURL + graphModelQueryURL, {
+    return fetchWithCreds({
+      path: subcommonsURL + graphModelQueryURL,
       method: 'POST',
       body: JSON.stringify({
         query: queryString,

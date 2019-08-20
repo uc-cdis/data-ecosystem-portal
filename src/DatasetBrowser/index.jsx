@@ -80,13 +80,18 @@ class DatasetBrowser extends React.Component {
         }
       }
     `;
-    return fetch(subcommonsURL + graphModelQueryURL, {
+    console.log('fetching from ', subcommonsURL + graphModelQueryURL);
+    return fetchWithCreds({
+      path: subcommonsURL + graphModelQueryURL,
       method: 'POST',
       body: JSON.stringify({
         query: queryString,
       }),
     }).then(
-      result => result.json(),
+      result => { 
+        console.log('90: ', result);
+        result.json();
+      },
       reason => [ ] // eslint-disable-line
     ).then((result) => {
       const reformatted = [];
