@@ -503,7 +503,7 @@ class Explorer extends React.Component {
         <div className='ndef-page-title'>
           Data Explorer
         </div>
-        <div id='explorer-spinner' className={ this.state.loading ? 'visible' : 'hidden'} ><Spinner/></div>
+        <div id='def-spinner' className={ this.state.loading ? 'visible' : 'hidden'} ><Spinner/></div>
         <div className='explorer'>
           <div className='explorer__filters'>
             <FilterGroup

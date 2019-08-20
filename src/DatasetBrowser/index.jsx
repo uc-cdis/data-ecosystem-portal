@@ -7,6 +7,7 @@ import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import './DatasetBrowser.less';
 import { fetchWithCreds } from '../actions';
 import { guppyGraphQLUrl } from '../configs';
+import Spinner from '../components/Spinner';
 
 function calculateSummaryCounts(field, filteredData) {
   const values = [];
@@ -56,6 +57,7 @@ class DatasetBrowser extends React.Component {
         supported_data_resource: 0,
         dataset_name: 0,
       },
+      loading: true
     };
     this.filterGroupRef = React.createRef();
     this.tableRef = React.createRef();
@@ -138,6 +140,8 @@ class DatasetBrowser extends React.Component {
       });
 
       this.tableRef.current.updateData(this.allData);
+
+      this.setState({loading: false});
     });
   }
 
@@ -230,6 +234,7 @@ class DatasetBrowser extends React.Component {
         <div className='ndef-page-title'>
           Datasets Browser
         </div>
+        <div id='def-spinner' className={ this.state.loading ? 'visible' : 'hidden'} ><Spinner/></div>
         <div className='dataset-browser'>
           <div className='dataset-browser__filters'>
             <FilterGroup
