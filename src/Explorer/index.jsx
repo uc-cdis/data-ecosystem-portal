@@ -10,6 +10,7 @@ import { guppyDownloadUrl } from '../configs';
 import { askGuppyForAggregationData } from '@gen3/guppy/dist/components/Utils/queries';
 import SummaryChartGroup from '@gen3/ui-component/dist/components/charts/SummaryChartGroup';
 import { components } from '../params';
+import Spinner from '../components/Spinner';
 
 var dataExplorerConfig2 = {
     "guppy": {
@@ -181,7 +182,8 @@ class Explorer extends React.Component {
       },
       chartData: { },
       dataExplorerConfig: dataExplorerConfig2,
-      datasetsCount: 0
+      datasetsCount: 0,
+      loading: true
     };
     this.filterGroupRef = React.createRef();
     this.tableRef = React.createRef();
@@ -376,7 +378,7 @@ class Explorer extends React.Component {
         '',
       ).then((res) => {
           const chartData = _this.buildCharts(res.data._aggregation.subject, chartConfig);
-          _this.setState({'chartData': chartData});
+          _this.setState({'chartData': chartData, loading: false});
         });
     });
   }
@@ -493,11 +495,15 @@ class Explorer extends React.Component {
 
     const barChartColor = components.categorical2Colors ? components.categorical2Colors[0] : null;
 
+    // if (this.state.loading) {
+    //   return (<Spinner />) 
+    // };
     return (
       <React.Fragment>
         <div className='ndef-page-title'>
           Data Explorer
         </div>
+        <div id='explorer-spinner' className={ this.state.loading ? 'visible' : 'hidden'} ><Spinner/></div>
         <div className='explorer'>
           <div className='explorer__filters'>
             <FilterGroup
@@ -551,6 +557,7 @@ class Explorer extends React.Component {
               totalCount={totalCount}
               guppyConfig={this.state.dataExplorerConfig}
               isLocked={false}
+              loading={this.state.loading}
             />
           </div>
         </div>

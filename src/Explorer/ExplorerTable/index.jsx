@@ -19,7 +19,7 @@ class ExplorerTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false,
+      loading: props.loading,
       pageSize: props.defaultPageSize,
       currentPage: 0,
       filteredData: this.props.filteredData,
