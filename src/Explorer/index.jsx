@@ -32,7 +32,7 @@ var dataExplorerConfig2 = {
           { "text": "ImmPort", "filterType": "singleSelect"}
         ]
       }
-    ],
+    ], 
     "subjectSections": [
       { 
         "title": "Ethnicity", 
@@ -103,6 +103,14 @@ const chartConfig = {
     "chartType": "count",
     "title": "Subjects"
   },
+  "dataset": {
+    "chartType": "pie",
+    "title": "Dataset"
+  },
+  "species": {
+    "chartType": "bar",
+    "title": "Species"
+  },
   "gender": {
     "chartType": "pie",
     "title": "Gender"
@@ -110,10 +118,6 @@ const chartConfig = {
   "race": {
     "chartType": "bar",
     "title": "Race"
-  },
-  "ethnicity": {
-    "chartType": "bar",
-    "title": "Ethnicity"
   }
 };
 
@@ -149,11 +153,9 @@ function checkIfFiltersApply(filtersApplied, row) {
     }
     const filtersApplyMatch = filtersApplied[property].selectedValues.map(
       x => x.toLowerCase(),
-    ).includes(
-      row[property].toLowerCase(),
-    );
+    ) === row[property].toLowerCase();
     let filtersApplyContains = filtersApplied[property].selectedValues.filter(
-      x => row[property].toLowerCase().includes(x.toLowerCase()),
+      x => row[property].toLowerCase() === x.toLowerCase(),
     );
     filtersApplyContains = filtersApplyContains.length > 0;
     const filtersApply = filtersApplyMatch || filtersApplyContains;
@@ -252,21 +254,37 @@ class Explorer extends React.Component {
     return Promise.all(promiseArray);
   }
 
-  buildCharts = (aggsData, chartConfig) => {
+  filterSelf = (histograms, field, filtersApplied) => {
+    if(typeof filtersApplied === 'undefined' 
+      || filtersApplied.length === 0
+      || !Object.keys(filtersApplied).includes(field) ) {
+      return histograms;
+    }
+
+    let filteredHistogram = [];
+    for(let j = 0; j < histograms.length; j +=1) {
+      if(filtersApplied[field].selectedValues.includes(histograms[j].key)) {
+        filteredHistogram.push(histograms[j]);
+      }
+    }
+    return filteredHistogram;
+  }
+
+  buildCharts = (aggsData, chartConfig, filter) => {
     const summaries = [];
     const countItems = [];
     const stackedBarCharts = [];
     countItems.push({
-      label: 'Subjects', // this.props.nodeCountTitle,
-      value: this.state.filteredData.length //this.props.totalCount,
-    });
-    countItems.push({
       label: 'Datasets', // this.props.nodeCountTitle,
       value: this.state.datasetsCount //this.props.totalCount,
     });
+    countItems.push({
+      label: 'Subjects', // this.props.nodeCountTitle,
+      value: this.state.filteredData.length //this.props.totalCount,
+    });
     Object.keys(chartConfig).forEach((field) => {
       if (!aggsData || !aggsData[field] || !aggsData[field].histogram) return;
-      const { histogram } = aggsData[field];
+      const histogram = this.filterSelf(aggsData[field].histogram, field, filter);
       switch (chartConfig[field].chartType) {
       case 'pie':
       case 'bar':
@@ -432,6 +450,19 @@ class Explorer extends React.Component {
         filteredData.push(rawData[j]);
       }
     }
+
+    var _this = this;
+    askGuppyForAggregationData(
+      '/guppy/',
+      'subject',
+      fields,
+      filtersApplied,
+      '',
+    ).then((res) => {
+        const chartData = _this.buildCharts(res.data._aggregation.subject, chartConfig, filtersApplied);
+        _this.setState({'chartData': chartData});
+      });
+
 
     this.setState({
       filteredData: filteredData,
