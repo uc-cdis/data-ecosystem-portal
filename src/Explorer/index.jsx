@@ -369,8 +369,8 @@ class Explorer extends React.Component {
         filteredData: this.allData,
         rawData: this.allData,
         counts: {
-          supported_data_resource: 0, // calculateSummaryCounts('supported_data_resource', this.allData),
-          dataset: 0 //calculateSummaryCounts('dataset', this.allData),
+          supported_data_resource: 0,
+          dataset: 0
         },
         dataExplorerConfig: dataExplorerConfig,
         datasetsCount: datasetsCount
