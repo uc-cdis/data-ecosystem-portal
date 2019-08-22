@@ -295,7 +295,7 @@ class Explorer extends React.Component {
     }
 
     return fetchWithCreds({
-      path: `${subcommonsURL}` + flatModelQueryRelativePath,
+      path: subcommonsURL + flatModelQueryRelativePath,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
