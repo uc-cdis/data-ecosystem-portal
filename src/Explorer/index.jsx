@@ -1,93 +1,18 @@
 import React from 'react';
 import FilterGroup from '@gen3/ui-component/dist/components/filters/FilterGroup';
 import FilterList from '@gen3/ui-component/dist/components/filters/FilterList';
+import { askGuppyForAggregationData, getGQLFilter } from '@gen3/guppy/dist/components/Utils/queries';
+import SummaryChartGroup from '@gen3/ui-component/dist/components/charts/SummaryChartGroup';
 import { config } from '../params';
 import ExplorerTable from './ExplorerTable/';
 import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import './Explorer.less';
 import { fetchWithCreds } from '../actions';
 import { guppyDownloadUrl } from '../configs';
-import { askGuppyForAggregationData } from '@gen3/guppy/dist/components/Utils/queries';
-import SummaryChartGroup from '@gen3/ui-component/dist/components/charts/SummaryChartGroup';
 import { components } from '../params';
 import Spinner from '../components/Spinner';
 
-var dataExplorerConfig2 = {
-    "guppy": {
-      "indices": [
-        {
-          "index": "data_explorer",
-          "type": "subject"
-        }
-      ],
-      "auth_filter_field": "auth_resource_path"
-    },
-    "projectSections": [
-      { 
-        "title": "Project/Dataset",
-        "field": "dataset",
-        "options": [
-          { "text": "MARCS", "filterType": "singleSelect"},
-          { "text": "WIHS", "filterType": "singleSelect"},
-          { "text": "DEPOT: DAIDs Data Commons", "filterType": "singleSelect"},
-          { "text": "ImmPort", "filterType": "singleSelect"}
-        ]
-      }
-    ], 
-    "subjectSections": [
-      { 
-        "title": "Ethnicity", 
-        "field": "ethnicity",
-        "options": [
-          { "text": "Hispanic or Latino", "filterType": "singleSelect"},
-          { "text": "Not Hispanic or Latino", "filterType": "singleSelect"}
-        ]
-      },
-      { 
-        "title": "Gender",
-        "field": "gender",
-        "options": [
-          { "text": "Male", "filterType": "singleSelect"},
-          { "text": "Female", "filterType": "singleSelect"},
-          { "text": "Not Reported", "filterType": "singleSelect"}
-        ]
-      },
-      { 
-        "title": "Race",
-        "field": "race",
-        "options": []
-      },
-      { 
-        "title": "Species",
-        "field": "species",
-        "options": []
-      }
-    ],
-    "fieldMapping" : [
-      { "field": "dataset", "name": "Dataset" },
-      { "field": "studyAccession", "name": "Study Accession" },
-      { "field": "phenotype", "name": "Phenotype" },
-      { "field": "age", "name": "Age" },
-      { "field": "race", "name": "Race" },
-      { "field": "gender", "name": "Gender" },
-      { "field": "ethnicity", "name": "Ethnicity" },
-      { "field": "strain", "name": "Strain" },
-      { "field": "species", "name": "Species" },
-      { "field": "submitter_id", "name": "Submitter ID" }
-    ],
-    "filterConfig": {
-      "tabs": [{
-        "title": "Subject",
-        "fields": ["ethnicity", "gender", "race", "species"]
-      },
-      {
-        "title": "Project",
-        "fields": ["dataset", "research_focus"]
-      }]
-    }
-};
-
-const fieldMapping = dataExplorerConfig2.fieldMapping;
+const fieldMapping = config.dataExplorerConfig.fieldMapping;
 
 const fields = [];
 for (let j = 0; j < fieldMapping.length; j += 1) {
@@ -123,6 +48,7 @@ const chartConfig = {
 };
 
 function addCountsToSectionList(filterSections) {
+  let filterSectionsCopy = filterSections.slice();
   for (let k = 0; k < filterSections.length; k += 1) {
     const options = filterSections[k].options.slice();
     const n = Object.keys(options).length;
@@ -131,7 +57,7 @@ function addCountsToSectionList(filterSections) {
     }
     filterSections[k].options = options;
   }
-  return filterSections
+  return filterSections;
 }
 
 function calculateSummaryCounts(field, filteredData) {
@@ -178,10 +104,10 @@ class Explorer extends React.Component {
       paginatedData: [],
       counts: {
         supported_data_resource: 0,
-        dataset_name: 0,
+        dataset: 0,
       },
       chartData: { },
-      dataExplorerConfig: dataExplorerConfig2,
+      dataExplorerConfig: config.dataExplorerConfig,
       datasetsCount: 0,
       loading: true
     };
@@ -194,48 +120,36 @@ class Explorer extends React.Component {
   }
 
   obtainSubcommonsData = (subcommonsConfig) => {
-    console.log('197: ', subcommonsConfig);
     const subcommonsURL = subcommonsConfig.URL;
     const subcommonsName = subcommonsConfig.name;
-    const graphModelQueryURL = 'api/v0/submission/graphql';
-    const queryString = `
-      {
-        subject {
-          race
-          ethnicity
-          gender
-          species
-          ageUnit
-          age
-          phenotype
-          strain
-          submitter_id
-        }
-      }
-    `;
+    const flatModelQueryURL = 'guppy/download';
+
+    const queryObject = {
+      "type": "subject",
+      "fields": [
+        "race",
+        "ethnicity",
+        "gender",
+        "species",
+        "submitter_id",
+        "year_of_birth"
+      ]
+    };
+
     return fetchWithCreds({
-      path: subcommonsURL + graphModelQueryURL,
+      path: subcommonsURL + flatModelQueryURL,
       method: 'POST',
-      body: JSON.stringify({
-        query: queryString,
-      }),
-    }).then(
-      result => result.json(),
-      reason => [ ] // eslint-disable-line
-    ).then((result) => {
+      body: JSON.stringify(queryObject),
+    }).then((result) => {
       const reformatted = [];
-      if (!result.data) {
+      if (!result || !result.data) {
         return [];
       }
-      const studies = result.data.study;
-      for (let j = 0; j < studies.length; j += 1) {
-        reformatted.push({
-          description: studies[j].study_description,
-          dataset_name: studies[j].submitter_id,
-          research_focus: studies[j].study_design,
-          link: subcommonsURL,
-          supported_data_resource: subcommonsName,
-        });
+      const subjects = result.data;
+      for (let j = 0; j < subjects.length; j += 1) {
+        const subject = subjects[j];
+        subject.dataset = subcommonsName;
+        reformatted.push(subject);
       }
       return reformatted;
     });
@@ -272,9 +186,11 @@ class Explorer extends React.Component {
     const summaries = [];
     const countItems = [];
     const stackedBarCharts = [];
+    const numUniqueDatasets = [...new Set(this.state.filteredData.map(x => x['dataset']))].length;
+
     countItems.push({
       label: 'Datasets', // this.props.nodeCountTitle,
-      value: this.state.datasetsCount //this.props.totalCount,
+      value: numUniqueDatasets //this.props.totalCount,
     });
     countItems.push({
       label: 'Subjects', // this.props.nodeCountTitle,
@@ -320,6 +236,124 @@ class Explorer extends React.Component {
     });
   }
 
+  histogramQueryStrForEachField = (field) => { 
+    return `${field} {
+      histogram {
+        key
+        count
+      }
+    }`
+  }
+
+  obtainSubcommonsAggsData = (subcommonsConfig, filtersApplied) => {
+    const subcommonsURL = subcommonsConfig.URL; 
+    const subcommonsName = subcommonsConfig.name;
+    const filtersAppliedReduced = Object.assign({}, filtersApplied);
+    if(filtersApplied.hasOwnProperty('dataset') 
+      && !filtersApplied.dataset.selectedValues.includes(subcommonsName)) {
+      return null;
+    } else if(filtersApplied.hasOwnProperty('dataset') && filtersApplied.dataset.selectedValues.includes(subcommonsName)) {
+      delete filtersAppliedReduced.dataset;
+    }
+    const fields = ['species', 'gender', 'race'];
+    const applyFilter = typeof filtersAppliedReduced !== 'undefined' 
+      && Object.keys(filtersAppliedReduced).length > 0;
+    
+    const query = { 
+      'query': 
+        `query ${applyFilter ? '($filter: JSON)' : ''} {
+          _aggregation {
+            subject ${applyFilter ? '(filter: $filter, filterSelf: true)' : ''} {
+              ${fields.map(field => this.histogramQueryStrForEachField(field))}
+              _totalCount
+            }
+          }
+        }`
+    };
+    
+    if(applyFilter) {
+      query.variables = { filter: getGQLFilter(filtersAppliedReduced) };
+    }
+
+    return fetchWithCreds({
+      path: subcommonsURL + 'guppy/graphql',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(query),
+    }).then((result) => {
+      const reformatted = [];
+      if (!result || !result.data || !result.data.data || !result.data.data._aggregation) {
+        return null;
+      }
+      const histograms = result.data.data._aggregation.subject;
+      if(histograms._totalCount > 0) {
+        histograms.dataset = {};
+        histograms.dataset.histogram = [{ 
+          'key': subcommonsName, 
+          'count': histograms._totalCount
+        }];
+      }
+      return histograms;
+    });
+  }
+
+  obtainAllSubcommonsAggsData = (filtersApplied) => {
+    const promiseArray = [];
+    const n = Object.keys(config.subcommons).length;
+    for (let j = 0; j < n; j += 1) {
+      promiseArray.push(
+        this.obtainSubcommonsAggsData(config.subcommons[j], filtersApplied),
+      );
+    }
+    return Promise.all(promiseArray);
+  }
+
+  flattenHistograms(listOfHistograms) {
+    // This absurd function combines Guppy histograms from an arbitrary
+    // number of commons for the purpose of rendering explorer charts.
+    const flattened = {};
+
+    for(let j = 0; j < listOfHistograms.length; j += 1) {
+      if (!listOfHistograms[j] || typeof listOfHistograms[j] === 'undefined') continue
+      const keys = Object.keys(listOfHistograms[j]);
+      for(let k = 0; k < keys.length; k += 1) {
+        const fieldName = keys[k];
+        if(!flattened.hasOwnProperty(fieldName)) {
+          flattened[fieldName] = {};
+        }
+        
+        if(!listOfHistograms[j][keys[k]]) {
+          continue;
+        }
+        const histogramsForKey = listOfHistograms[j][keys[k]].histogram;
+        if (!histogramsForKey || typeof histogramsForKey === 'undefined') {
+          continue;
+        }
+        for(let z = 0; z < histogramsForKey.length; z +=1) {
+          const fieldValue = histogramsForKey[z].key;
+          const fieldCount = histogramsForKey[z].count;
+          if(!flattened[fieldName].hasOwnProperty(fieldValue)) {
+            flattened[fieldName][fieldValue] = fieldCount;
+          } else {
+            flattened[fieldName][fieldValue] += fieldCount;
+          }
+        } 
+      }
+    }
+
+    let result = {};
+    Object.keys(flattened).forEach(function(key,index) {
+      result[key] = { 'histogram': [] }
+      Object.keys(flattened[key]).forEach(function(subKey,subIndex) { 
+        result[key].histogram.push({'key': subKey, 'count': flattened[key][subKey]})
+      });
+    });
+    
+    return result;
+  }
+
   initializeData = () => {
     this.allData = [];
     var _this = this;
@@ -328,10 +362,10 @@ class Explorer extends React.Component {
       this.allData = this.allData.concat(parentCommonsData);
       return this.obtainAllSubcommonsData();
     }).then((subCommonsData) => {
-      // const data = subCommonsData.flat();
-      // if (data.length > 0) {
-      //   this.allData = this.allData.concat(data);
-      // }
+      const data = subCommonsData.flat();
+      if (data.length > 0) {
+        this.allData = this.allData.concat(data);
+      }
 
       const dataExplorerConfig = this.state.dataExplorerConfig;
       const currentSubjectFilters = dataExplorerConfig.subjectSections;
@@ -358,24 +392,15 @@ class Explorer extends React.Component {
         rawData: this.allData,
         counts: {
           supported_data_resource: 0, // calculateSummaryCounts('supported_data_resource', this.allData),
-          dataset_name: 0 //calculateSummaryCounts('dataset_name', this.allData),
+          dataset: 0 //calculateSummaryCounts('dataset', this.allData),
         },
         dataExplorerConfig: dataExplorerConfig,
         datasetsCount: datasetsCount
       });
 
       this.tableRef.current.updateData(this.allData);
-    }).then(function() {
-       askGuppyForAggregationData(
-        '/guppy/',
-        'subject',
-        fields,
-        {},
-        '',
-      ).then((res) => {
-          const chartData = _this.buildCharts(res.data._aggregation.subject, chartConfig);
-          _this.setState({'chartData': chartData, loading: false});
-        });
+
+      return this.refreshCharts();
     });
   }
 
@@ -439,6 +464,27 @@ class Explorer extends React.Component {
     );
   }
 
+  refreshCharts = (filtersApplied) => {
+    var _this = this;
+    if (typeof filtersApplied === 'undefined') {
+      filtersApplied = {};
+    }
+    return this.obtainAllSubcommonsAggsData(filtersApplied).then(function(subcommonsAggsData) {
+      askGuppyForAggregationData(
+        '/guppy/',
+        'subject',
+        ['species', 'race', 'gender', 'dataset'],
+        filtersApplied,
+        '',
+      ).then((res) => {
+          let combinedAggsData = subcommonsAggsData.concat(res.data._aggregation.subject);
+          combinedAggsData = _this.flattenHistograms(combinedAggsData);
+          const chartData = _this.buildCharts(combinedAggsData, chartConfig, filtersApplied);
+          _this.setState({'chartData': chartData, loading: false});
+        });
+    });
+  }
+
   handleFilterChange(filtersApplied) {
     const rawData = this.state.rawData;
     const filteredData = [];
@@ -450,16 +496,16 @@ class Explorer extends React.Component {
     }
 
     var _this = this;
-    askGuppyForAggregationData(
-      '/guppy/',
-      'subject',
-      fields,
-      filtersApplied,
-      '',
-    ).then((res) => {
-        const chartData = _this.buildCharts(res.data._aggregation.subject, chartConfig, filtersApplied);
-        _this.setState({'chartData': chartData});
-      });
+    // askGuppyForAggregationData(
+    //   '/guppy/',
+    //   'subject',
+    //   fields,
+    //   filtersApplied,
+    //   '',
+    // ).then((res) => {
+    //     const chartData = _this.buildCharts(res.data._aggregation.subject, chartConfig, filtersApplied);
+    //     _this.setState({'chartData': chartData});
+    //   });
 
 
     this.setState({
@@ -467,9 +513,11 @@ class Explorer extends React.Component {
       counts:
         {
           supported_data_resource: calculateSummaryCounts('supported_data_resource', filteredData),
-          dataset_name: calculateSummaryCounts('dataset_name', filteredData),
+          dataset: calculateSummaryCounts('dataset', filteredData),
         },
     });
+
+    this.refreshCharts(filtersApplied);
 
     this.tableRef.current.updateData(filteredData);
   }

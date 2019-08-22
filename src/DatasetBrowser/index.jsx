@@ -80,17 +80,26 @@ class DatasetBrowser extends React.Component {
         }
       }
     `;
+    
     console.log('fetching from ', subcommonsURL + graphModelQueryURL);
     return fetchWithCreds({
       path: subcommonsURL + graphModelQueryURL,
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
         query: queryString,
       }),
     }).then(
       result => { 
         console.log('90: ', result);
-        result.json();
+        try {
+          result.json();
+        } catch (err) {
+          console.log('Error fetching from subcommons: ', result, 'Err: ', err);
+          return [];
+        }
       },
       reason => [ ] // eslint-disable-line
     ).then((result) => {
@@ -116,9 +125,13 @@ class DatasetBrowser extends React.Component {
     const promiseArray = [];
     const n = Object.keys(config.subcommons).length;
     for (let j = 0; j < n; j += 1) {
-      promiseArray.push(
-        this.obtainSubcommonsData(config.subcommons[j]),
-      );
+      try { 
+        promiseArray.push(
+          this.obtainSubcommonsData(config.subcommons[j]),
+        );
+      } catch (err) {
+        console.log(err);
+      }
     }
     return Promise.all(promiseArray);
   }

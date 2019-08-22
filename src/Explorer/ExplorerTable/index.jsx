@@ -164,6 +164,7 @@ ExplorerTable.propTypes = {
   filteredData: PropTypes.array,
   totalCount: PropTypes.number.isRequired,
   isLocked: PropTypes.bool.isRequired,
+  loading: PropTypes.bool,
   className: PropTypes.string,
   defaultPageSize: PropTypes.number,
   tableConfig: PropTypes.object.isRequired,

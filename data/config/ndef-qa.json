@@ -189,51 +189,53 @@
     },
     "projectSections": [
       { 
-        "title": "Project/Dataset", 
-        "options": [
-          { "text": "MARCS", "filterType": "singleSelect"},
-          { "text": "WIHS", "filterType": "singleSelect"},
-          { "text": "DEPOT: DAIDs Data Commons", "filterType": "singleSelect"},
-          { "text": "ImmPort", "filterType": "singleSelect"}
-        ]
+        "title": "Project/Dataset",
+        "field": "dataset",
+        "options": []
       }
-    ],
+    ], 
     "subjectSections": [
       { 
         "title": "Ethnicity", 
-        "options": [
-          { "text": "Hispanic or Latino", "filterType": "singleSelect"},
-          { "text": "Not Hispanic or Latino", "filterType": "singleSelect"}
-        ]
+        "field": "ethnicity",
+        "options": []
       },
       { 
         "title": "Gender",
-        "options": [
-          { "text": "Male", "filterType": "singleSelect"},
-          { "text": "Female", "filterType": "singleSelect"},
-          { "text": "Not Reported", "filterType": "singleSelect"}
-        ]
+        "field": "gender",
+        "options": []
+      },
+      { 
+        "title": "Race",
+        "field": "race",
+        "options": []
+      },
+      { 
+        "title": "Species",
+        "field": "species",
+        "options": []
       }
     ],
     "fieldMapping" : [
+      { "field": "dataset", "name": "Dataset" },
+      { "field": "studyAccession", "name": "Study Accession" },
+      { "field": "phenotype", "name": "Phenotype" },
+      { "field": "age", "name": "Age" },
       { "field": "race", "name": "Race" },
       { "field": "gender", "name": "Gender" },
       { "field": "ethnicity", "name": "Ethnicity" },
-      { "field": "species", "name": "Species" },
-      { "field": "age", "name": "Age" },
-      { "field": "phenotype", "name": "Phenotype" },
       { "field": "strain", "name": "Strain" },
-      { "field": "studyAccession", "name": "Study Accession" },
+      { "field": "species", "name": "Species" },
       { "field": "submitter_id", "name": "Submitter ID" }
     ],
     "filterConfig": {
       "tabs": [{
-        "title": "Project",
-        "fields": ["dataset_name", "research_focus"]
-      }, 
-      {
         "title": "Subject",
-        "fields": ["ethnicity", "gender"]
+        "fields": ["ethnicity", "gender", "race", "species"]
+      },
+      {
+        "title": "Project",
+        "fields": ["dataset", "research_focus"]
       }]
     }
   }
