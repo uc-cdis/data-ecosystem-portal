@@ -45,4 +45,4 @@ export const ReduxTransaction = (() => {
   return connect(mapStateToProps, mapDispatchToProps)(TransactionLogTable);
 })();
 
-export { ReduxTransaction as default }
+export { ReduxTransaction as default };

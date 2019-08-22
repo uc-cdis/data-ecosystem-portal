@@ -58,7 +58,7 @@ export const removeDeletedNode = (state, id) => {
   return searchResult;
 };
 
-const reducers = combineReducers({ 
+const reducers = combineReducers({
   bar,
   homepage,
   popups,

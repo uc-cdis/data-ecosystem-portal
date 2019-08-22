@@ -175,7 +175,7 @@ ExplorerTable.defaultProps = {
   filteredData: [],
   className: '',
   defaultPageSize: 10,
-  loading: false
+  loading: false,
 };
 
 export default ExplorerTable;

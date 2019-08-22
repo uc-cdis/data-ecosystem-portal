@@ -54,15 +54,15 @@ const homepage = (state = {}, action) => {
     // keep previous design: if less than 4 nodes, calculate all files number
     if (nodesForIndexChart.length < 4) {
       // add counts for all file type nodes, as the last count
-      const fileCount = 0; //fileNodes.reduce((acc, fileNode) => {
-        // let newAcc = acc;
-        // Object.keys(projectNodeCounts).forEach((proj) => {
-        //  if (projectNodeCounts[proj][fileNode]) {
-        //    newAcc += projectNodeCounts[proj][fileNode];
-        //  }
-        //});
-        // return newAcc;
-      //}, 0);
+      const fileCount = 0; // fileNodes.reduce((acc, fileNode) => {
+      // let newAcc = acc;
+      // Object.keys(projectNodeCounts).forEach((proj) => {
+      //  if (projectNodeCounts[proj][fileNode]) {
+      //    newAcc += projectNodeCounts[proj][fileNode];
+      //  }
+      // });
+      // return newAcc;
+      // }, 0);
       summaryCounts.push(fileCount);
     }
 

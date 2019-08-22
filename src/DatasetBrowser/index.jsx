@@ -57,7 +57,7 @@ class DatasetBrowser extends React.Component {
         supported_data_resource: 0,
         dataset_name: 0,
       },
-      loading: true
+      loading: true,
     };
     this.filterGroupRef = React.createRef();
     this.tableRef = React.createRef();
@@ -80,7 +80,7 @@ class DatasetBrowser extends React.Component {
         }
       }
     `;
-    
+
     console.log('fetching from ', subcommonsURL + graphModelQueryURL);
     return fetchWithCreds({
       path: subcommonsURL + graphModelQueryURL,
@@ -92,7 +92,7 @@ class DatasetBrowser extends React.Component {
         query: queryString,
       }),
     }).then(
-      result => { 
+      (result) => {
         if (result.status === 200) {
           return result.data;
         }
@@ -122,7 +122,7 @@ class DatasetBrowser extends React.Component {
     const promiseArray = [];
     const n = Object.keys(config.subcommons).length;
     for (let j = 0; j < n; j += 1) {
-      try { 
+      try {
         promiseArray.push(
           this.obtainSubcommonsData(config.subcommons[j]),
         );
@@ -156,7 +156,7 @@ class DatasetBrowser extends React.Component {
 
       this.tableRef.current.updateData(this.allData);
 
-      this.setState({loading: false});
+      this.setState({ loading: false });
     });
   }
 
@@ -249,7 +249,7 @@ class DatasetBrowser extends React.Component {
         <div className='ndef-page-title'>
           Datasets Browser
         </div>
-        <div id='def-spinner' className={ this.state.loading ? 'visible' : 'hidden'} ><Spinner/></div>
+        <div id='def-spinner' className={this.state.loading ? 'visible' : 'hidden'} ><Spinner /></div>
         <div className='dataset-browser'>
           <div className='dataset-browser__filters'>
             <FilterGroup
