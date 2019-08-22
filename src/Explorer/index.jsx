@@ -3,6 +3,7 @@ import FilterGroup from '@gen3/ui-component/dist/components/filters/FilterGroup'
 import FilterList from '@gen3/ui-component/dist/components/filters/FilterList';
 import { askGuppyForAggregationData, getGQLFilter } from '@gen3/guppy/dist/components/Utils/queries';
 import SummaryChartGroup from '@gen3/ui-component/dist/components/charts/SummaryChartGroup';
+import PercentageStackedBarChart from '@gen3/ui-component/dist/components/charts/PercentageStackedBarChart';
 import { config } from '../params';
 import ExplorerTable from './ExplorerTable/';
 import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
@@ -49,15 +50,15 @@ const chartConfig = {
 
 function addCountsToSectionList(filterSections) {
   let filterSectionsCopy = filterSections.slice();
-  for (let k = 0; k < filterSections.length; k += 1) {
-    const options = filterSections[k].options.slice();
+  for (let k = 0; k < filterSectionsCopy.length; k += 1) {
+    const options = filterSectionsCopy[k].options.slice();
     const n = Object.keys(options).length;
     for (let m = 0; m < n; m += 1) {
       options[m].count = 1;
     }
-    filterSections[k].options = options;
+    filterSectionsCopy[k].options = options;
   }
-  return filterSections;
+  return filterSectionsCopy;
 }
 
 function calculateSummaryCounts(field, filteredData) {
@@ -92,6 +93,51 @@ function checkIfFiltersApply(filtersApplied, row) {
   }
   return true;
 }
+
+function flattenHistograms(listOfHistograms) {
+    // This absurd function combines Guppy histograms from an arbitrary
+    // number of commons for the purpose of rendering explorer charts.
+    const flattened = {};
+
+    for(let j = 0; j < listOfHistograms.length; j += 1) {
+      // eslint-disable-next-line no-continue
+      if (!listOfHistograms[j] || typeof listOfHistograms[j] === 'undefined') continue
+      const keys = Object.keys(listOfHistograms[j]);
+      for(let k = 0; k < keys.length; k += 1) {
+        const fieldName = keys[k];
+        if(!Object.prototype.hasOwnProperty.call(flattened,fieldName)) {
+          flattened[fieldName] = {};
+        }
+        
+        if(!listOfHistograms[j][keys[k]]) {
+          continue; // eslint-disable no-continue
+        }
+        const histogramsForKey = listOfHistograms[j][keys[k]].histogram;
+        if (!histogramsForKey || typeof histogramsForKey === 'undefined') {
+          continue; // eslint-disable no-continue
+        }
+        for(let z = 0; z < histogramsForKey.length; z +=1) {
+          const fieldValue = histogramsForKey[z].key;
+          const fieldCount = histogramsForKey[z].count;
+          if(!Object.prototype.hasOwnProperty.call(flattened[fieldName],fieldValue)) {
+            flattened[fieldName][fieldValue] = fieldCount;
+          } else {
+            flattened[fieldName][fieldValue] += fieldCount;
+          }
+        } 
+      }
+    }
+
+    let result = {};
+    Object.keys(flattened).forEach(function(key,index) {
+      result[key] = { 'histogram': [] }
+      Object.keys(flattened[key]).forEach(function(subKey) { 
+        result[key].histogram.push({'key': subKey, 'count': flattened[key][subKey]})
+      });
+    });
+    
+    return result;
+  }
 
 class Explorer extends React.Component {
   constructor(props) {
@@ -249,13 +295,14 @@ class Explorer extends React.Component {
     const subcommonsURL = subcommonsConfig.URL; 
     const subcommonsName = subcommonsConfig.name;
     const filtersAppliedReduced = Object.assign({}, filtersApplied);
-    if(filtersApplied.hasOwnProperty('dataset') 
+    if(Object.prototype.hasOwnProperty.call(filtersApplied,'dataset')
       && !filtersApplied.dataset.selectedValues.includes(subcommonsName)) {
       return null;
-    } else if(filtersApplied.hasOwnProperty('dataset') && filtersApplied.dataset.selectedValues.includes(subcommonsName)) {
+    } else if(Object.prototype.hasOwnProperty.call(filtersApplied,'dataset')
+      && filtersApplied.dataset.selectedValues.includes(subcommonsName)) {
       delete filtersAppliedReduced.dataset;
     }
-    const fields = ['species', 'gender', 'race'];
+    const chartFields = ['species', 'gender', 'race'];
     const applyFilter = typeof filtersAppliedReduced !== 'undefined' 
       && Object.keys(filtersAppliedReduced).length > 0;
     
@@ -264,7 +311,7 @@ class Explorer extends React.Component {
         `query ${applyFilter ? '($filter: JSON)' : ''} {
           _aggregation {
             subject ${applyFilter ? '(filter: $filter, filterSelf: true)' : ''} {
-              ${fields.map(field => this.histogramQueryStrForEachField(field))}
+              ${chartFields.map(field => this.histogramQueryStrForEachField(field))}
               _totalCount
             }
           }
@@ -283,16 +330,15 @@ class Explorer extends React.Component {
       },
       body: JSON.stringify(query),
     }).then((result) => {
-      const reformatted = [];
-      if (!result || !result.data || !result.data.data || !result.data.data._aggregation) {
+      if (!result || !result.data || !result.data.data || !result.data.data["_aggregation"]) {
         return null;
       }
-      const histograms = result.data.data._aggregation.subject;
-      if(histograms._totalCount > 0) {
+      const histograms = result.data.data["_aggregation"].subject;
+      if(histograms["_totalCount"] > 0) {
         histograms.dataset = {};
         histograms.dataset.histogram = [{ 
           'key': subcommonsName, 
-          'count': histograms._totalCount
+          'count': histograms["_totalCount"]
         }];
       }
       return histograms;
@@ -310,53 +356,10 @@ class Explorer extends React.Component {
     return Promise.all(promiseArray);
   }
 
-  flattenHistograms(listOfHistograms) {
-    // This absurd function combines Guppy histograms from an arbitrary
-    // number of commons for the purpose of rendering explorer charts.
-    const flattened = {};
-
-    for(let j = 0; j < listOfHistograms.length; j += 1) {
-      if (!listOfHistograms[j] || typeof listOfHistograms[j] === 'undefined') continue
-      const keys = Object.keys(listOfHistograms[j]);
-      for(let k = 0; k < keys.length; k += 1) {
-        const fieldName = keys[k];
-        if(!flattened.hasOwnProperty(fieldName)) {
-          flattened[fieldName] = {};
-        }
-        
-        if(!listOfHistograms[j][keys[k]]) {
-          continue;
-        }
-        const histogramsForKey = listOfHistograms[j][keys[k]].histogram;
-        if (!histogramsForKey || typeof histogramsForKey === 'undefined') {
-          continue;
-        }
-        for(let z = 0; z < histogramsForKey.length; z +=1) {
-          const fieldValue = histogramsForKey[z].key;
-          const fieldCount = histogramsForKey[z].count;
-          if(!flattened[fieldName].hasOwnProperty(fieldValue)) {
-            flattened[fieldName][fieldValue] = fieldCount;
-          } else {
-            flattened[fieldName][fieldValue] += fieldCount;
-          }
-        } 
-      }
-    }
-
-    let result = {};
-    Object.keys(flattened).forEach(function(key,index) {
-      result[key] = { 'histogram': [] }
-      Object.keys(flattened[key]).forEach(function(subKey,subIndex) { 
-        result[key].histogram.push({'key': subKey, 'count': flattened[key][subKey]})
-      });
-    });
-    
-    return result;
-  }
 
   initializeData = () => {
     this.allData = [];
-    var _this = this;
+    var outerThis = this;
     this.obtainParentCommonsSubjects().then((result) => {
       const parentCommonsData = result; //.data.subject;
       this.allData = this.allData.concat(parentCommonsData);
@@ -376,15 +379,16 @@ class Explorer extends React.Component {
       dataExplorerConfig.subjectSections = currentSubjectFilters;
       
       const currentProjectFilters = dataExplorerConfig.projectSections;
+      const currentProjectFiltersCopy = dataExplorerConfig.projectSections.slice();
       let datasetsCount = 0;
       currentProjectFilters.forEach((x, index, theArray) => {
         const options = this.buildFilterFromData(this.allData, x.field);
-        theArray[index].options = options;
+        currentProjectFiltersCopy[index].options = options;
         if(x.field == 'dataset') {
           datasetsCount = options.length;
         }
       });
-      dataExplorerConfig.projectSections = currentProjectFilters;
+      dataExplorerConfig.projectSections = currentProjectFiltersCopy;
 
 
       this.setState({
@@ -405,28 +409,6 @@ class Explorer extends React.Component {
   }
 
   obtainParentCommonsSubjects = async () => {
-    const queryString = `
-      {
-        subject(first: 10000) {
-          race
-          ethnicity
-          gender
-          species
-          ageUnit
-          age
-          phenotype
-          strain
-          armAccession
-          studyAccession
-          filePath
-          fileDetail
-          submitter_id
-          subjectAccession
-          dataset
-        }
-      }
-    `;
-    
     const queryObject = {
       "type": "subject",
       "fields": [
@@ -458,14 +440,14 @@ class Explorer extends React.Component {
       // }),
       method: 'POST',
     }).then(
-      ({ status, data }) => { 
+      ({ status, data }) => { // eslint-disable-line no-unused-vars
         return data; // eslint-disable-line no-unused-vars
       }
     );
   }
 
   refreshCharts = (filtersApplied) => {
-    var _this = this;
+    var outerThis = this;
     if (typeof filtersApplied === 'undefined') {
       filtersApplied = {};
     }
@@ -477,10 +459,10 @@ class Explorer extends React.Component {
         filtersApplied,
         '',
       ).then((res) => {
-          let combinedAggsData = subcommonsAggsData.concat(res.data._aggregation.subject);
-          combinedAggsData = _this.flattenHistograms(combinedAggsData);
-          const chartData = _this.buildCharts(combinedAggsData, chartConfig, filtersApplied);
-          _this.setState({'chartData': chartData, loading: false});
+          let combinedAggsData = subcommonsAggsData.concat(res.data["_aggregation"].subject);
+          combinedAggsData = flattenHistograms(combinedAggsData);
+          const chartData = outerThis.buildCharts(combinedAggsData, chartConfig, filtersApplied);
+          outerThis.setState({'chartData': chartData, loading: false});
         });
     });
   }
@@ -494,19 +476,6 @@ class Explorer extends React.Component {
         filteredData.push(rawData[j]);
       }
     }
-
-    var _this = this;
-    // askGuppyForAggregationData(
-    //   '/guppy/',
-    //   'subject',
-    //   fields,
-    //   filtersApplied,
-    //   '',
-    // ).then((res) => {
-    //     const chartData = _this.buildCharts(res.data._aggregation.subject, chartConfig, filtersApplied);
-    //     _this.setState({'chartData': chartData});
-    //   });
-
 
     this.setState({
       filteredData: filteredData,
@@ -532,11 +501,6 @@ class Explorer extends React.Component {
     ];
 
     const totalCount = this.state.filteredData.length;
-
-    if (this.props.onFilterChange) {
-      this.props.onFilterChange(filterResults, this.state.accessibility);
-    }
-
     const barChartColor = components.categorical2Colors ? components.categorical2Colors[0] : null;
 
     // if (this.state.loading) {
@@ -547,7 +511,9 @@ class Explorer extends React.Component {
         <div className='ndef-page-title'>
           Data Explorer
         </div>
-        <div id='def-spinner' className={ this.state.loading ? 'visible' : 'hidden'} ><Spinner/></div>
+        <div id='def-spinner' className={ this.state.loading ? 'visible' : 'hidden'} >
+          <Spinner/>
+        </div>
         <div className='explorer'>
           <div className='explorer__filters'>
             <FilterGroup
@@ -579,7 +545,8 @@ class Explorer extends React.Component {
               )
             }
             {
-              this.state.chartData.stackedBarCharts && this.state.chartData.stackedBarCharts.map((chart, i) => (
+              this.state.chartData.stackedBarCharts 
+                && this.state.chartData.stackedBarCharts.map((chart, i) => (
                 <PercentageStackedBarChart
                   key={i}
                   data={chart.data}
