@@ -384,7 +384,7 @@ class Explorer extends React.Component {
       currentProjectFilters.forEach((x, index, theArray) => {
         const options = this.buildFilterFromData(this.allData, x.field);
         currentProjectFiltersCopy[index].options = options;
-        if(x.field == 'dataset') {
+        if(x.field === 'dataset') {
           datasetsCount = options.length;
         }
       });
