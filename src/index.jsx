@@ -21,7 +21,6 @@ import DatasetBrowser from './DatasetBrowser/';
 import Explorer from './Explorer/';
 import IndexPage from './Index/page';
 import UserProfile, { fetchAccess } from './UserProfile/ReduxUserProfile';
-// import UserAgreementCert from './UserAgreement/ReduxCertPopup';
 import theme from './theme';
 import getReduxStore from './reduxStore';
 import { ReduxNavBar, ReduxTopBar, ReduxFooter } from './Layout/reduxer';
