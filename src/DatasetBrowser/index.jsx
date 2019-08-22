@@ -7,6 +7,8 @@ import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import './DatasetBrowser.less';
 import { fetchWithCreds } from '../actions';
 import { guppyGraphQLUrl } from '../configs';
+import Spinner from '../components/Spinner';
+import { graphModelQueryRelativePath } from '../localconf';
 
 function calculateSummaryCounts(field, filteredData) {
   const values = [];
@@ -56,6 +58,7 @@ class DatasetBrowser extends React.Component {
         supported_data_resource: 0,
         dataset_name: 0,
       },
+      loading: true,
     };
     this.filterGroupRef = React.createRef();
     this.tableRef = React.createRef();
@@ -68,7 +71,6 @@ class DatasetBrowser extends React.Component {
   obtainSubcommonsData = (subcommonsConfig) => {
     const subcommonsURL = subcommonsConfig.URL;
     const subcommonsName = subcommonsConfig.name;
-    const graphModelQueryURL = 'api/v0/submission/graphql';
     const queryString = `
       {
         study {
@@ -78,13 +80,23 @@ class DatasetBrowser extends React.Component {
         }
       }
     `;
-    return fetch(subcommonsURL + graphModelQueryURL, {
+
+    return fetchWithCreds({
+      path: subcommonsURL + graphModelQueryRelativePath,
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
         query: queryString,
       }),
     }).then(
-      result => result.json(),
+      (result) => {
+        if (result.status === 200) {
+          return result.data;
+        }
+        return {};
+      },
       reason => [ ] // eslint-disable-line
     ).then((result) => {
       const reformatted = [];
@@ -109,9 +121,13 @@ class DatasetBrowser extends React.Component {
     const promiseArray = [];
     const n = Object.keys(config.subcommons).length;
     for (let j = 0; j < n; j += 1) {
-      promiseArray.push(
-        this.obtainSubcommonsData(config.subcommons[j]),
-      );
+      try {
+        promiseArray.push(
+          this.obtainSubcommonsData(config.subcommons[j]),
+        );
+      } catch (err) {
+        console.log(err); // eslint-disable no-console
+      }
     }
     return Promise.all(promiseArray);
   }
@@ -138,6 +154,8 @@ class DatasetBrowser extends React.Component {
       });
 
       this.tableRef.current.updateData(this.allData);
+
+      this.setState({ loading: false });
     });
   }
 
@@ -230,6 +248,7 @@ class DatasetBrowser extends React.Component {
         <div className='ndef-page-title'>
           Datasets Browser
         </div>
+        <div id='def-spinner' className={this.state.loading ? 'visible' : 'hidden'} ><Spinner /></div>
         <div className='dataset-browser'>
           <div className='dataset-browser__filters'>
             <FilterGroup

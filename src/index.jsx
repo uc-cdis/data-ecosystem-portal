@@ -17,11 +17,10 @@ import ReduxLogin, { fetchLogin } from './Login/ReduxLogin';
 import ProtectedContent from './Login/ProtectedContent';
 import HomePage from './Homepage/page';
 import DocumentPage from './Document/page';
-// import ExplorerPage from './Explorer/ExplorerPage';
 import DatasetBrowser from './DatasetBrowser/';
+import Explorer from './Explorer/';
 import IndexPage from './Index/page';
 import UserProfile, { fetchAccess } from './UserProfile/ReduxUserProfile';
-// import UserAgreementCert from './UserAgreement/ReduxCertPopup';
 import theme from './theme';
 import getReduxStore from './reduxStore';
 import { ReduxNavBar, ReduxTopBar, ReduxFooter } from './Layout/reduxer';
@@ -157,6 +156,17 @@ async function init() {
                           <ProtectedContent
                             // A code change is required in Guppy to make this page public.
                             component={DatasetBrowser}
+                            {...props}
+                          />
+                        )
+                      }
+                    />
+                    <Route
+                      path='/explorer'
+                      component={
+                        props => (
+                          <ProtectedContent
+                            component={Explorer}
                             {...props}
                           />
                         )

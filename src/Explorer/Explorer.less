@@ -1,0 +1,48 @@
+.explorer {
+	display:flex;
+	padding: 0 20px 20px 20px;
+	margin: 17px 0 34px 0;
+}
+
+.explorer__filters .g3-single-select-filter__count {
+  display:none;
+}
+
+.explorer__visualizations {
+	display: flex;
+	flex-flow: column;
+	padding-left: 20px;
+	width: 80%;
+}
+
+.explorer-link-button svg {
+	width:15px;
+	height:15px;
+	top:-7px;
+	position:relative;
+}
+
+.explorer-link-button svg, .explorer-link-button svg path {
+	color: #606060;
+	fill: #606060;
+	transition: color .2s, fill.2s;
+	--webkit-transition: color .2s, fill.2s;
+	display:block;
+	margin:auto;
+}
+
+.explorer-link-button {
+	border:solid #606060 1px;
+	transition: border-color .2s;
+	--webkit-transition: border-color .2s;
+	width:40px;
+}
+
+.explorer-link-button:hover {
+	border-color: #3283c8;
+}
+
+.explorer-link-button:hover svg path, .explorer-link-button:hover svg {
+	color: #3283c8;
+	fill: #3283c8;
+}

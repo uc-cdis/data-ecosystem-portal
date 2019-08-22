@@ -1,11 +1,11 @@
 {
   "subcommons": [ 
     {
-      "URL": "https://tb.niaiddata.org/",
+      "URL": "https://qa-test2.planx-pla.net/",
       "name": "NDC: TB Data Commons"
     }, 
     {
-      "URL": "https://aids.niaiddata.org/",
+      "URL": "https://qa-test4.planx-pla.net/",
       "name": "NDC: AIDS Data Commons"
     }
   ],

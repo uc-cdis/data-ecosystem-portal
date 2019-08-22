@@ -3,22 +3,23 @@ import PropTypes from 'prop-types';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import { capitalizeFirstLetter } from '../../utils';
-import './DatasetBrowserTable.css';
+import './ExplorerTable.css';
 import IconicLink from '../../components/buttons/IconicLink';
 import LockIcon from '../../img/icons/lock.svg';
 import dictIcons from '../../img/icons/index';
 
 function truncateTextIfNecessary(text) {
-  if (!text || text.length < 405) {
+  if (typeof text !== 'string' || !text || text.length < 405) {
     return text;
   }
   return `${text.slice(0, 405)}...`;
 }
 
-class DatasetBrowserTable extends React.Component {
+class ExplorerTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: props.loading,
       pageSize: props.defaultPageSize,
       currentPage: 0,
       filteredData: this.props.filteredData,
@@ -32,7 +33,7 @@ class DatasetBrowserTable extends React.Component {
     }
 
     // some magic numbers that work fine for table columns width
-    const minWidth = 150;
+    const minWidth = 100;
     const maxWidth = 300;
     const letterWidth = 8;
     const spacing = 20;
@@ -48,7 +49,8 @@ class DatasetBrowserTable extends React.Component {
       const len = str ? str.length : 0;
       maxLetterLen = len > maxLetterLen ? len : maxLetterLen;
     });
-    const resWidth = Math.min((maxLetterLen * letterWidth) + spacing, maxWidth);
+    let resWidth = Math.min((maxLetterLen * letterWidth) + spacing, maxWidth);
+    resWidth = Math.max(resWidth, minWidth);
 
     return resWidth;
   }
@@ -87,8 +89,9 @@ class DatasetBrowserTable extends React.Component {
   }
 
   paginate = (state) => {
+    this.setState({ loading: true });
     const paginatedData = this.makePaginatedData(state, this.state.filteredData);
-    this.setState({ paginatedData });
+    this.setState({ paginatedData, loading: false });
   };
 
   render() {
@@ -157,20 +160,22 @@ class DatasetBrowserTable extends React.Component {
   }
 }
 
-DatasetBrowserTable.propTypes = {
+ExplorerTable.propTypes = {
   filteredData: PropTypes.array,
   totalCount: PropTypes.number.isRequired,
   isLocked: PropTypes.bool.isRequired,
+  loading: PropTypes.bool,
   className: PropTypes.string,
   defaultPageSize: PropTypes.number,
   tableConfig: PropTypes.object.isRequired,
   guppyConfig: PropTypes.object.isRequired,
 };
 
-DatasetBrowserTable.defaultProps = {
+ExplorerTable.defaultProps = {
   filteredData: [],
   className: '',
   defaultPageSize: 10,
+  loading: false,
 };
 
-export default DatasetBrowserTable;
+export default ExplorerTable;
