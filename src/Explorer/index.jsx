@@ -1,3 +1,4 @@
+/* eslint no-underscore-dangle: 0 */
 import React from 'react';
 import FilterGroup from '@gen3/ui-component/dist/components/filters/FilterGroup';
 import FilterList from '@gen3/ui-component/dist/components/filters/FilterList';
@@ -20,33 +21,6 @@ for (let j = 0; j < fieldMapping.length; j += 1) {
   fields.push(fieldMapping[j].field);
 }
 const tableConfig = { fields };
-
-const chartConfig = { 
-  "project_id": {
-    "chartType": "count",
-    "title": "Projects"
-  },
-  "subject_id": {
-    "chartType": "count",
-    "title": "Subjects"
-  },
-  "dataset": {
-    "chartType": "pie",
-    "title": "Dataset"
-  },
-  "species": {
-    "chartType": "bar",
-    "title": "Species"
-  },
-  "gender": {
-    "chartType": "pie",
-    "title": "Gender"
-  },
-  "race": {
-    "chartType": "bar",
-    "title": "Race"
-  }
-};
 
 function addCountsToSectionList(filterSections) {
   let filterSectionsCopy = filterSections.slice();
@@ -110,11 +84,11 @@ function flattenHistograms(listOfHistograms) {
         }
         
         if(!listOfHistograms[j][keys[k]]) {
-          continue; // eslint-disable no-continue
+          continue; // eslint-disable-line no-continue
         }
         const histogramsForKey = listOfHistograms[j][keys[k]].histogram;
         if (!histogramsForKey || typeof histogramsForKey === 'undefined') {
-          continue; // eslint-disable no-continue
+          continue; // eslint-disable-line no-continue
         }
         for(let z = 0; z < histogramsForKey.length; z +=1) {
           const fieldValue = histogramsForKey[z].key;
@@ -129,7 +103,7 @@ function flattenHistograms(listOfHistograms) {
     }
 
     let result = {};
-    Object.keys(flattened).forEach(function(key,index) {
+    Object.keys(flattened).forEach(function(key) {
       result[key] = { 'histogram': [] }
       Object.keys(flattened[key]).forEach(function(subKey) { 
         result[key].histogram.push({'key': subKey, 'count': flattened[key][subKey]})
@@ -359,7 +333,6 @@ class Explorer extends React.Component {
 
   initializeData = () => {
     this.allData = [];
-    var outerThis = this;
     this.obtainParentCommonsSubjects().then((result) => {
       const parentCommonsData = result; //.data.subject;
       this.allData = this.allData.concat(parentCommonsData);
@@ -372,16 +345,17 @@ class Explorer extends React.Component {
 
       const dataExplorerConfig = this.state.dataExplorerConfig;
       const currentSubjectFilters = dataExplorerConfig.subjectSections;
-      currentSubjectFilters.forEach((x, index, theArray) => {
+      const currentSubjectFiltersCopy = dataExplorerConfig.subjectSections.slice();
+      currentSubjectFilters.forEach((x, index) => {
         const options = this.buildFilterFromData(this.allData, x.field);
-        theArray[index].options = options;
+        currentSubjectFiltersCopy[index].options = options;
       });
-      dataExplorerConfig.subjectSections = currentSubjectFilters;
+      dataExplorerConfig.subjectSections = currentSubjectFiltersCopy;
       
       const currentProjectFilters = dataExplorerConfig.projectSections;
       const currentProjectFiltersCopy = dataExplorerConfig.projectSections.slice();
       let datasetsCount = 0;
-      currentProjectFilters.forEach((x, index, theArray) => {
+      currentProjectFilters.forEach((x, index) => {
         const options = this.buildFilterFromData(this.allData, x.field);
         currentProjectFiltersCopy[index].options = options;
         if(x.field === 'dataset') {
@@ -448,20 +422,22 @@ class Explorer extends React.Component {
 
   refreshCharts = (filtersApplied) => {
     var outerThis = this;
+    var filters = Object.assign({}, filtersApplied);
     if (typeof filtersApplied === 'undefined') {
-      filtersApplied = {};
+      filters = {};
     }
-    return this.obtainAllSubcommonsAggsData(filtersApplied).then(function(subcommonsAggsData) {
+    return this.obtainAllSubcommonsAggsData(filters).then(function(subcommonsAggsData) {
       askGuppyForAggregationData(
         '/guppy/',
         'subject',
         ['species', 'race', 'gender', 'dataset'],
-        filtersApplied,
+        filters,
         '',
       ).then((res) => {
           let combinedAggsData = subcommonsAggsData.concat(res.data["_aggregation"].subject);
           combinedAggsData = flattenHistograms(combinedAggsData);
-          const chartData = outerThis.buildCharts(combinedAggsData, chartConfig, filtersApplied);
+          const chartData = outerThis.buildCharts(combinedAggsData, 
+            outerThis.state.dataExplorerConfig.charts, filters);
           outerThis.setState({'chartData': chartData, loading: false});
         });
     });

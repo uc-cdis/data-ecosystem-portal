@@ -178,6 +178,32 @@
     }
   },
   "dataExplorerConfig": {
+    "charts": {
+      "project_id": {
+        "chartType": "count",
+        "title": "Projects"
+      },
+      "subject_id": {
+        "chartType": "count",
+        "title": "Subjects"
+      },
+      "dataset": {
+        "chartType": "pie",
+        "title": "Dataset"
+      },
+      "species": {
+        "chartType": "bar",
+        "title": "Species"
+      },
+      "gender": {
+        "chartType": "pie",
+        "title": "Gender"
+      },
+      "race": {
+        "chartType": "bar",
+        "title": "Race"
+      }
+    },
     "guppy": {
       "indices": [
         {
