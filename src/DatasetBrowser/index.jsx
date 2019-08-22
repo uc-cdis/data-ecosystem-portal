@@ -8,6 +8,7 @@ import './DatasetBrowser.less';
 import { fetchWithCreds } from '../actions';
 import { guppyGraphQLUrl } from '../configs';
 import Spinner from '../components/Spinner';
+import { graphModelQueryRelativePath } from '../localconf';
 
 function calculateSummaryCounts(field, filteredData) {
   const values = [];
@@ -70,7 +71,6 @@ class DatasetBrowser extends React.Component {
   obtainSubcommonsData = (subcommonsConfig) => {
     const subcommonsURL = subcommonsConfig.URL;
     const subcommonsName = subcommonsConfig.name;
-    const graphModelQueryURL = 'api/v0/submission/graphql';
     const queryString = `
       {
         study {
@@ -81,9 +81,8 @@ class DatasetBrowser extends React.Component {
       }
     `;
 
-    console.log('fetching from ', subcommonsURL + graphModelQueryURL);
     return fetchWithCreds({
-      path: subcommonsURL + graphModelQueryURL,
+      path: subcommonsURL + graphModelQueryRelativePath,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -11,6 +11,7 @@ import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import './Explorer.less';
 import { fetchWithCreds } from '../actions';
 import { guppyDownloadUrl } from '../configs';
+import { flatModelDownloadRelativePath, flatModelQueryRelativePath } from '../localconf';
 
 import Spinner from '../components/Spinner';
 
@@ -142,7 +143,6 @@ class Explorer extends React.Component {
   obtainSubcommonsData = (subcommonsConfig) => {
     const subcommonsURL = subcommonsConfig.URL;
     const subcommonsName = subcommonsConfig.name;
-    const flatModelQueryURL = 'guppy/download';
 
     const queryObject = {
       type: 'subject',
@@ -157,7 +157,7 @@ class Explorer extends React.Component {
     };
 
     return fetchWithCreds({
-      path: subcommonsURL + flatModelQueryURL,
+      path: subcommonsURL + flatModelDownloadRelativePath,
       method: 'POST',
       body: JSON.stringify(queryObject),
     }).then((result) => {
@@ -295,7 +295,7 @@ class Explorer extends React.Component {
     }
 
     return fetchWithCreds({
-      path: `${subcommonsURL}guppy/graphql`,
+      path: `${subcommonsURL}` + flatModelQueryRelativePath,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -406,10 +406,6 @@ class Explorer extends React.Component {
     return fetchWithCreds({
       path: `${guppyDownloadUrl}`, // `${guppyDownloadUrl}`,
       body: JSON.stringify(queryObject),
-
-      // JSON.stringify({
-      //   query: queryString,
-      // }),
       method: 'POST',
     }).then(
       ({ status, data }) => // eslint-disable-line no-unused-vars

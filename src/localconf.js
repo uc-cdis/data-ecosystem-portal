@@ -49,6 +49,9 @@ function buildConfig(opts) {
     return u.href;
   }
 
+  const graphModelQueryRelativePath = 'api/v0/submission/graphql';
+  const flatModelDownloadRelativePath = 'guppy/download';
+  const flatModelQueryRelativePath = 'guppy/graphql';
   const submissionApiPath = `${hostname}api/v0/submission/`;
   const apiPath = `${hostname}api/`;
   const submissionApiOauthPath = `${hostname}api/v0/oauth2/`;
@@ -237,6 +240,9 @@ function buildConfig(opts) {
     homepageChartNodes: components.index.homepageChartNodes,
     datasetUrl,
     indexPublic,
+    graphModelQueryRelativePath,
+    flatModelDownloadRelativePath,
+    flatModelQueryRelativePath,
     guppyUrl,
     guppyGraphQLUrl,
     guppyDownloadUrl,

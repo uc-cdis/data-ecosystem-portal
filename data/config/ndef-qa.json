@@ -6,7 +6,7 @@
     }, 
     {
       "URL": "https://qa-test4.planx-pla.net/",
-      "name": "NDC: AIDs Data Commons"
+      "name": "NDC: AIDS Data Commons"
     }
   ],
   "gaTrackingId": "undefined",
@@ -64,10 +64,10 @@
           "label": "Explore cohorts"
         },
         {
-          "name": "NDC: DAIDs Data Commons",
+          "name": "NDC: AIDS Data Commons",
           "icon": "data-explore",
           "body": "The HIV Data Commons.",
-          "external_link": "https://daids.niaiddata.org",
+          "external_link": "https://aids.niaiddata.org",
           "internal_link": "/datasets",
           "label": "Explore cohorts"
         }
@@ -128,22 +128,13 @@
     "analysis": true
   },
   "datasetBrowserConfig": {
-    "guppy": {
-      "indices": [
-        {
-          "index": "dataset_browser",
-          "type": "dataset"
-        }
-      ],
-      "auth_filter_field": "auth_resource_path"
-    },
     "filterSections": [
       { 
         "title": "Supported Data Resources", 
         "options": [
           { "text": "NDC: TB Data Commons", "filterType": "singleSelect"},
           { "text": "ImmPort", "filterType": "singleSelect"},
-          { "text": "NDC: DAIDs Data Commons", "filterType": "singleSelect"}
+          { "text": "NDC: AIDS Data Commons", "filterType": "singleSelect"}
         ]
       },
       { 
@@ -203,15 +194,6 @@
         "chartType": "bar",
         "title": "Race"
       }
-    },
-    "guppy": {
-      "indices": [
-        {
-          "index": "data_explorer",
-          "type": "subject"
-        }
-      ],
-      "auth_filter_field": "auth_resource_path"
     },
     "projectSections": [
       { 
