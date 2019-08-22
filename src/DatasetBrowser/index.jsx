@@ -93,13 +93,10 @@ class DatasetBrowser extends React.Component {
       }),
     }).then(
       result => { 
-        console.log('90: ', result);
-        try {
-          result.json();
-        } catch (err) {
-          console.log('Error fetching from subcommons: ', result, 'Err: ', err);
-          return [];
+        if (result.status === 200) {
+          return result.data;
         }
+        return {};
       },
       reason => [ ] // eslint-disable-line
     ).then((result) => {
