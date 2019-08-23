@@ -26,6 +26,7 @@ try {
   const config = JSON.parse(contents);
   const subcommons = config['subcommons'].map(x => x.URL);
   subcommonsToConnectSrc = subcommons.join(' ');
+  console.log('\n\n\n\nSUBCOMMONS TO CONNECT SRC: \n\n\n\n', subcommonsToConnectSrc)
 } catch(err) {
   console.log('Failed to retrieve subcommons from config file.');
 }
