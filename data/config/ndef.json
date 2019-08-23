@@ -7,6 +7,10 @@
     {
       "URL": "https://aids.niaiddata.org/",
       "name": "NDC: AIDS Data Commons"
+    },
+    {
+      "URL": "https://flu.niaiddata.org/",
+      "name": "NDC: FLU Data Commons"
     }
   ],
   "gaTrackingId": "undefined",
@@ -68,6 +72,14 @@
           "icon": "data-explore",
           "body": "The HIV Data Commons.",
           "external_link": "https://aids.niaiddata.org",
+          "internal_link": "/datasets",
+          "label": "Explore cohorts"
+        },
+        {
+          "name": "NDC: Flu Data Commons",
+          "icon": "data-explore",
+          "body": "The Flu Data Commons.",
+          "external_link": "https://flu.niaiddata.org",
           "internal_link": "/datasets",
           "label": "Explore cohorts"
         }
