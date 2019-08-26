@@ -9,7 +9,7 @@ import { config, components } from '../params';
 import ExplorerTable from './ExplorerTable/';
 import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import './Explorer.less';
-import { fetchWithCreds } from '../actions';
+import { fetchWithCreds, fetchWithCredsAndTimeout } from '../actions';
 import { guppyDownloadUrl } from '../configs';
 import { flatModelDownloadRelativePath, flatModelQueryRelativePath } from '../localconf';
 
@@ -156,13 +156,13 @@ class Explorer extends React.Component {
       ],
     };
 
-    return fetchWithCreds({
+    return fetchWithCredsAndTimeout({
       path: subcommonsURL + flatModelDownloadRelativePath,
       method: 'POST',
       body: JSON.stringify(queryObject),
-    }).then((result) => {
+    }, 3000).then((result) => {
       const reformatted = [];
-      if (!result || !result.data) {
+      if (!result || !result.data || result.status !== 200) {
         return [];
       }
       const subjects = result.data;
@@ -172,7 +172,7 @@ class Explorer extends React.Component {
         reformatted.push(subject);
       }
       return reformatted;
-    });
+    }).catch(() => []);
   }
 
   obtainAllSubcommonsData = () => {
@@ -294,14 +294,14 @@ class Explorer extends React.Component {
       query.variables = { filter: getGQLFilter(filtersAppliedReduced) };
     }
 
-    return fetchWithCreds({
+    return fetchWithCredsAndTimeout({
       path: subcommonsURL + flatModelQueryRelativePath,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(query),
-    }).then((result) => {
+    }, 3000).then((result) => {
       if (!result || !result.data || !result.data.data || !result.data.data._aggregation) {
         return null;
       }
@@ -314,7 +314,7 @@ class Explorer extends React.Component {
         }];
       }
       return histograms;
-    });
+    }).catch(() => []);
   }
 
   obtainAllSubcommonsAggsData = (filtersApplied) => {
@@ -336,7 +336,7 @@ class Explorer extends React.Component {
       this.allData = this.allData.concat(parentCommonsData);
       return this.obtainAllSubcommonsData();
     }).then((subCommonsData) => {
-      const data = subCommonsData.flat();
+      const data = subCommonsData.filter(x => typeof x !== 'undefined').flat();
       if (data.length > 0) {
         this.allData = this.allData.concat(data);
       }
@@ -473,9 +473,6 @@ class Explorer extends React.Component {
     const totalCount = this.state.filteredData.length;
     const barChartColor = components.categorical2Colors ? components.categorical2Colors[0] : null;
 
-    // if (this.state.loading) {
-    //   return (<Spinner />)
-    // };
     return (
       <React.Fragment>
         <div className='ndef-page-title'>

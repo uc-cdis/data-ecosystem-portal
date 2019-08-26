@@ -17,6 +17,18 @@ const title = {
   kf: 'Kids First Data Coordinating Center Portal',
   ndh: 'NIAID Data Hub',
 } [app];
+const fs = require('fs');
+
+let subcommonsToConnectSrc = '';
+try {
+  const configPath = 'data/config/' + app + '.json';
+  const contents = fs.readFileSync(configPath, 'utf8');
+  const config = JSON.parse(contents);
+  const subcommons = config['subcommons'].map(x => x.URL);
+  subcommonsToConnectSrc = subcommons.join(' ');
+} catch(err) {
+  console.log('Failed to retrieve subcommons from config file.'); // eslint-disable no-console
+}
 
 const plugins = [
   new webpack.EnvironmentPlugin(['NODE_ENV']),
@@ -54,7 +66,9 @@ const plugins = [
       if (typeof process.env.INDEXD_URL !== 'undefined') {
         rv[(new URL(process.env.INDEXD_URL)).origin] = true;
       }
-      return Object.keys(rv).join(' ');
+      let connectSrcString = Object.keys(rv).join(' ');
+      connectSrcString += subcommonsToConnectSrc;
+      return connectSrcString;
     })(),
     hash: true
   }),

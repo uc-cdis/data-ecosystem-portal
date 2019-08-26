@@ -126,7 +126,7 @@ class DatasetBrowser extends React.Component {
           this.obtainSubcommonsData(config.subcommons[j]),
         );
       } catch (err) {
-        console.log(err); // eslint-disable no-console
+        console.log(err); // eslint-disable-line no-console
       }
     }
     return Promise.all(promiseArray);

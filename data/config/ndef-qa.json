@@ -7,6 +7,10 @@
     {
       "URL": "https://qa-test4.planx-pla.net/",
       "name": "NDC: AIDS Data Commons"
+    },
+    {
+      "URL": "https://qa-flu.planx-pla.net/",
+      "name": "NDC: Flu Data Commons"
     }
   ],
   "gaTrackingId": "undefined",
@@ -59,7 +63,7 @@
           "name": "NDC: TB Data Commons",
           "icon": "data-explore",
           "body": "The TB Project data commons.",
-          "external_link": "https://tb.niaiddata.org",
+          "external_link": "https://qa-test4.planx-pla.net/",
           "internal_link": "/datasets",
           "label": "Explore cohorts"
         },
@@ -67,7 +71,15 @@
           "name": "NDC: AIDS Data Commons",
           "icon": "data-explore",
           "body": "The HIV Data Commons.",
-          "external_link": "https://aids.niaiddata.org",
+          "external_link": "https://qa-test2.planx-pla.net/",
+          "internal_link": "/datasets",
+          "label": "Explore cohorts"
+        },
+        {
+          "name": "NDC: Flu Data Commons",
+          "icon": "data-explore",
+          "body": "The Flu Data Commons.",
+          "external_link": "https://qa-flu.planx-pla.net",
           "internal_link": "/datasets",
           "label": "Explore cohorts"
         }
@@ -226,7 +238,7 @@
     ],
     "fieldMapping" : [
       { "field": "dataset", "name": "Dataset" },
-      { "field": "studyAccession", "name": "Study Accession" },
+      { "field": "studyAccession", "name": "Study" },
       { "field": "phenotype", "name": "Phenotype" },
       { "field": "age", "name": "Age" },
       { "field": "race", "name": "Race" },
