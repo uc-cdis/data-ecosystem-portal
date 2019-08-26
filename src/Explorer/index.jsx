@@ -337,7 +337,6 @@ class Explorer extends React.Component {
       return this.obtainAllSubcommonsData();
     }).then((subCommonsData) => {
       const data = subCommonsData.filter(x => typeof x !== 'undefined').flat();
-      // console.log('343: ', data);
       if (data.length > 0) {
         this.allData = this.allData.concat(data);
       }
