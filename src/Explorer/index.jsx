@@ -9,7 +9,7 @@ import { config, components } from '../params';
 import ExplorerTable from './ExplorerTable/';
 import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import './Explorer.less';
-import { fetchWithCreds,fetchWithCredsAndTimeout } from '../actions';
+import { fetchWithCreds, fetchWithCredsAndTimeout } from '../actions';
 import { guppyDownloadUrl } from '../configs';
 import { flatModelDownloadRelativePath, flatModelQueryRelativePath } from '../localconf';
 
@@ -172,9 +172,7 @@ class Explorer extends React.Component {
         reformatted.push(subject);
       }
       return reformatted;
-    }).catch(function(err) {
-      return [];
-    });
+    }).catch(() => []);
   }
 
   obtainAllSubcommonsData = () => {
@@ -316,9 +314,7 @@ class Explorer extends React.Component {
         }];
       }
       return histograms;
-    }).catch(function(err){
-        return [];
-    });
+    }).catch(() => []);
   }
 
   obtainAllSubcommonsAggsData = (filtersApplied) => {
@@ -340,7 +336,6 @@ class Explorer extends React.Component {
       this.allData = this.allData.concat(parentCommonsData);
       return this.obtainAllSubcommonsData();
     }).then((subCommonsData) => {
-
       const data = subCommonsData.filter(x => typeof x !== 'undefined').flat();
       // console.log('343: ', data);
       if (data.length > 0) {
