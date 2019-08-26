@@ -162,7 +162,7 @@ class Explorer extends React.Component {
       body: JSON.stringify(queryObject),
     }).then((result) => {
       const reformatted = [];
-      if (!result || !result.data) {
+      if (!result || !result.data || result.status !== 200) {
         return [];
       }
       const subjects = result.data;
