@@ -238,7 +238,7 @@
     ],
     "fieldMapping" : [
       { "field": "dataset", "name": "Dataset" },
-      { "field": "studyAccession", "name": "Study Accession" },
+      { "field": "studyAccession", "name": "Study" },
       { "field": "phenotype", "name": "Phenotype" },
       { "field": "age", "name": "Age" },
       { "field": "race", "name": "Race" },
