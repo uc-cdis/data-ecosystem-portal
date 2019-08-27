@@ -141,12 +141,13 @@
   },
   "datasetBrowserConfig": {
     "filterSections": [
-      { 
+      {
         "title": "Supported Data Resources", 
         "options": [
-          { "text": "NDE: TB", "filterType": "singleSelect"},
           { "text": "ImmPort", "filterType": "singleSelect"},
-          { "text": "NDE: AIDS", "filterType": "singleSelect"}
+          { "text": "NDE: TB", "filterType": "singleSelect"},
+          { "text": "NDE: AIDS", "filterType": "singleSelect"},
+          { "text": "NDE: Flu", "filterType": "singleSelect"}
         ]
       },
       { 
