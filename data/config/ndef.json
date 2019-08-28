@@ -62,7 +62,7 @@
         {
           "name": "NDE: TB",
           "icon": "data-explore",
-          "body": "The NDE TB Project.",
+          "body": "The NDE TB Environment.",
           "external_link": "https://tb.niaiddata.org",
           "internal_link": "/datasets",
           "label": "Explore cohorts"
@@ -70,7 +70,7 @@
         {
           "name": "NDE: AIDS",
           "icon": "data-explore",
-          "body": "The NDE HIV Project.",
+          "body": "The NDE AIDS environment.",
           "external_link": "https://aids.niaiddata.org",
           "internal_link": "/datasets",
           "label": "Explore cohorts"
@@ -78,7 +78,7 @@
         {
           "name": "NDE: Flu",
           "icon": "data-explore",
-          "body": "The NDE Flu Project.",
+          "body": "The NDE Flu environment.",
           "external_link": "https://flu.niaiddata.org",
           "internal_link": "/datasets",
           "label": "Explore cohorts"
