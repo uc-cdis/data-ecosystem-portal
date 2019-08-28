@@ -2,15 +2,15 @@
   "subcommons": [ 
     {
       "URL": "https://tb.niaiddata.org/",
-      "name": "NDC: TB Data Commons"
+      "name": "NDE: TB"
     }, 
     {
       "URL": "https://aids.niaiddata.org/",
-      "name": "NDC: AIDS Data Commons"
+      "name": "NDE: AIDS"
     },
     {
       "URL": "https://flu.niaiddata.org/",
-      "name": "NDC: FLU Data Commons"
+      "name": "NDE: FLU"
     }
   ],
   "gaTrackingId": "undefined",
@@ -60,25 +60,25 @@
           "logo": "/custom/logo/immport-main-icon.png"
         },
         {
-          "name": "NDC: TB Data Commons",
+          "name": "NDE: TB",
           "icon": "data-explore",
-          "body": "The TB Project data commons.",
+          "body": "The NDE TB Environment.",
           "external_link": "https://tb.niaiddata.org",
           "internal_link": "/datasets",
           "label": "Explore cohorts"
         },
         {
-          "name": "NDC: AIDS Data Commons",
+          "name": "NDE: AIDS",
           "icon": "data-explore",
-          "body": "The HIV Data Commons.",
+          "body": "The NDE AIDS Environment.",
           "external_link": "https://aids.niaiddata.org",
           "internal_link": "/datasets",
           "label": "Explore cohorts"
         },
         {
-          "name": "NDC: Flu Data Commons",
+          "name": "NDE: Flu",
           "icon": "data-explore",
-          "body": "The Flu Data Commons.",
+          "body": "The NDE Flu Environment.",
           "external_link": "https://flu.niaiddata.org",
           "internal_link": "/datasets",
           "label": "Explore cohorts"
@@ -141,12 +141,13 @@
   },
   "datasetBrowserConfig": {
     "filterSections": [
-      { 
+      {
         "title": "Supported Data Resources", 
         "options": [
-          { "text": "NDC: TB Data Commons", "filterType": "singleSelect"},
           { "text": "ImmPort", "filterType": "singleSelect"},
-          { "text": "NDC: AIDS Data Commons", "filterType": "singleSelect"}
+          { "text": "NDE: TB", "filterType": "singleSelect"},
+          { "text": "NDE: AIDS", "filterType": "singleSelect"},
+          { "text": "NDE: Flu", "filterType": "singleSelect"}
         ]
       },
       { 
