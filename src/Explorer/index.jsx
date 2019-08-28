@@ -12,7 +12,7 @@ import './Explorer.less';
 import { fetchWithCreds, fetchWithCredsAndTimeout } from '../actions';
 import { guppyDownloadUrl } from '../configs';
 import { flatModelDownloadRelativePath, flatModelQueryRelativePath } from '../localconf';
-
+import getReduxStore from '../reduxStore';
 import Spinner from '../components/Spinner';
 
 const fieldMapping = config.dataExplorerConfig.fieldMapping;
@@ -131,6 +131,7 @@ class Explorer extends React.Component {
       dataExplorerConfig: config.dataExplorerConfig,
       datasetsCount: 0,
       loading: true,
+      isUserLoggedIn: false,
     };
     this.filterGroupRef = React.createRef();
     this.tableRef = React.createRef();
@@ -138,6 +139,10 @@ class Explorer extends React.Component {
 
   componentWillMount() {
     this.initializeData();
+    getReduxStore().then(store => {
+      const { user } = store.getState();
+      this.setState({ isUserLoggedIn: !!user.username });
+    });
   }
 
   obtainSubcommonsData = (subcommonsConfig) => {
@@ -377,6 +382,8 @@ class Explorer extends React.Component {
       this.tableRef.current.updateData(this.allData);
 
       return this.refreshCharts();
+    }).catch(err => {
+      this.setState({ loading: false });
     });
   }
 
@@ -536,6 +543,7 @@ class Explorer extends React.Component {
               guppyConfig={this.state.dataExplorerConfig}
               isLocked={false}
               loading={this.state.loading}
+              isUserLoggedIn={this.state.isUserLoggedIn}
             />
           </div>
         </div>

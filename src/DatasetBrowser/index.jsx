@@ -9,6 +9,7 @@ import { fetchWithCreds } from '../actions';
 import { guppyGraphQLUrl } from '../configs';
 import Spinner from '../components/Spinner';
 import { graphModelQueryRelativePath } from '../localconf';
+import getReduxStore from '../reduxStore';
 
 function calculateSummaryCounts(field, filteredData) {
   const values = [];
@@ -59,6 +60,7 @@ class DatasetBrowser extends React.Component {
         dataset_name: 0,
       },
       loading: true,
+      isUserLoggedIn: false,
     };
     this.filterGroupRef = React.createRef();
     this.tableRef = React.createRef();
@@ -66,6 +68,10 @@ class DatasetBrowser extends React.Component {
 
   componentWillMount() {
     this.initializeData();
+    getReduxStore().then(store => {
+      const { user } = store.getState();
+      this.setState({ isUserLoggedIn: !!user.username });
+    });
   }
 
   obtainSubcommonsData = (subcommonsConfig) => {
@@ -143,7 +149,7 @@ class DatasetBrowser extends React.Component {
       if (data.length > 0) {
         this.allData = this.allData.concat(data);
       }
-
+      
       this.setState({
         filteredData: this.allData,
         rawData: this.allData,
@@ -155,6 +161,8 @@ class DatasetBrowser extends React.Component {
 
       this.tableRef.current.updateData(this.allData);
 
+      this.setState({ loading: false });
+    }).catch(err => {
       this.setState({ loading: false });
     });
   }
@@ -271,6 +279,7 @@ class DatasetBrowser extends React.Component {
               totalCount={totalCount}
               guppyConfig={config.datasetBrowserConfig}
               isLocked={false}
+              isUserLoggedIn={this.state.isUserLoggedIn}
             />
           </div>
         </div>

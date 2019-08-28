@@ -154,7 +154,7 @@ async function init() {
                       component={
                         props => (
                           <ProtectedContent
-                            // A code change is required in Guppy to make this page public.
+                            public
                             component={DatasetBrowser}
                             {...props}
                           />
@@ -166,6 +166,7 @@ async function init() {
                       component={
                         props => (
                           <ProtectedContent
+                            public
                             component={Explorer}
                             {...props}
                           />
