@@ -70,7 +70,7 @@
         {
           "name": "NDE: AIDS",
           "icon": "data-explore",
-          "body": "The NDE AIDS environment.",
+          "body": "The NDE AIDS Environment.",
           "external_link": "https://qa-test4.planx-pla.net/",
           "internal_link": "/datasets",
           "label": "Explore cohorts"
@@ -78,7 +78,7 @@
         {
           "name": "NDE: Flu",
           "icon": "data-explore",
-          "body": "The NDE Flu environment.",
+          "body": "The NDE Flu Environment.",
           "external_link": "https://qa-flu.planx-pla.net",
           "internal_link": "/datasets",
           "label": "Explore cohorts"
