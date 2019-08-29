@@ -130,7 +130,7 @@ class ExplorerTable extends React.Component {
     const visiblePages = Math.min(totalPages, Math.round((SCROLL_SIZE / pageSize) + 0.49));
     const start = (this.state.currentPage * this.state.pageSize) + 1;
     const end = Math.min((this.state.currentPage + 1) * this.state.pageSize, totalCount);
-    let loginMessage = this.props.isUserLoggedIn ? '' : 'Log in to see even more data.';
+    const loginMessage = this.props.isUserLoggedIn ? '' : 'Log in to see even more data.';
     return (
       <div className={`dataset-browser-table ${this.props.className}`}>
         {(this.props.isLocked) ? <React.Fragment />

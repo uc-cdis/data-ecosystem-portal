@@ -69,11 +69,11 @@ class DatasetBrowser extends React.Component {
 
   componentWillMount() {
     this.initializeData();
-    
+
     getReduxStore().then((store) => {
-      store.dispatch(fetchUser).then(response => {
+      store.dispatch(fetchUser).then((response) => {
         this.setState({ isUserLoggedIn: !!response.user.username });
-      })
+      });
     });
   }
 
@@ -152,7 +152,7 @@ class DatasetBrowser extends React.Component {
       if (data.length > 0) {
         this.allData = this.allData.concat(data);
       }
-      
+
       this.setState({
         filteredData: this.allData,
         rawData: this.allData,
@@ -165,7 +165,8 @@ class DatasetBrowser extends React.Component {
       this.tableRef.current.updateData(this.allData);
 
       this.setState({ loading: false });
-    }).catch(err => {
+    }).catch((err) => {
+      console.log('Error initializing data: ', err);
       this.setState({ loading: false });
     });
   }
@@ -213,7 +214,6 @@ class DatasetBrowser extends React.Component {
           dataset_name: calculateSummaryCounts('dataset_name', filteredData),
         },
     });
-
 
 
     this.tableRef.current.updateData(filteredData);

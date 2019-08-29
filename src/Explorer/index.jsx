@@ -26,7 +26,7 @@ const tableConfig = { fields };
 
 function getFieldsOnTypeFromCommons(subcommonsURL) {
   const query = {
-    query: 
+    query:
       `{
         __type(name: "Subject") {
           name
@@ -35,8 +35,8 @@ function getFieldsOnTypeFromCommons(subcommonsURL) {
             name
           }
         }
-      }`
-    };
+      }`,
+  };
 
   return fetchWithCredsAndTimeout({
     path: subcommonsURL + flatModelQueryRelativePath,
@@ -46,9 +46,8 @@ function getFieldsOnTypeFromCommons(subcommonsURL) {
     },
     body: JSON.stringify(query),
   }, 3000).then((result) => {
-    const fieldsInGuppyFormat = result.data.data.__type.fields;
-    const fields = result.data.data.__type.fields.map(x => x.name);
-    return fields;
+    const fieldsFromCommons = result.data.data.__type.fields.map(x => x.name);
+    return fieldsFromCommons;
   }).catch(() => {
     console.log('Failed to retrieve schema / field list from ', subcommonsURL);
     return [];
@@ -172,9 +171,9 @@ class Explorer extends React.Component {
   componentWillMount() {
     this.initializeData();
     getReduxStore().then((store) => {
-      store.dispatch(fetchUser).then(response => {
+      store.dispatch(fetchUser).then((response) => {
         this.setState({ isUserLoggedIn: !!response.user.username });
-      })
+      });
     });
   }
 
@@ -411,7 +410,8 @@ class Explorer extends React.Component {
       this.tableRef.current.updateData(this.allData);
 
       return this.refreshCharts();
-    }).catch(err => {
+    }).catch((err) => {
+      console.log('Failed to initialize data: ', err);
       this.setState({ loading: false });
     });
   }
@@ -456,7 +456,7 @@ class Explorer extends React.Component {
     if (typeof filtersApplied === 'undefined') {
       filters = {};
     }
-    
+
     return this.obtainAllSubcommonsAggsData(filters).then((subcommonsAggsData) => {
       askGuppyForAggregationData(
         '/guppy/',
