@@ -1,3 +1,4 @@
+/* eslint no-console: 0 */
 import React from 'react';
 import PropTypes from 'prop-types';
 import ReactTable from 'react-table';
@@ -129,10 +130,13 @@ class ExplorerTable extends React.Component {
     const visiblePages = Math.min(totalPages, Math.round((SCROLL_SIZE / pageSize) + 0.49));
     const start = (this.state.currentPage * this.state.pageSize) + 1;
     const end = Math.min((this.state.currentPage + 1) * this.state.pageSize, totalCount);
+    const loginMessage = this.props.isUserLoggedIn ? '' : 'Log in to see even more data.';
     return (
       <div className={`dataset-browser-table ${this.props.className}`}>
         {(this.props.isLocked) ? <React.Fragment />
-          : <p className='dataset-browser-table__description'>{`Showing ${start} - ${end} of ${totalCount} matching datasets`}</p> }
+          : <p className='dataset-browser-table__description'>
+            {`Showing ${start} - ${end} of ${totalCount} matching subjects. ${loginMessage}`}
+          </p> }
         <ReactTable
           columns={columnsConfig}
           manual
@@ -169,6 +173,7 @@ ExplorerTable.propTypes = {
   defaultPageSize: PropTypes.number,
   tableConfig: PropTypes.object.isRequired,
   guppyConfig: PropTypes.object.isRequired,
+  isUserLoggedIn: PropTypes.bool,
 };
 
 ExplorerTable.defaultProps = {
@@ -176,6 +181,7 @@ ExplorerTable.defaultProps = {
   className: '',
   defaultPageSize: 10,
   loading: false,
+  isUserLoggedIn: false,
 };
 
 export default ExplorerTable;

@@ -1,4 +1,5 @@
 /* eslint no-underscore-dangle: 0 */
+/* eslint no-console: 0 */
 import React from 'react';
 import FilterGroup from '@gen3/ui-component/dist/components/filters/FilterGroup';
 import FilterList from '@gen3/ui-component/dist/components/filters/FilterList';
@@ -9,10 +10,10 @@ import { config, components } from '../params';
 import ExplorerTable from './ExplorerTable/';
 import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import './Explorer.less';
-import { fetchWithCreds, fetchWithCredsAndTimeout } from '../actions';
+import { fetchWithCreds, fetchWithCredsAndTimeout, fetchUser } from '../actions';
 import { guppyDownloadUrl } from '../configs';
 import { flatModelDownloadRelativePath, flatModelQueryRelativePath } from '../localconf';
-
+import getReduxStore from '../reduxStore';
 import Spinner from '../components/Spinner';
 
 const fieldMapping = config.dataExplorerConfig.fieldMapping;
@@ -22,6 +23,36 @@ for (let j = 0; j < fieldMapping.length; j += 1) {
   fields.push(fieldMapping[j].field);
 }
 const tableConfig = { fields };
+
+function getFieldsOnTypeFromCommons(subcommonsURL) {
+  const query = {
+    query:
+      `{
+        __type(name: "Subject") {
+          name
+          kind
+          fields {
+            name
+          }
+        }
+      }`,
+  };
+
+  return fetchWithCredsAndTimeout({
+    path: subcommonsURL + flatModelQueryRelativePath,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(query),
+  }, 3000).then((result) => {
+    const fieldsFromCommons = result.data.data.__type.fields.map(x => x.name);
+    return fieldsFromCommons;
+  }).catch(() => {
+    console.log('Failed to retrieve schema / field list from ', subcommonsURL);
+    return [];
+  });
+}
 
 function addCountsToSectionList(filterSections) {
   const filterSectionsCopy = filterSections.slice();
@@ -131,6 +162,7 @@ class Explorer extends React.Component {
       dataExplorerConfig: config.dataExplorerConfig,
       datasetsCount: 0,
       loading: true,
+      isUserLoggedIn: false,
     };
     this.filterGroupRef = React.createRef();
     this.tableRef = React.createRef();
@@ -138,22 +170,23 @@ class Explorer extends React.Component {
 
   componentWillMount() {
     this.initializeData();
+    getReduxStore().then((store) => {
+      store.dispatch(fetchUser).then((response) => {
+        this.setState({ isUserLoggedIn: !!response.user.username });
+      });
+    });
   }
 
-  obtainSubcommonsData = (subcommonsConfig) => {
+  obtainSubcommonsData = async (subcommonsConfig) => {
     const subcommonsURL = subcommonsConfig.URL;
     const subcommonsName = subcommonsConfig.name;
+    const fieldsFromConfig = this.state.dataExplorerConfig.fieldMapping.map(x => x.field);
+    const fieldsFromCommons = await getFieldsOnTypeFromCommons(subcommonsURL);
+    const fieldIntersection = fieldsFromConfig.filter(x => fieldsFromCommons.includes(x));
 
     const queryObject = {
       type: 'subject',
-      fields: [
-        'race',
-        'ethnicity',
-        'gender',
-        'species',
-        'submitter_id',
-        'year_of_birth',
-      ],
+      fields: fieldIntersection,
     };
 
     return fetchWithCredsAndTimeout({
@@ -377,6 +410,9 @@ class Explorer extends React.Component {
       this.tableRef.current.updateData(this.allData);
 
       return this.refreshCharts();
+    }).catch((err) => {
+      console.log('Failed to initialize data: ', err);
+      this.setState({ loading: false });
     });
   }
 
@@ -420,6 +456,7 @@ class Explorer extends React.Component {
     if (typeof filtersApplied === 'undefined') {
       filters = {};
     }
+
     return this.obtainAllSubcommonsAggsData(filters).then((subcommonsAggsData) => {
       askGuppyForAggregationData(
         '/guppy/',
@@ -536,6 +573,7 @@ class Explorer extends React.Component {
               guppyConfig={this.state.dataExplorerConfig}
               isLocked={false}
               loading={this.state.loading}
+              isUserLoggedIn={this.state.isUserLoggedIn}
             />
           </div>
         </div>

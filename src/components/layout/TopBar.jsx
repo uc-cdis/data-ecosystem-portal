@@ -70,6 +70,20 @@ class TopBar extends Component {
                 </React.Fragment>
               )
             }
+            {
+              typeof this.props.user.username === 'undefined'
+              &&
+              (
+                <React.Fragment>
+                  <Link className='top-bar__link' to='/login'>
+                    <TopIconButton
+                      icon='exit'
+                      name='Login'
+                    />
+                  </Link>
+                </React.Fragment>
+              )
+            }
           </nav>
         </header>
       </div>

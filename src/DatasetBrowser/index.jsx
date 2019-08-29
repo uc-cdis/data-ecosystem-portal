@@ -1,3 +1,4 @@
+/* eslint no-console: 0 */
 import React from 'react';
 import FilterGroup from '@gen3/ui-component/dist/components/filters/FilterGroup';
 import FilterList from '@gen3/ui-component/dist/components/filters/FilterList';
@@ -5,10 +6,11 @@ import { config } from '../params';
 import DatasetBrowserTable from './DatasetBrowserTable/';
 import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import './DatasetBrowser.less';
-import { fetchWithCreds } from '../actions';
+import { fetchWithCreds, fetchUser } from '../actions';
 import { guppyGraphQLUrl } from '../configs';
 import Spinner from '../components/Spinner';
 import { graphModelQueryRelativePath } from '../localconf';
+import getReduxStore from '../reduxStore';
 
 function calculateSummaryCounts(field, filteredData) {
   const values = [];
@@ -59,6 +61,7 @@ class DatasetBrowser extends React.Component {
         dataset_name: 0,
       },
       loading: true,
+      isUserLoggedIn: false,
     };
     this.filterGroupRef = React.createRef();
     this.tableRef = React.createRef();
@@ -66,6 +69,12 @@ class DatasetBrowser extends React.Component {
 
   componentWillMount() {
     this.initializeData();
+
+    getReduxStore().then((store) => {
+      store.dispatch(fetchUser).then((response) => {
+        this.setState({ isUserLoggedIn: !!response.user.username });
+      });
+    });
   }
 
   obtainSubcommonsData = (subcommonsConfig) => {
@@ -156,6 +165,9 @@ class DatasetBrowser extends React.Component {
       this.tableRef.current.updateData(this.allData);
 
       this.setState({ loading: false });
+    }).catch((err) => {
+      console.log('Error initializing data: ', err);
+      this.setState({ loading: false });
     });
   }
 
@@ -202,6 +214,7 @@ class DatasetBrowser extends React.Component {
           dataset_name: calculateSummaryCounts('dataset_name', filteredData),
         },
     });
+
 
     this.tableRef.current.updateData(filteredData);
   }
@@ -271,6 +284,7 @@ class DatasetBrowser extends React.Component {
               totalCount={totalCount}
               guppyConfig={config.datasetBrowserConfig}
               isLocked={false}
+              isUserLoggedIn={this.state.isUserLoggedIn}
             />
           </div>
         </div>
