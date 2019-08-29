@@ -1,4 +1,5 @@
 /* eslint no-underscore-dangle: 0 */
+/* eslint no-console: 0 */
 import React from 'react';
 import FilterGroup from '@gen3/ui-component/dist/components/filters/FilterGroup';
 import FilterList from '@gen3/ui-component/dist/components/filters/FilterList';
@@ -22,6 +23,37 @@ for (let j = 0; j < fieldMapping.length; j += 1) {
   fields.push(fieldMapping[j].field);
 }
 const tableConfig = { fields };
+
+function getFieldsOnTypeFromCommons(subcommonsURL) {
+  const query = {
+    query: 
+      `{
+        __type(name: "Subject") {
+          name
+          kind
+          fields {
+            name
+          }
+        }
+      }`
+    };
+
+  return fetchWithCredsAndTimeout({
+    path: subcommonsURL + flatModelQueryRelativePath,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(query),
+  }, 3000).then((result) => {
+    const fieldsInGuppyFormat = result.data.data.__type.fields;
+    const fields = result.data.data.__type.fields.map(x => x.name);
+    return fields;
+  }).catch(() => {
+    console.log('Failed to retrieve schema / field list from ', subcommonsURL);
+    return [];
+  });
+}
 
 function addCountsToSectionList(filterSections) {
   const filterSectionsCopy = filterSections.slice();
@@ -139,26 +171,18 @@ class Explorer extends React.Component {
 
   componentWillMount() {
     this.initializeData();
-    getReduxStore().then(store => {
-      const { user } = store.getState();
-      this.setState({ isUserLoggedIn: !!user.username });
-    });
   }
 
-  obtainSubcommonsData = (subcommonsConfig) => {
+  obtainSubcommonsData = async (subcommonsConfig) => {
     const subcommonsURL = subcommonsConfig.URL;
     const subcommonsName = subcommonsConfig.name;
+    const fieldsFromConfig = this.state.dataExplorerConfig.fieldMapping.map(x => x.field);
+    const fieldsFromCommons = await getFieldsOnTypeFromCommons(subcommonsURL);
+    const fieldIntersection = fieldsFromConfig.filter(x => fieldsFromCommons.includes(x));
 
     const queryObject = {
       type: 'subject',
-      fields: [
-        'race',
-        'ethnicity',
-        'gender',
-        'species',
-        'submitter_id',
-        'year_of_birth',
-      ],
+      fields: fieldIntersection,
     };
 
     return fetchWithCredsAndTimeout({
@@ -427,6 +451,10 @@ class Explorer extends React.Component {
     if (typeof filtersApplied === 'undefined') {
       filters = {};
     }
+    getReduxStore().then(store => {
+      const { user } = store.getState();
+      this.setState({ isUserLoggedIn: !!user.username });
+    });
     return this.obtainAllSubcommonsAggsData(filters).then((subcommonsAggsData) => {
       askGuppyForAggregationData(
         '/guppy/',

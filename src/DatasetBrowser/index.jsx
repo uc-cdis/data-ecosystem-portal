@@ -1,3 +1,4 @@
+/* eslint no-console: 0 */
 import React from 'react';
 import FilterGroup from '@gen3/ui-component/dist/components/filters/FilterGroup';
 import FilterList from '@gen3/ui-component/dist/components/filters/FilterList';
