@@ -10,7 +10,7 @@ import { config, components } from '../params';
 import ExplorerTable from './ExplorerTable/';
 import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import './Explorer.less';
-import { fetchWithCreds, fetchWithCredsAndTimeout } from '../actions';
+import { fetchWithCreds, fetchWithCredsAndTimeout, fetchUser } from '../actions';
 import { guppyDownloadUrl } from '../configs';
 import { flatModelDownloadRelativePath, flatModelQueryRelativePath } from '../localconf';
 import getReduxStore from '../reduxStore';
@@ -171,6 +171,11 @@ class Explorer extends React.Component {
 
   componentWillMount() {
     this.initializeData();
+    getReduxStore().then((store) => {
+      store.dispatch(fetchUser).then(response => {
+        this.setState({ isUserLoggedIn: !!response.user.username });
+      })
+    });
   }
 
   obtainSubcommonsData = async (subcommonsConfig) => {
@@ -451,10 +456,7 @@ class Explorer extends React.Component {
     if (typeof filtersApplied === 'undefined') {
       filters = {};
     }
-    getReduxStore().then(store => {
-      const { user } = store.getState();
-      this.setState({ isUserLoggedIn: !!user.username });
-    });
+    
     return this.obtainAllSubcommonsAggsData(filters).then((subcommonsAggsData) => {
       askGuppyForAggregationData(
         '/guppy/',

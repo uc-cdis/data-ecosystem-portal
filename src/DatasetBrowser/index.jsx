@@ -6,7 +6,7 @@ import { config } from '../params';
 import DatasetBrowserTable from './DatasetBrowserTable/';
 import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import './DatasetBrowser.less';
-import { fetchWithCreds } from '../actions';
+import { fetchWithCreds, fetchUser } from '../actions';
 import { guppyGraphQLUrl } from '../configs';
 import Spinner from '../components/Spinner';
 import { graphModelQueryRelativePath } from '../localconf';
@@ -69,9 +69,11 @@ class DatasetBrowser extends React.Component {
 
   componentWillMount() {
     this.initializeData();
-    getReduxStore().then(store => {
-      const { user } = store.getState();
-      this.setState({ isUserLoggedIn: !!user.username });
+    
+    getReduxStore().then((store) => {
+      store.dispatch(fetchUser).then(response => {
+        this.setState({ isUserLoggedIn: !!response.user.username });
+      })
     });
   }
 
@@ -211,6 +213,8 @@ class DatasetBrowser extends React.Component {
           dataset_name: calculateSummaryCounts('dataset_name', filteredData),
         },
     });
+
+
 
     this.tableRef.current.updateData(filteredData);
   }
