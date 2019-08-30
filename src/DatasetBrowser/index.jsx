@@ -215,7 +215,6 @@ class DatasetBrowser extends React.Component {
         },
     });
 
-
     this.tableRef.current.updateData(filteredData);
   }
 

@@ -24,36 +24,6 @@ for (let j = 0; j < fieldMapping.length; j += 1) {
 }
 const tableConfig = { fields };
 
-function getFieldsOnTypeFromCommons(subcommonsURL) {
-  const query = {
-    query:
-      `{
-        __type(name: "Subject") {
-          name
-          kind
-          fields {
-            name
-          }
-        }
-      }`,
-  };
-
-  return fetchWithCredsAndTimeout({
-    path: subcommonsURL + flatModelQueryRelativePath,
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(query),
-  }, 3000).then((result) => {
-    const fieldsFromCommons = result.data.data.__type.fields.map(x => x.name);
-    return fieldsFromCommons;
-  }).catch(() => {
-    console.log('Failed to retrieve schema / field list from ', subcommonsURL);
-    return [];
-  });
-}
-
 function addCountsToSectionList(filterSections) {
   const filterSectionsCopy = filterSections.slice();
   for (let k = 0; k < filterSectionsCopy.length; k += 1) {
@@ -163,6 +133,7 @@ class Explorer extends React.Component {
       datasetsCount: 0,
       loading: true,
       isUserLoggedIn: false,
+      queryableFieldsForEachSubcommons: {},
     };
     this.filterGroupRef = React.createRef();
     this.tableRef = React.createRef();
@@ -177,11 +148,46 @@ class Explorer extends React.Component {
     });
   }
 
+  getFieldsOnTypeFromCommons = (subcommonsURL) => {
+    const query = {
+      query:
+        `{
+          __type(name: "Subject") {
+            name
+            kind
+            fields {
+              name
+            }
+          }
+        }`,
+    };
+
+    const outerThis = this;
+
+    return fetchWithCredsAndTimeout({
+      path: subcommonsURL + flatModelQueryRelativePath,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(query),
+    }, 3000).then((result) => {
+      const fieldsFromCommons = result.data.data.__type.fields.map(x => x.name);
+      const queryableFieldsForEachSubcommons = outerThis.state.queryableFieldsForEachSubcommons;
+      queryableFieldsForEachSubcommons[subcommonsURL] = fieldsFromCommons;
+      outerThis.setState({ queryableFieldsForEachSubcommons });
+      return fieldsFromCommons;
+    }).catch(() => {  
+      console.log('Failed to retrieve schema / field list from ', subcommonsURL); 
+      return [];  
+    });
+  }
+
   obtainSubcommonsData = async (subcommonsConfig) => {
     const subcommonsURL = subcommonsConfig.URL;
     const subcommonsName = subcommonsConfig.name;
     const fieldsFromConfig = this.state.dataExplorerConfig.fieldMapping.map(x => x.field);
-    const fieldsFromCommons = await getFieldsOnTypeFromCommons(subcommonsURL);
+    const fieldsFromCommons = await this.getFieldsOnTypeFromCommons(subcommonsURL);
     const fieldIntersection = fieldsFromConfig.filter(x => fieldsFromCommons.includes(x));
 
     const queryObject = {
@@ -280,7 +286,7 @@ class Explorer extends React.Component {
     const options = [];
     uniqueValues.forEach((x) => {
       if (!x) return;
-      options.push({ text: x, filterType: 'singleSelect', count: 0 });
+      options.push({ text: x.toString(), filterType: 'singleSelect', count: 0 });
     });
     return options.sort((a, b) => {
       if (a.text > b.text) return 1;
@@ -307,7 +313,12 @@ class Explorer extends React.Component {
       && filtersApplied.dataset.selectedValues.includes(subcommonsName)) {
       delete filtersAppliedReduced.dataset;
     }
-    const chartFields = ['species', 'gender', 'race'];
+    let chartFields = ['species', 'gender', 'race'];
+    const queryableFields = this.state.queryableFieldsForEachSubcommons[subcommonsURL];
+    if (typeof queryableFields !== 'undefined') {
+      chartFields = chartFields.filter(x => queryableFields.includes(x));
+    }
+
     const applyFilter = typeof filtersAppliedReduced !== 'undefined'
       && Object.keys(filtersAppliedReduced).length > 0;
 
