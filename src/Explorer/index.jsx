@@ -177,7 +177,10 @@ class Explorer extends React.Component {
       queryableFieldsForEachSubcommons[subcommonsURL] = fieldsFromCommons;
       outerThis.setState({ queryableFieldsForEachSubcommons });
       return fieldsFromCommons;
-    }).catch(() => []);
+    }).catch(() => {  
+      console.log('Failed to retrieve schema / field list from ', subcommonsURL); 
+      return [];  
+    });
   }
 
   obtainSubcommonsData = async (subcommonsConfig) => {
