@@ -162,7 +162,7 @@ class Explorer extends React.Component {
         }`,
     };
 
-    var outerThis = this;
+    const outerThis = this;
 
     return fetchWithCredsAndTimeout({
       path: subcommonsURL + flatModelQueryRelativePath,
@@ -175,11 +175,9 @@ class Explorer extends React.Component {
       const fieldsFromCommons = result.data.data.__type.fields.map(x => x.name);
       const queryableFieldsForEachSubcommons = outerThis.state.queryableFieldsForEachSubcommons;
       queryableFieldsForEachSubcommons[subcommonsURL] = fieldsFromCommons;
-      outerThis.setState({ queryableFieldsForEachSubcommons: queryableFieldsForEachSubcommons});
+      outerThis.setState({ queryableFieldsForEachSubcommons });
       return fieldsFromCommons;
-    }).catch(() => {
-      return [];
-    });
+    }).catch(() => []);
   }
 
   obtainSubcommonsData = async (subcommonsConfig) => {
@@ -480,7 +478,7 @@ class Explorer extends React.Component {
         let combinedAggsData = subcommonsAggsData.concat(res.data._aggregation.subject);
         combinedAggsData = flattenHistograms(combinedAggsData);
         const chartData = outerThis.buildCharts(combinedAggsData,
-        outerThis.state.dataExplorerConfig.charts, filters);
+          outerThis.state.dataExplorerConfig.charts, filters);
         outerThis.setState({ chartData, loading: false });
       });
     });
