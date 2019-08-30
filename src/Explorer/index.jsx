@@ -286,9 +286,7 @@ class Explorer extends React.Component {
     const options = [];
     uniqueValues.forEach((x) => {
       if (!x) return;
-      let y = x;
-      if (Array.isArray(x)) y = x[0];
-      options.push({ text: y, filterType: 'singleSelect', count: 0 });
+      options.push({ text: x.toString(), filterType: 'singleSelect', count: 0 });
     });
     return options.sort((a, b) => {
       if (a.text > b.text) return 1;
