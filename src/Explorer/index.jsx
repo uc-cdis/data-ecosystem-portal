@@ -24,6 +24,36 @@ for (let j = 0; j < fieldMapping.length; j += 1) {
 }
 const tableConfig = { fields };
 
+function getFieldsOnTypeFromCommons(subcommonsURL) {
+  const query = {
+    query:
+      `{
+        __type(name: "Subject") {
+          name
+          kind
+          fields {
+            name
+          }
+        }
+      }`,
+  };
+
+  return fetchWithCredsAndTimeout({
+    path: subcommonsURL + flatModelQueryRelativePath,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(query),
+  }, 3000).then((result) => {
+    const fieldsFromCommons = result.data.data.__type.fields.map(x => x.name);
+    return fieldsFromCommons;
+  }).catch(() => {
+    console.log('Failed to retrieve schema / field list from ', subcommonsURL);
+    return [];
+  });
+}
+
 function addCountsToSectionList(filterSections) {
   const filterSectionsCopy = filterSections.slice();
   for (let k = 0; k < filterSectionsCopy.length; k += 1) {
