@@ -94,9 +94,7 @@ if (process.env.NODE_ENV !== 'dev' && process.env.NODE_ENV !== 'auto') {
 module.exports = {
   entry: ['babel-polyfill', './src/index.jsx'],
   target: 'web',
-  externals: [nodeExternals(), {
-    xmlhttprequest: '{XMLHttpRequest:XMLHttpRequest}',
-  }],
+  externals: [nodeExternals()],
   mode: process.env.NODE_ENV !== 'dev' && process.env.NODE_ENV !== 'auto' ? 'production' : 'development',
   output: {
     path: __dirname,
@@ -157,7 +155,10 @@ module.exports = {
       graphql: path.resolve('./node_modules/graphql'),
       react: path.resolve('./node_modules/react'), // Same issue.
     },
-    extensions: ['.mjs', '.js', '.jsx', '.json'],
+    extensions: ['.mjs', '.js', '.jsx', '.json' ],
   },
   plugins,
+  externals: [{
+    xmlhttprequest: '{XMLHttpRequest:XMLHttpRequest}',
+  }],
 };
