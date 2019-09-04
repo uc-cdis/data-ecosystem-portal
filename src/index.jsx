@@ -15,7 +15,6 @@ import '@gen3/ui-component/dist/css/base.less';
 import { fetchDictionary, fetchSchema, fetchVersionInfo } from './actions';
 import ReduxLogin, { fetchLogin } from './Login/ReduxLogin';
 import ProtectedContent from './Login/ProtectedContent';
-import HomePage from './Homepage/page';
 import DocumentPage from './Document/page';
 import DatasetBrowser from './DatasetBrowser/';
 import Explorer from './Explorer/';
@@ -96,13 +95,6 @@ async function init() {
                             {...props}
                           />
                         )
-                      }
-                    />
-                    <Route
-                      exact
-                      path='/submission'
-                      component={
-                        props => <ProtectedContent component={HomePage} {...props} />
                       }
                     />
                     <Route
