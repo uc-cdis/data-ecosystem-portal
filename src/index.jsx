@@ -12,7 +12,7 @@ import ReactGA from 'react-ga';
 import { Helmet } from 'react-helmet';
 
 import '@gen3/ui-component/dist/css/base.less';
-import { fetchDictionary, fetchSchema, fetchVersionInfo } from './actions';
+import { fetchVersionInfo } from './actions';
 import ReduxLogin, { fetchLogin } from './Login/ReduxLogin';
 import ProtectedContent from './Login/ProtectedContent';
 import DocumentPage from './Document/page';
@@ -43,8 +43,6 @@ async function init() {
   ReactGA.pageview(window.location.pathname + window.location.search);
   await Promise.all(
     [
-      store.dispatch(fetchSchema),
-      store.dispatch(fetchDictionary),
       store.dispatch(fetchVersionInfo),
     ],
   );
