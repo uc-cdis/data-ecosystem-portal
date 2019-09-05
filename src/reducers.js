@@ -2,7 +2,6 @@ import { reducer as formReducer } from 'redux-form';
 import { combineReducers } from 'redux';
 import userProfile from './UserProfile/reducers';
 import certificate from './UserAgreement/reducers';
-import homepage from './Homepage/reducers';
 import queryNodes from './QueryNode/reducers';
 import popups from './Popup/reducers';
 import login from './Login/reducers';
@@ -60,7 +59,6 @@ export const removeDeletedNode = (state, id) => {
 
 const reducers = combineReducers({
   bar,
-  homepage,
   popups,
   user,
   status,

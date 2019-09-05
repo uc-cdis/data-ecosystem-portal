@@ -85,7 +85,7 @@ class DatasetBrowser extends React.Component {
         study {
           study_description
           submitter_id
-          study_design
+          study_objective
         }
       }
     `;
@@ -117,7 +117,7 @@ class DatasetBrowser extends React.Component {
         reformatted.push({
           description: studies[j].study_description,
           dataset_name: studies[j].submitter_id,
-          research_focus: studies[j].study_design,
+          research_focus: studies[j].study_objective,
           link: subcommonsURL,
           supported_data_resource: subcommonsName,
         });

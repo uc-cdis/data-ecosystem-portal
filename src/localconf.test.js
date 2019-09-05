@@ -12,7 +12,6 @@ describe('The localconf', () => {
     'submissionApiOauthPath',
     'credentialCdisPath',
     'graphqlPath',
-    'graphqlSchemaUrl',
     'appname',
     'login',
     'requiredCerts',

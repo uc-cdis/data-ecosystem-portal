@@ -8,7 +8,6 @@ import {
   submissionApiPath,
   graphqlPath,
   guppyGraphQLUrl,
-  graphqlSchemaUrl,
 } from './configs';
 import sessionMonitor from './SessionMonitor';
 
@@ -363,52 +362,6 @@ export const fetchProjects = () => dispatch =>
             type: 'FETCH_ERROR',
             error: data,
             status,
-          };
-        }
-      })
-    .then(msg => dispatch(msg));
-
-
-/**
- * Fetch the schema for graphi, and stuff it into redux -
- * handled by router
- */
-export const fetchSchema = dispatch => fetchWithCreds({ path: graphqlSchemaUrl, dispatch })
-  .then(
-    ({ status, data }) => {
-      switch (status) {
-      case 200:
-        return dispatch(
-          {
-            type: 'RECEIVE_SCHEMA_LOGIN',
-            schema: data,
-          },
-        );
-      default:
-        return Promise.resolve('NOOP');
-      }
-    },
-  );
-
-
-export const fetchDictionary = dispatch =>
-  fetchWithCreds({
-    path: `${submissionApiPath}_dictionary/_all`,
-    method: 'GET',
-    useCache: true,
-  })
-    .then(
-      ({ status, data }) => {
-        switch (status) {
-        case 200:
-          return {
-            type: 'RECEIVE_DICTIONARY',
-            data,
-          };
-        default:
-          return {
-            type: 'FETCH_ERROR',
-            error: data,
           };
         }
       })

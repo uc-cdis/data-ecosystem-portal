@@ -134,13 +134,13 @@ fi
 bash custom/customize.sh
 
 # download the graphql schema for the commons from HOSTNAME
-npm run schema
+# npm run schema
 # run the relay compiler against the graphql schema
-npm run relay
+# npm run relay
 # generate a parameters.json file by overlaying $APP.json on default.json
 npm run params
 # run a sanity check to make sure portal config works
-npm run sanity-check
+# npm run sanity-check
 
 # try to keep the arranger components in line
 #export STORYBOOK_ARRANGER_API=localhost:3000

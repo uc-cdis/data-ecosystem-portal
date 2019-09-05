@@ -3,8 +3,6 @@
   "plugins": [
     "dev-expression",
     "transform-class-properties",
-    ["relay",
-      {"compat": true, "schema": "data/schema.json"}],
     ["@babel/plugin-transform-runtime"]
   ]
 }
