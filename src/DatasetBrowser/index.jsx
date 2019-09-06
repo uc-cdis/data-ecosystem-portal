@@ -86,6 +86,7 @@ class DatasetBrowser extends React.Component {
           study_description
           submitter_id
           study_design
+          study_objective
         }
       }
     `;
@@ -117,7 +118,7 @@ class DatasetBrowser extends React.Component {
         reformatted.push({
           description: studies[j].study_description,
           dataset_name: studies[j].submitter_id,
-          research_focus: studies[j].study_design,
+          research_focus: studies[j].study_objective,
           link: subcommonsURL,
           supported_data_resource: subcommonsName,
         });
@@ -258,7 +259,7 @@ class DatasetBrowser extends React.Component {
     return (
       <React.Fragment>
         <div className='ndef-page-title'>
-          Datasets Browser
+          Dataset Browser
         </div>
         <div id='def-spinner' className={this.state.loading ? 'visible' : 'hidden'} ><Spinner /></div>
         <div className='dataset-browser'>

@@ -197,12 +197,13 @@
       },
       "species": {
         "chartType": "bar",
-        "title": "Species"
+        "title": "Genus species"
       },
       "gender": {
         "chartType": "pie",
         "title": "Gender"
-      },
+      }
+    },
     "projectSections": [
       { 
         "title": "Project/Dataset",
@@ -231,8 +232,6 @@
       { "field": "dataset", "name": "Dataset" },
       { "field": "studyAccession", "name": "Study" },
       { "field": "phenotype", "name": "Phenotype" },
-      { "field": "age", "name": "Age" },
-      { "field": "race", "name": "Race" },
       { "field": "gender", "name": "Gender" },
       { "field": "ethnicity", "name": "Ethnicity" },
       { "field": "strain", "name": "Strain" },
