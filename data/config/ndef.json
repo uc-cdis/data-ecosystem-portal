@@ -197,7 +197,7 @@
       },
       "species": {
         "chartType": "bar",
-        "title": "Genus Species"
+        "title": "Genus species"
       },
       "gender": {
         "chartType": "pie",
@@ -223,7 +223,7 @@
         "options": []
       },
       { 
-        "title": "Genus Species",
+        "title": "Genus species",
         "field": "species",
         "options": []
       }
@@ -235,7 +235,7 @@
       { "field": "gender", "name": "Gender" },
       { "field": "ethnicity", "name": "Ethnicity" },
       { "field": "strain", "name": "Strain" },
-      { "field": "species", "name": "Genus Species" },
+      { "field": "species", "name": "Genus species" },
       { "field": "submitter_id", "name": "Submitter ID" }
     ],
     "filterConfig": {
