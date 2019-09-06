@@ -48,7 +48,7 @@
     "appName": "NDEF",
     "index": {
       "introduction": {
-        "heading": "Cross-Commons Datasets",
+        "heading": "Cross-Environment Datasets",
         "text": "Divisions within NIAID can have their own independent data models while maintaining interoperability of the data ecosystem. The data within projects are findable, accessible, interoperable, and reusable (FAIR), but it will be easier for each individual research community to work within the system. Of course, with this approach, two different research communities may create data models that have data elements that may conflict and that will need to be manually de-conflicted.",
         "link": "/datasets"
       },
@@ -60,7 +60,7 @@
           "logo": "/custom/logo/immport-main-icon.png"
         },
         {
-          "name": "NDE: TB",
+          "name": "NIAID TB Environment",
           "icon": "data-explore",
           "body": "The NDE TB Environment.",
           "external_link": "https://tb.niaiddata.org",
@@ -68,7 +68,7 @@
           "label": "Explore cohorts"
         },
         {
-          "name": "NDE: AIDS",
+          "name": "NIAID AIDS Environment",
           "icon": "data-explore",
           "body": "The NDE AIDS Environment.",
           "external_link": "https://aids.niaiddata.org",
@@ -76,7 +76,7 @@
           "label": "Explore cohorts"
         },
         {
-          "name": "NDE: Flu",
+          "name": "NIAID Flu Environment",
           "icon": "data-explore",
           "body": "The NDE Flu Environment.",
           "external_link": "https://flu.niaiddata.org",
@@ -111,7 +111,7 @@
     },
     "login": {
       "title": "NDEF Data Ecosystem",
-      "subTitle": "Cross-Commons Datasets",
+      "subTitle": "Cross-Environment Datasets",
       "text": "The website combines government datasets from multiple divisions of NIAID to create clean, easy to navigate visualizations for data-driven discovery within Allergy and Infectious Diseases.",
       "contact": "If you have any questions about access or the registration process, please contact ",
       "email": "support@datacommons.io"
@@ -169,7 +169,7 @@
     ],
     "fieldMapping" : [
       { "field": "link", "name": "View" },
-      { "field": "dataset_name", "name": "Dataset" },
+      { "field": "dataset_name", "name": "Study" },
       { "field": "supported_data_resource", "name": "Supported Data Resource" },
       { "field": "research_focus", "name": "Research Focus" },
       { "field": "description", "name": "Description of Dataset" }
@@ -197,15 +197,11 @@
       },
       "species": {
         "chartType": "bar",
-        "title": "Species"
+        "title": "Genus species"
       },
       "gender": {
         "chartType": "pie",
         "title": "Gender"
-      },
-      "race": {
-        "chartType": "bar",
-        "title": "Race"
       }
     },
     "projectSections": [
@@ -227,11 +223,6 @@
         "options": []
       },
       { 
-        "title": "Race",
-        "field": "race",
-        "options": []
-      },
-      { 
         "title": "Species",
         "field": "species",
         "options": []
@@ -241,18 +232,16 @@
       { "field": "dataset", "name": "Dataset" },
       { "field": "studyAccession", "name": "Study" },
       { "field": "phenotype", "name": "Phenotype" },
-      { "field": "age", "name": "Age" },
-      { "field": "race", "name": "Race" },
       { "field": "gender", "name": "Gender" },
       { "field": "ethnicity", "name": "Ethnicity" },
       { "field": "strain", "name": "Strain" },
-      { "field": "species", "name": "Species" },
+      { "field": "species", "name": "Genus species" },
       { "field": "submitter_id", "name": "Submitter ID" }
     ],
     "filterConfig": {
       "tabs": [{
         "title": "Subject",
-        "fields": ["ethnicity", "gender", "race", "species"]
+        "fields": ["ethnicity", "gender", "species"]
       },
       {
         "title": "Project",

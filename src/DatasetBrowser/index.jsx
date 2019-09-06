@@ -85,6 +85,7 @@ class DatasetBrowser extends React.Component {
         study {
           study_description
           submitter_id
+          study_design
           study_objective
         }
       }
@@ -258,7 +259,7 @@ class DatasetBrowser extends React.Component {
     return (
       <React.Fragment>
         <div className='ndef-page-title'>
-          Datasets Browser
+          Dataset Browser
         </div>
         <div id='def-spinner' className={this.state.loading ? 'visible' : 'hidden'} ><Spinner /></div>
         <div className='dataset-browser'>

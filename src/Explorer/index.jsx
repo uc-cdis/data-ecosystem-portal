@@ -436,7 +436,6 @@ class Explorer extends React.Component {
         'gender',
         'species',
         'ageUnit',
-        'age',
         'phenotype',
         'strain',
         'armAccession',
