@@ -60,7 +60,7 @@
           "logo": "/custom/logo/immport-main-icon.png"
         },
         {
-          "name": "NDE: TB",
+          "name": "NIAID TB Environment",
           "icon": "data-explore",
           "body": "The NDE TB Environment.",
           "external_link": "https://qa-test2.planx-pla.net/",
@@ -68,7 +68,7 @@
           "label": "Explore cohorts"
         },
         {
-          "name": "NDE: AIDS",
+          "name": "NIAID AIDS Environment",
           "icon": "data-explore",
           "body": "The NDE AIDS Environment.",
           "external_link": "https://qa-test4.planx-pla.net/",
@@ -76,7 +76,7 @@
           "label": "Explore cohorts"
         },
         {
-          "name": "NDE: Flu",
+          "name": "NIAID Flu Environment",
           "icon": "data-explore",
           "body": "The NDE Flu Environment.",
           "external_link": "https://qa-flu.planx-pla.net",
@@ -110,7 +110,7 @@
       ]
     },
     "login": {
-      "title": "NDEF Data Ecosystem",
+      "title": "NIAID Data Ecosystem",
       "subTitle": "Cross Environment Datasets",
       "text": "The website combines government datasets from multiple divisions of NIAID to create clean, easy to navigate visualizations for data-driven discovery within Allergy and Infectious Diseases.",
       "contact": "If you have any questions about access or the registration process, please contact ",
@@ -223,7 +223,7 @@
         "options": []
       },
       { 
-        "title": "Genus species",
+        "title": "Genus Species",
         "field": "species",
         "options": []
       }
@@ -235,7 +235,7 @@
       { "field": "gender", "name": "Gender" },
       { "field": "ethnicity", "name": "Ethnicity" },
       { "field": "strain", "name": "Strain" },
-      { "field": "species", "name": "Genus species" },
+      { "field": "species", "name": "Genus Species" },
       { "field": "submitter_id", "name": "Submitter ID" }
     ],
     "filterConfig": {
