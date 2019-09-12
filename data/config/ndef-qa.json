@@ -45,7 +45,7 @@
     "projectDetails": "boardCounts"
   },
   "components": {
-    "appName": "NDEF",
+    "appName": "NIAID Data Ecosystem",
     "index": {
       "introduction": {
         "heading": "Cross Environment Datasets",
@@ -129,8 +129,8 @@
       },
       {
         "src": "/custom/logo/niaid.png",
-        "href": "https://niaid.bionimbus.org",
-        "alt": "NIAID Data Hub"
+        "href": "https://qa-test3.planx-pla.net/",
+        "alt": "NIAID Data Ecosystem"
       }
     ]
   },
@@ -155,6 +155,7 @@
         "options": [
           { "text": "AIDS", "filterType": "singleSelect"},
           { "text": "TB", "filterType": "singleSelect"},
+          { "text": "Flu", "filterType": "singleSelect"},
           { "text": "Immune Response", "filterType": "singleSelect"},
           { "text": "Allergy", "filterType": "singleSelect"},
           { "text": "Atopy", "filterType": "singleSelect"},

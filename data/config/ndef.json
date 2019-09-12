@@ -45,10 +45,10 @@
     "projectDetails": "boardCounts"
   },
   "components": {
-    "appName": "NDEF",
+    "appName": "NIAID Data Ecosystem",
     "index": {
       "introduction": {
-        "heading": "Cross-Environment Datasets",
+        "heading": "Cross Environment Datasets",
         "text": "Divisions within NIAID can have their own independent data models while maintaining interoperability of the data ecosystem. The data within projects are findable, accessible, interoperable, and reusable (FAIR), but it will be easier for each individual research community to work within the system. Of course, with this approach, two different research communities may create data models that have data elements that may conflict and that will need to be manually de-conflicted.",
         "link": "/datasets"
       },
@@ -110,7 +110,7 @@
       ]
     },
     "login": {
-      "title": "NDEF Data Ecosystem",
+      "title": "NIAID Data Ecosystem",
       "subTitle": "Cross Environment Datasets",
       "text": "The website combines government datasets from multiple divisions of NIAID to create clean, easy to navigate visualizations for data-driven discovery within Allergy and Infectious Diseases.",
       "contact": "If you have any questions about access or the registration process, please contact ",
@@ -129,8 +129,8 @@
       },
       {
         "src": "/custom/logo/niaid.png",
-        "href": "https://niaid.bionimbus.org",
-        "alt": "NIAID Data Hub"
+        "href": "https://niaiddata.org",
+        "alt": "NIAID Data Ecosystem"
       }
     ]
   },
@@ -155,6 +155,7 @@
         "options": [
           { "text": "AIDS", "filterType": "singleSelect"},
           { "text": "TB", "filterType": "singleSelect"},
+          { "text": "Flu", "filterType": "singleSelect"},
           { "text": "Immune Response", "filterType": "singleSelect"},
           { "text": "Allergy", "filterType": "singleSelect"},
           { "text": "Atopy", "filterType": "singleSelect"},
