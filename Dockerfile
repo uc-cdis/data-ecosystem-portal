@@ -24,9 +24,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ARG APP=ndef
 ARG BASENAME
 
-RUN mkdir -p /data-ecosystem-portal
-COPY . /data-ecosystem-portal
-WORKDIR /data-ecosystem-portal
+RUN mkdir -p /data-portal
+COPY . /data-portal
+WORKDIR /data-portal
 
 RUN COMMIT=`git rev-parse HEAD` && echo "export const portalCommit = \"${COMMIT}\";" >src/versions.js \
     && VERSION=`git describe --always --tags` && echo "export const portalVersion =\"${VERSION}\";" >>src/versions.js \
