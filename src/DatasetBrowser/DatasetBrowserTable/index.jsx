@@ -27,31 +27,15 @@ class DatasetBrowserTable extends React.Component {
     };
   }
 
-  getWidthForColumn = (field, columnName) => {
+  getWidthForColumn = (field) => { // hardcode column width
     if (field === 'link') {
       return 80;
+    } else if (field === 'dataset_name'
+    || field === 'supported_data_resource'
+    || field === 'research_focus') {
+      return 200;
     }
-
-    // some magic numbers that work fine for table columns width
-    const minWidth = 150;
-    const maxWidth = 300;
-    const letterWidth = 8;
-    const spacing = 20;
-    if (!this.props.filteredData || this.props.filteredData.length === 0) {
-      return minWidth;
-    }
-    let maxLetterLen = columnName.length;
-    this.props.filteredData.forEach((d) => {
-      if (d[field] === null || typeof d[field] === 'undefined') {
-        return;
-      }
-      const str = d[field].toString && d[field].toString();
-      const len = str ? str.length : 0;
-      maxLetterLen = len > maxLetterLen ? len : maxLetterLen;
-    });
-    const resWidth = Math.min((maxLetterLen * letterWidth) + spacing, maxWidth);
-
-    return resWidth;
+    return 400;
   }
 
   updateData = (filteredData) => {
@@ -101,11 +85,10 @@ class DatasetBrowserTable extends React.Component {
       return {
         Header: name,
         accessor: field,
-        maxWidth: 400,
         render: ({ row }) => (
           <button onClick={e => this.handleButtonClick(e, row)}>Click Me</button>
         ),
-        width: this.getWidthForColumn(field, name),
+        minWidth: this.getWidthForColumn(field),
         Cell: row => (field === 'link' ?
           <IconicLink
             link={row.value}
