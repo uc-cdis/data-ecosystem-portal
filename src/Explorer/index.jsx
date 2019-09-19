@@ -248,7 +248,7 @@ class Explorer extends React.Component {
     const numUniqueDatasets = [...new Set(this.state.filteredData.map(x => x.dataset))].length;
 
     countItems.push({
-      label: 'Datasets', // this.props.nodeCountTitle,
+      label: 'Supported Data Resources', // this.props.nodeCountTitle,
       value: numUniqueDatasets, // this.props.totalCount,
     });
     countItems.push({
