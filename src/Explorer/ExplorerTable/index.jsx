@@ -92,7 +92,11 @@ class ExplorerTable extends React.Component {
   paginate = (state) => {
     this.setState({ loading: true });
     const paginatedData = this.makePaginatedData(state, this.state.filteredData);
-    this.setState({ paginatedData, loading: false });
+    this.setState({
+      paginatedData,
+      loading: false,
+      currentPage: state.page,
+    });
   };
 
   render() {

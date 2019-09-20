@@ -4,8 +4,8 @@
 
 .explorer-table__description {
   margin-bottom: 10px;
-  font-weight:bold;
-  font-size:15px;
+  font-weight: bold;
+  font-size: 15px;
 }
 
 .explorer-table .ReactTable.-striped .rt-tr.-odd {
@@ -53,6 +53,6 @@
 
 
 .explorer-table .index-button-bar__item {
-  margin:auto;
-  display:block;
+  margin: auto;
+  display: block;
 }

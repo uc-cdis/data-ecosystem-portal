@@ -47,7 +47,7 @@ class IndexButtonBar extends Component {
                     <IconicLink
                       link={item.external_link}
                       className='index-button-bar__item'
-                      caption='Visit Website'
+                      caption='Visit Environment'
                       target='_blank'
                       isExternal
                     />

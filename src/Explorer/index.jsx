@@ -539,14 +539,14 @@ class Explorer extends React.Component {
           <div className='explorer__visualizations'>
             {
               this.state.chartData.countItems && this.state.chartData.countItems.length > 0 && (
-                <div className='guppy-explorer-visualization__summary-cards'>
+                <div className='explorer-visualization__summary-cards'>
                   <DataSummaryCardGroup summaryItems={this.state.chartData.countItems} connected />
                 </div>
               )
             }
             {
               this.state.chartData.summaries && this.state.chartData.summaries.length > 0 && (
-                <div className='guppy-explorer-visualization__charts'>
+                <div className='explorer-visualization__charts'>
                   <SummaryChartGroup
                     summaries={this.state.chartData.summaries}
                     lockMessage={'This chart is locked.'}
