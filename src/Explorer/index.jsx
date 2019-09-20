@@ -15,6 +15,7 @@ import { guppyDownloadUrl } from '../configs';
 import { flatModelDownloadRelativePath, flatModelQueryRelativePath } from '../localconf';
 import getReduxStore from '../reduxStore';
 import Spinner from '../components/Spinner';
+import phenotypeNameMapping from './phenotypeNameMapping';
 
 const fieldMapping = config.dataExplorerConfig.fieldMapping;
 
@@ -189,10 +190,11 @@ class Explorer extends React.Component {
     const fieldsFromConfig = this.state.dataExplorerConfig.fieldMapping.map(x => x.field);
     const fieldsFromCommons = await this.getFieldsOnTypeFromCommons(subcommonsURL);
     const fieldIntersection = fieldsFromConfig.filter(x => fieldsFromCommons.includes(x));
+    const neededFields = fieldIntersection.concat(phenotypeNameMapping[subcommonsURL]);
 
     const queryObject = {
       type: 'subject',
-      fields: fieldIntersection,
+      fields: neededFields,
     };
 
     return fetchWithCredsAndTimeout({
@@ -208,6 +210,7 @@ class Explorer extends React.Component {
       for (let j = 0; j < subjects.length; j += 1) {
         const subject = subjects[j];
         subject.dataset = subcommonsName;
+        subject.phenotype = subject[phenotypeNameMapping[subcommonsURL]];
         reformatted.push(subject);
       }
       return reformatted;
@@ -539,14 +542,14 @@ class Explorer extends React.Component {
           <div className='explorer__visualizations'>
             {
               this.state.chartData.countItems && this.state.chartData.countItems.length > 0 && (
-                <div className='guppy-explorer-visualization__summary-cards'>
+                <div className='explorer-visualization__summary-cards'>
                   <DataSummaryCardGroup summaryItems={this.state.chartData.countItems} connected />
                 </div>
               )
             }
             {
               this.state.chartData.summaries && this.state.chartData.summaries.length > 0 && (
-                <div className='guppy-explorer-visualization__charts'>
+                <div className='explorer-visualization__charts'>
                   <SummaryChartGroup
                     summaries={this.state.chartData.summaries}
                     lockMessage={'This chart is locked.'}
