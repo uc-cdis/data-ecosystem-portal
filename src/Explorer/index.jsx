@@ -15,6 +15,7 @@ import { guppyDownloadUrl } from '../configs';
 import { flatModelDownloadRelativePath, flatModelQueryRelativePath } from '../localconf';
 import getReduxStore from '../reduxStore';
 import Spinner from '../components/Spinner';
+import phenotypeNameMapping from './phenotypeNameMapping';
 
 const fieldMapping = config.dataExplorerConfig.fieldMapping;
 
@@ -189,10 +190,11 @@ class Explorer extends React.Component {
     const fieldsFromConfig = this.state.dataExplorerConfig.fieldMapping.map(x => x.field);
     const fieldsFromCommons = await this.getFieldsOnTypeFromCommons(subcommonsURL);
     const fieldIntersection = fieldsFromConfig.filter(x => fieldsFromCommons.includes(x));
+    const neededFields = fieldIntersection.concat(phenotypeNameMapping[subcommonsURL]);
 
     const queryObject = {
       type: 'subject',
-      fields: fieldIntersection,
+      fields: neededFields,
     };
 
     return fetchWithCredsAndTimeout({
@@ -208,6 +210,7 @@ class Explorer extends React.Component {
       for (let j = 0; j < subjects.length; j += 1) {
         const subject = subjects[j];
         subject.dataset = subcommonsName;
+        subject.phenotype = subject[phenotypeNameMapping[subcommonsURL]];
         reformatted.push(subject);
       }
       return reformatted;
