@@ -202,7 +202,7 @@ class Explorer extends React.Component {
     promiseArray.push(
       this.obtainSubcommonsData({
         URL: '/',
-        name: 'Immport',
+        name: 'ImmPort',
       }),
     );
     return Promise.all(promiseArray);
@@ -359,7 +359,7 @@ class Explorer extends React.Component {
     promiseArray.push(
       this.obtainSubcommonsAggsData({
         URL: '/',
-        name: 'Immport',
+        name: 'ImmPort',
       }, filtersApplied),
     );
     return Promise.all(promiseArray);
