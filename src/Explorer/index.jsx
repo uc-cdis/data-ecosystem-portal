@@ -26,7 +26,7 @@ function checkIfFiltersApply(filtersApplied, row) {
       return false;
     }
     let value = row[property];
-    if (typeof value === 'object' && value.length === 1) {
+    if (Array.isArray(value) && value.length === 1) {
       value = row[property][0];
     }
     const filtersApplyMatch = _.isEqual(filtersApplied[property].selectedValues, value);
@@ -75,7 +75,6 @@ function flattenHistograms(listOfHistograms) {
 
 function buildFilterTabsByCombinedAggsData(combinedAggsData) {
   const result = config.dataExplorerConfig.filterConfig.tabs.map((t, i) => {
-    console.log(t);
     const sections = t.fields.map((field) => {
       const options = combinedAggsData[field].histogram.map(h => ({
         text: h.key,
@@ -403,7 +402,6 @@ class Explorer extends React.Component {
 
       // refresh filters
       const tabs = buildFilterTabsByCombinedAggsData(combinedAggsData);
-      console.log(tabs);
 
       this.setState({
         chartData,
