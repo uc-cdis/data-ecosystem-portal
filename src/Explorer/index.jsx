@@ -26,6 +26,8 @@ function checkIfFiltersApply(filtersApplied, row) {
       return false;
     }
     let value = row[property];
+    if (value === true) value = 'true';
+    if (value === false) value = 'false';
     if (Array.isArray(value) && value.length === 1) {
       value = row[property][0];
     }
@@ -292,8 +294,10 @@ class Explorer extends React.Component {
       Object.keys(filtersAppliedReduced), nonQueryableFields);
     if (nonQueryableFieldsInFilterApplied && nonQueryableFieldsInFilterApplied.length > 0) {
       // trying to query aggregation from subcommons using a non-queryable field
-      // is meaningless, so let's just skip the query and return empty set
-      return [];
+      // is meaningless, so let's just skip those fields in filter
+      nonQueryableFieldsInFilterApplied.forEach((nonExistField) => {
+        delete filtersAppliedReduced[nonExistField];
+      });
     }
 
     const applyFilter = typeof filtersAppliedReduced !== 'undefined'
