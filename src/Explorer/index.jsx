@@ -15,9 +15,9 @@ import { guppyDownloadUrl } from '../configs';
 import { flatModelDownloadRelativePath, flatModelQueryRelativePath } from '../localconf';
 import getReduxStore from '../reduxStore';
 import Spinner from '../components/Spinner';
-import phenotypeNameMapping from './phenotypeNameMapping';
 
 const fieldMapping = config.dataExplorerConfig.fieldMapping;
+const phenotypeNameMapping = config.dataExplorerConfig.phenotypeNameMapping;
 
 const fields = [];
 for (let j = 0; j < fieldMapping.length; j += 1) {
@@ -190,7 +190,10 @@ class Explorer extends React.Component {
     const fieldsFromConfig = this.state.dataExplorerConfig.fieldMapping.map(x => x.field);
     const fieldsFromCommons = await this.getFieldsOnTypeFromCommons(subcommonsURL);
     const fieldIntersection = fieldsFromConfig.filter(x => fieldsFromCommons.includes(x));
-    const neededFields = fieldIntersection.concat(phenotypeNameMapping[subcommonsURL]);
+    let neededFields = fieldIntersection;
+    if (phenotypeNameMapping[subcommonsName]) {
+      neededFields = fieldIntersection.concat(phenotypeNameMapping[subcommonsName]);
+    }
 
     const queryObject = {
       type: 'subject',
@@ -210,7 +213,9 @@ class Explorer extends React.Component {
       for (let j = 0; j < subjects.length; j += 1) {
         const subject = subjects[j];
         subject.dataset = subcommonsName;
-        subject.phenotype = subject[phenotypeNameMapping[subcommonsURL]];
+        if (phenotypeNameMapping[subcommonsName] && subject[phenotypeNameMapping[subcommonsName]]) {
+          subject.phenotype = subject[phenotypeNameMapping[subcommonsName]];
+        }
         reformatted.push(subject);
       }
       return reformatted;
