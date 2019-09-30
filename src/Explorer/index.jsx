@@ -16,13 +16,14 @@ import { capitalizeFirstLetter } from '../utils';
 import { flatModelDownloadRelativePath, flatModelQueryRelativePath } from '../localconf';
 import getReduxStore from '../reduxStore';
 import Spinner from '../components/Spinner';
-import phenotypeNameMapping from './phenotypeNameMapping';
+
+const phenotypeNameMapping = config.dataExplorerConfig.phenotypeNameMapping;
 
 function checkIfFiltersApply(filtersApplied, row) {
   const attributes = Object.keys(filtersApplied);
   for (let i = 0; i < attributes.length; i += 1) {
     const property = attributes[i];
-    if (!row[property]) {
+    if (typeof (row[property]) === 'undefined') {
       return false;
     }
     let value = row[property];
@@ -165,8 +166,10 @@ class Explorer extends React.Component {
     const fieldsFromConfig = config.dataExplorerConfig.tableConfig.fields;
     const fieldsFromCommons = await this.getFieldsOnTypeFromCommons(subcommonsURL);
     const fieldIntersection = fieldsFromConfig.filter(x => fieldsFromCommons.includes(x));
-    const neededFields = phenotypeNameMapping[subcommonsURL]
-      ? fieldIntersection.concat(phenotypeNameMapping[subcommonsURL]) : fieldIntersection;
+    let neededFields = fieldIntersection;
+    if (phenotypeNameMapping[subcommonsName]) {
+      neededFields = fieldIntersection.concat(phenotypeNameMapping[subcommonsName]);
+    }
 
     const queryObject = {
       type: 'subject',
@@ -186,7 +189,9 @@ class Explorer extends React.Component {
       for (let j = 0; j < subjects.length; j += 1) {
         const subject = subjects[j];
         subject.dataset = subcommonsName;
-        subject.phenotype = subject[phenotypeNameMapping[subcommonsURL]];
+        if (phenotypeNameMapping[subcommonsName] && subject[phenotypeNameMapping[subcommonsName]]) {
+          subject.phenotype = subject[phenotypeNameMapping[subcommonsName]];
+        }
         reformatted.push(subject);
       }
       return reformatted;

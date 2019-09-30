@@ -279,6 +279,11 @@
         "rifampin_res_phenotype",
         "streptomycin_res_phenotype"
       ]
+    },
+    "phenotypeNameMapping": {
+      "NDE: TB": "_type_of_resistances",
+      "NDE: FLU": "virus_subtype",
+      "NDE: AIDS": "status"
     }
   }
 }
