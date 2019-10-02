@@ -39,7 +39,7 @@ class IndexButtonBar extends Component {
                         this.props.onActiveTab(item.internal_link);
                         this.props.history.push(`${item.internal_link}`);
                       }}
-                      label={item.label}
+                      label={item.internal_line_text}
                       buttonType='secondary'
                     />
                     }

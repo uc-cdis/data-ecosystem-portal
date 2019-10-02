@@ -66,7 +66,7 @@
           "body": "The NDE TB Environment.",
           "external_link": "https://qa-test2.planx-pla.net/",
           "internal_link": "/datasets",
-          "label": "Explore cohorts"
+          "internal_line_text": "Explore cohorts"
         },
         {
           "name": "NIAID AIDS Environment",
@@ -74,7 +74,7 @@
           "body": "The NDE AIDS Environment.",
           "external_link": "https://qa-test4.planx-pla.net/",
           "internal_link": "/datasets",
-          "label": "Explore cohorts"
+          "internal_line_text": "Explore cohorts"
         },
         {
           "name": "NIAID Flu Environment",
@@ -82,7 +82,7 @@
           "body": "The NDE Flu Environment.",
           "external_link": "https://qa-flu.planx-pla.net",
           "internal_link": "/datasets",
-          "label": "Explore cohorts"
+          "internal_line_text": "Explore cohorts"
         }
       ]
     },
