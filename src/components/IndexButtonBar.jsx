@@ -43,14 +43,15 @@ class IndexButtonBar extends Component {
                       buttonType='secondary'
                     />
                     }
-                    { Object.prototype.hasOwnProperty.call(item, 'external_link') &&
-                    <IconicLink
-                      link={item.external_link}
-                      className='index-button-bar__item'
-                      caption='Visit Environment'
-                      target='_blank'
-                      isExternal
-                    />
+                    {
+                      Object.prototype.hasOwnProperty.call(item, 'external_link') &&
+                        <IconicLink
+                          link={item.external_link}
+                          className='index-button-bar__item'
+                          caption={Object.prototype.hasOwnProperty.call(item, 'external_link_text') ? item.external_link_text : 'Visit Environment'}
+                          target='_blank'
+                          isExternal
+                        />
                     }
                   </div>
                 </div>
