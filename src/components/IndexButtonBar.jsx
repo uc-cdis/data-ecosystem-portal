@@ -39,18 +39,19 @@ class IndexButtonBar extends Component {
                         this.props.onActiveTab(item.internal_link);
                         this.props.history.push(`${item.internal_link}`);
                       }}
-                      label={item.label}
+                      label={item.internal_line_text}
                       buttonType='secondary'
                     />
                     }
-                    { Object.prototype.hasOwnProperty.call(item, 'external_link') &&
-                    <IconicLink
-                      link={item.external_link}
-                      className='index-button-bar__item'
-                      caption='Visit Environment'
-                      target='_blank'
-                      isExternal
-                    />
+                    {
+                      Object.prototype.hasOwnProperty.call(item, 'external_link') &&
+                        <IconicLink
+                          link={item.external_link}
+                          className='index-button-bar__item'
+                          caption={Object.prototype.hasOwnProperty.call(item, 'external_link_text') ? item.external_link_text : 'Visit Environment'}
+                          target='_blank'
+                          isExternal
+                        />
                     }
                   </div>
                 </div>
