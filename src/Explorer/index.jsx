@@ -279,10 +279,16 @@ class Explorer extends React.Component {
     }`
 
   obtainSubcommonsAggsData = (subcommonsConfig, filtersApplied) => {
+    let selectedDatasets = [];
+    if (filtersApplied.dataset && filtersApplied.dataset.selectedValues) {
+      selectedDatasets = filtersApplied.dataset.selectedValues;
+    }
+    const datasetIsSelected = (selectedDatasets.length === 0
+      || selectedDatasets.includes(subcommonsConfig.name));
     const subcommonsURL = subcommonsConfig.URL;
     const subcommonsName = subcommonsConfig.name;
-    const filtersAppliedReduced = Object.assign({}, filtersApplied);
 
+    const filtersAppliedReduced = Object.assign({}, filtersApplied);
     delete filtersAppliedReduced.dataset;
 
     // construct query fields list
@@ -291,6 +297,9 @@ class Explorer extends React.Component {
     const queryableFields = this.state.queryableFieldsForEachSubcommons[subcommonsURL];
     if (typeof queryableFields !== 'undefined') {
       wantedFields = wantedFields.filter(x => queryableFields.includes(x));
+    }
+    if (!datasetIsSelected) {
+      wantedFields = []; // if this dataset is not selected, we don't need any aggs results
     }
 
     // check if filter contains non-queryable fields
@@ -345,14 +354,16 @@ class Explorer extends React.Component {
       }];
 
       // add those non-queryable fields with 'N/A' as values
-      nonQueryableFields.forEach((f) => {
-        histograms[f] = {};
-        histograms[f].histogram = [{
-          key: 'N/A',
-          count: histograms._totalCount,
-          disabled: true,
-        }];
-      });
+      if (datasetIsSelected) {
+        nonQueryableFields.forEach((f) => {
+          histograms[f] = {};
+          histograms[f].histogram = [{
+            key: 'N/A',
+            count: histograms._totalCount,
+            disabled: true,
+          }];
+        });
+      }
       return histograms;
     }).catch(() => []);
   }
@@ -365,10 +376,11 @@ class Explorer extends React.Component {
         this.obtainSubcommonsAggsData(config.subcommons[j], filtersApplied),
       );
     }
+    const thisCommonsName = 'ImmPort';
     promiseArray.push(
       this.obtainSubcommonsAggsData({
         URL: '/',
-        name: 'ImmPort',
+        name: thisCommonsName,
       }, filtersApplied),
     );
     return Promise.all(promiseArray);
