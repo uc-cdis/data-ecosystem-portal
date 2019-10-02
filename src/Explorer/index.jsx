@@ -32,10 +32,18 @@ function checkIfFiltersApply(filtersApplied, row) {
     if (Array.isArray(value) && value.length === 1) {
       value = row[property][0];
     }
-    const filtersApplyMatch = _.isEqual(filtersApplied[property].selectedValues, value);
-    const filtersApplyContains = filtersApplied[property].selectedValues.find(
-      x => _.isEqual(x, value),
-    );
+    let filtersApplyMatch = false;
+    let filtersApplyContains = false;
+    if (filtersApplied[property].selectedValues) {
+      filtersApplyMatch = _.isEqual(filtersApplied[property].selectedValues, value);
+      filtersApplyContains = filtersApplied[property].selectedValues.find(
+        x => _.isEqual(x, value),
+      );
+    } else if (filtersApplied[property].lowerBound !== undefined
+    && filtersApplied[property].upperBound !== undefined) {
+      filtersApplyMatch = (value >= filtersApplied[property].lowerBound
+      && value <= filtersApplied[property].upperBound);
+    }
     const filtersApply = filtersApplyMatch || filtersApplyContains;
     if (!filtersApply) {
       return false;
@@ -79,12 +87,23 @@ function flattenHistograms(listOfHistograms) {
 function buildFilterTabsByCombinedAggsData(combinedAggsData) {
   const result = config.dataExplorerConfig.filterConfig.tabs.map((t, i) => {
     const sections = t.fields.map((field) => {
-      const options = combinedAggsData[field].histogram.map(h => ({
-        text: h.key,
-        count: h.count,
-        filterType: 'singleSelect',
-        disabled: h.disabled,
-      }));
+      const options = combinedAggsData[field].histogram
+        .filter(h => h.count > 0)
+        .map((h) => {
+          if (Array.isArray(h.key) && h.key.length === 2) {
+            return {
+              filterType: 'range',
+              min: h.key[0],
+              max: h.key[1],
+            };
+          }
+          return {
+            text: h.key,
+            count: h.count,
+            filterType: 'singleSelect',
+            disabled: h.disabled,
+          };
+        });
       const foundFieldMapping = config.dataExplorerConfig
         .fieldMapping.find(f => f.field === field);
       const title = foundFieldMapping ? foundFieldMapping.name : capitalizeFirstLetter(field);
@@ -352,6 +371,10 @@ class Explorer extends React.Component {
         key: subcommonsName,
         count: histograms._totalCount,
       }];
+      if (nonQueryableFieldsInFilterApplied && nonQueryableFieldsInFilterApplied.length > 0) {
+        // querying non-existing field in subcommons is meaningless, total count should be zero
+        histograms.dataset.histogram[0].count = 0;
+      }
 
       // add those non-queryable fields with 'N/A' as values
       if (datasetIsSelected) {
