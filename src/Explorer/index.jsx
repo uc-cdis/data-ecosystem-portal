@@ -84,11 +84,38 @@ function flattenHistograms(listOfHistograms) {
   return result;
 }
 
+const filterValuesLastList = [
+  'not specified',
+  'unspecified',
+  'unknown',
+  'no data',
+  'n/a',
+];
+
 function buildFilterTabsByCombinedAggsData(combinedAggsData) {
   const result = config.dataExplorerConfig.filterConfig.tabs.map((t, i) => {
     const sections = t.fields.map((field) => {
       const options = combinedAggsData[field].histogram
         .filter(h => h.count > 0)
+        .sort((h1, h2) => {
+          if (Array.isArray(h1.key)) return -1;
+          if (Array.isArray(h2.key)) return 1;
+          const v1 = h1.key.toLowerCase ? h1.key.toLowerCase() : h1.key;
+          const v2 = h2.key.toLowerCase ? h2.key.toLowerCase() : h2.key;
+          const v1FoundInLastListIndex = filterValuesLastList.findIndex(k => k === v1);
+          const v2FoundInLastListIndex = filterValuesLastList.findIndex(k => k === v2);
+          if (v1FoundInLastListIndex === -1) {
+            if (v2FoundInLastListIndex === -1) {
+              return h1.count > h2.count; // order by desc count
+            }
+            return -1; // h2 in last list, put h1 first
+          }
+          if (v2FoundInLastListIndex === -1) {
+            return 1; // h1 in last list, put h2 first
+          }
+          // both in last list, order by index
+          return v1FoundInLastListIndex - v2FoundInLastListIndex;
+        })
         .map((h) => {
           if (Array.isArray(h.key) && h.key.length === 2) {
             return {
