@@ -407,12 +407,25 @@ class Explorer extends React.Component {
       if (datasetIsSelected) {
         nonQueryableFields.forEach((f) => {
           histograms[f] = {};
+          let count = histograms._totalCount;
+          if (nonQueryableFieldsInFilterApplied && nonQueryableFieldsInFilterApplied.length > 0) {
+            // non-existing field contained in filter in subcommons is meaningless,
+            // so total count should be zero
+            count = 0;
+          }
+          // if just querying non-existing field but with valid filter, just add count to 'n/a'
           histograms[f].histogram = [{
             key: 'N/A',
-            count: histograms._totalCount,
+            count,
             disabled: true,
           }];
         });
+        if (nonQueryableFieldsInFilterApplied && nonQueryableFieldsInFilterApplied.length > 0) {
+          // querying non-existing field in subcommons is meaningless, total count should be zero
+          wantedFields.forEach((f) => {
+            delete histograms[f];
+          });
+        }
       }
       return histograms;
     }).catch(() => []);
