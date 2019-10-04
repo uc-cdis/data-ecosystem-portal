@@ -49,13 +49,13 @@
     "index": {
       "introduction": {
         "heading": "NIAID Data Ecosystem Datasets",
-        "text": "Disciplines within NIAID can have their own independent data models while maintaining interoperability of the data ecosystem. The data within projects are findable, accessible, interoperable, and reusable (FAIR), but it will be easier for each individual research community to work within the system. Of course, with this approach, two different research communities may create data models that have data elements that may conflict and that will need to be manually de-conflicted.",
+        "text": "Disciplines within NIAID can have their own independent data models while maintaining interoperability of the data ecosystem, facilitating individual research communities to work within the system. The data within all supported resources are findable, accessible, interoperable, and reusable (FAIR).", 
         "link": "/datasets"
       },
       "buttons": [
         {
           "name": "ImmPort",
-          "body": "ImmPort is funded by the NIH, NIAID, and DAIT in support of the NIH mission to share data with the public. Data is provided by NIH-funded programs and other research organizations.",
+          "body": "Explore ImmPort, a resource funded by the NIH, NIAID, and DAIT in support of the NIH mission to share data with the public. Data is provided by NIH-funded programs and other research organizations.",
           "external_link": "https://www.immport.org/home",
           "external_link_text": "Visit Website",
           "logo": "/custom/logo/immport-main-icon.png"
@@ -63,26 +63,20 @@
         {
           "name": "NIAID TB Environment",
           "icon": "data-explore",
-          "body": "The NDE TB Environment.",
-          "external_link": "https://tb.niaiddata.org",
-          "internal_link": "/datasets",
-          "internal_line_text": "Explore cohorts"
+          "body": "Explore data from the NIAID TB Portals Program and PATRIC, the all-bacterial Bioinformatics Database and Analysis Resource Center.",
+          "external_link": "https://tb.niaiddata.org"
         },
         {
           "name": "NIAID AIDS Environment",
           "icon": "data-explore",
-          "body": "The NDE AIDS Environment.",
-          "external_link": "https://aids.niaiddata.org",
-          "internal_link": "/datasets",
-          "internal_line_text": "Explore cohorts"
+          "body": "Explore the NIAID's Multicenter Acquired Immunodeficiency Syndrome Cohort Study (MACS) and Women's Interagency HIV Study (WIHS).",
+          "external_link": "https://aids.niaiddata.org"
         },
         {
           "name": "NIAID Flu Environment",
           "icon": "data-explore",
-          "body": "The NDE Flu Environment.",
-          "external_link": "https://flu.niaiddata.org",
-          "internal_link": "/datasets",
-          "internal_line_text": "Explore cohorts"
+          "body": "Explore a collection of Influenza related studies from the NIAID Divison of Microbiology & Infectious Diseases.",
+          "external_link": "https://flu.niaiddata.org"
         }
       ]
     },
@@ -206,30 +200,6 @@
         "title": "Gender"
       }
     },
-    "projectSections": [
-      { 
-        "title": "Resource",
-        "field": "dataset",
-        "options": []
-      }
-    ], 
-    "subjectSections": [
-      { 
-        "title": "Ethnicity", 
-        "field": "ethnicity",
-        "options": []
-      },
-      { 
-        "title": "Gender",
-        "field": "gender",
-        "options": []
-      },
-      { 
-        "title": "Genus species",
-        "field": "species",
-        "options": []
-      }
-    ],
     "fieldMapping" : [
       { "field": "dataset", "name": "Resource" },
       { "field": "studyAccession", "name": "Study" },
@@ -238,17 +208,72 @@
       { "field": "ethnicity", "name": "Ethnicity" },
       { "field": "strain", "name": "Strain" },
       { "field": "species", "name": "Genus species" },
-      { "field": "submitter_id", "name": "Submitter ID" }
+      { "field": "submitter_id", "name": "Submitter ID" },
+      { "field": "race", "name": "Race" },
+      { "field": "hiv_status", "name": "HIV Status" }
     ],
     "filterConfig": {
       "tabs": [{
         "title": "Subject",
-        "fields": ["ethnicity", "gender", "species"]
+        "fields": ["ethnicity", "gender", "species", "race"]
+      },
+      {
+        "title": "Diagnosis",
+        "fields": [
+          "arthxbase",
+          "bshbvstat",
+          "bshcvstat",
+          "cd4nadir",
+          "status",
+          "hiv_status"
+        ]
+      },
+      {
+        "title": "Drug Resistance",
+        "fields": [
+          "amikacin_res_phenotype",
+          "capreomycin_res_phenotype",
+          "isoniazid_res_phenotype",
+          "kanamycin_res_phenotype",
+          "ofloxacin_res_phenotype",
+          "pyrazinamide_res_phenotype",
+          "rifampicin_res_phenotype",
+          "rifampin_res_phenotype",
+          "streptomycin_res_phenotype"
+        ]
       },
       {
         "title": "Resource",
-        "fields": ["dataset", "research_focus"]
+        "fields": ["dataset"]
       }]
+    },
+    "tableConfig": {
+      "fields": [
+        "dataset",
+        "studyAccession",
+        "phenotype",
+        "gender",
+        "ethnicity",
+        "strain",
+        "species",
+        "submitter_id",
+        "race",
+        "arthxbase",
+        "bshbvstat",
+        "bshcvstat",
+        "cd4nadir",
+        "status",
+        "hiv_status",
+        "amikacin_res_phenotype",
+        "capreomycin_res_phenotype",
+        "isoniazid_res_phenotype",
+        "kanamycin_res_phenotype",
+        "ofloxacin_res_phenotype",
+        "pyrazinamide_res_phenotype",
+        "rifampicin_res_phenotype",
+        "rifampin_res_phenotype",
+        "streptomycin_res_phenotype"
+      ]
     },
     "phenotypeNameMapping": {
       "NDE: TB": "_type_of_resistances",
