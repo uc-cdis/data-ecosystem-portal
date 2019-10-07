@@ -8,49 +8,13 @@ import { getGQLFilter } from '@gen3/guppy/dist/components/Utils/queries';
 import SummaryChartGroup from '@gen3/ui-component/dist/components/charts/SummaryChartGroup';
 import PercentageStackedBarChart from '@gen3/ui-component/dist/components/charts/PercentageStackedBarChart';
 import { config, components } from '../params';
-import ExplorerTable from './ExplorerTable/';
 import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import './Explorer.less';
 import { fetchWithCredsAndTimeout, fetchUser } from '../actions';
 import { capitalizeFirstLetter } from '../utils';
-import { flatModelDownloadRelativePath, flatModelQueryRelativePath } from '../localconf';
+import { flatModelQueryRelativePath } from '../localconf';
 import getReduxStore from '../reduxStore';
 import Spinner from '../components/Spinner';
-
-const phenotypeNameMapping = config.dataExplorerConfig.phenotypeNameMapping;
-
-function checkIfFiltersApply(filtersApplied, row) {
-  const attributes = Object.keys(filtersApplied);
-  for (let i = 0; i < attributes.length; i += 1) {
-    const property = attributes[i];
-    if (typeof (row[property]) === 'undefined') {
-      return false;
-    }
-    let value = row[property];
-    if (value === true) value = 'true';
-    if (value === false) value = 'false';
-    if (Array.isArray(value) && value.length === 1) {
-      value = row[property][0];
-    }
-    let filtersApplyMatch = false;
-    let filtersApplyContains = false;
-    if (filtersApplied[property].selectedValues) {
-      filtersApplyMatch = _.isEqual(filtersApplied[property].selectedValues, value);
-      filtersApplyContains = filtersApplied[property].selectedValues.find(
-        x => _.isEqual(x, value),
-      );
-    } else if (filtersApplied[property].lowerBound !== undefined
-    && filtersApplied[property].upperBound !== undefined) {
-      filtersApplyMatch = (value >= filtersApplied[property].lowerBound
-      && value <= filtersApplied[property].upperBound);
-    }
-    const filtersApply = filtersApplyMatch || filtersApplyContains;
-    if (!filtersApply) {
-      return false;
-    }
-  }
-  return true;
-}
 
 function flattenHistograms(listOfHistograms) {
   const result = {};
@@ -84,7 +48,7 @@ function flattenHistograms(listOfHistograms) {
   return result;
 }
 
-const filterValuesLastList = [
+const filterValuesLastList = config.dataExplorerConfig.filterValuesLastList || [
   'not specified',
   'unspecified',
   'unknown',
@@ -149,9 +113,6 @@ class Explorer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      rawData: [],
-      filteredData: [],
-      paginatedData: [],
       chartData: { },
       datasetsCount: 0,
       loading: true,
@@ -159,7 +120,6 @@ class Explorer extends React.Component {
       queryableFieldsForEachSubcommons: {},
     };
     this.filterGroupRef = React.createRef();
-    this.tableRef = React.createRef();
   }
 
   componentWillMount() {
@@ -184,9 +144,6 @@ class Explorer extends React.Component {
           }
         }`,
     };
-
-    const outerThis = this;
-
     return fetchWithCredsAndTimeout({
       path: subcommonsURL + flatModelQueryRelativePath,
       method: 'POST',
@@ -196,9 +153,12 @@ class Explorer extends React.Component {
       body: JSON.stringify(query),
     }, 3000).then((result) => {
       const fieldsFromCommons = result.data.data.__type.fields.map(x => x.name);
-      const queryableFieldsForEachSubcommons = outerThis.state.queryableFieldsForEachSubcommons;
-      queryableFieldsForEachSubcommons[subcommonsURL] = fieldsFromCommons;
-      outerThis.setState({ queryableFieldsForEachSubcommons });
+      this.setState({
+        queryableFieldsForEachSubcommons: {
+          ...this.state.queryableFieldsForEachSubcommons,
+          [subcommonsURL]: fieldsFromCommons,
+        },
+      });
       return fieldsFromCommons;
     }).catch(() => {
       console.log('Failed to retrieve schema / field list from ', subcommonsURL);
@@ -206,59 +166,43 @@ class Explorer extends React.Component {
     });
   }
 
-  obtainSubcommonsData = async (subcommonsConfig) => {
-    const subcommonsURL = subcommonsConfig.URL;
-    const subcommonsName = subcommonsConfig.name;
-    const fieldsFromConfig = config.dataExplorerConfig.tableConfig.fields;
-    const fieldsFromCommons = await this.getFieldsOnTypeFromCommons(subcommonsURL);
-    const fieldIntersection = fieldsFromConfig.filter(x => fieldsFromCommons.includes(x));
-    let neededFields = fieldIntersection;
-    if (phenotypeNameMapping[subcommonsName]) {
-      neededFields = fieldIntersection.concat(phenotypeNameMapping[subcommonsName]);
-    }
-
-    const queryObject = {
-      type: 'subject',
-      fields: neededFields,
-    };
-
-    return fetchWithCredsAndTimeout({
-      path: subcommonsURL + flatModelDownloadRelativePath,
-      method: 'POST',
-      body: JSON.stringify(queryObject),
-    }, 3000).then((result) => {
-      const reformatted = [];
-      if (!result || !result.data || result.status !== 200) {
-        return [];
+  getSummaryChart() {
+    const barChartColor = components.categorical2Colors ? components.categorical2Colors[0] : null;
+    const chartRowList = [];
+    this.state.chartData.summaries.forEach((s) => {
+      if (s.chartRow !== undefined && !chartRowList.includes(s.chartRow)) {
+        chartRowList.push(s.chartRow);
       }
-      const subjects = result.data;
-      for (let j = 0; j < subjects.length; j += 1) {
-        const subject = subjects[j];
-        subject.dataset = subcommonsName;
-        if (phenotypeNameMapping[subcommonsName] && subject[phenotypeNameMapping[subcommonsName]]) {
-          subject.phenotype = subject[phenotypeNameMapping[subcommonsName]];
-        }
-        reformatted.push(subject);
-      }
-      return reformatted;
-    }).catch(() => []);
-  }
-
-  obtainAllCommonsData = () => {
-    const promiseArray = [];
-    const n = Object.keys(config.subcommons).length;
-    for (let j = 0; j < n; j += 1) {
-      promiseArray.push(
-        this.obtainSubcommonsData(config.subcommons[j]),
+    });
+    if (chartRowList.length === 0) {
+      return (
+        <SummaryChartGroup
+          summaries={this.state.chartData.summaries}
+          lockMessage={'This chart is locked.'}
+          barChartColor={barChartColor}
+          useCustomizedColorMap={!!components.categorical9Colors}
+          customizedColorMap={components.categorical9Colors || []}
+          maximumDisplayItem={6}
+        />
       );
     }
-    promiseArray.push(
-      this.obtainSubcommonsData({
-        URL: '/',
-        name: 'ImmPort',
-      }),
+    return (
+      <React.Fragment>
+        {
+          chartRowList.map(chartRowIndex => (
+            <SummaryChartGroup
+              key={chartRowIndex}
+              summaries={this.state.chartData.summaries.filter(s => s.chartRow === chartRowIndex)}
+              lockMessage={'This chart is locked.'}
+              barChartColor={barChartColor}
+              useCustomizedColorMap={!!components.categorical9Colors}
+              customizedColorMap={components.categorical9Colors || []}
+              maximumDisplayItem={6}
+            />
+          ))
+        }
+      </React.Fragment>
     );
-    return Promise.all(promiseArray);
   }
 
   filterSelf = (histograms, field, filtersApplied) => {
@@ -281,19 +225,27 @@ class Explorer extends React.Component {
     const summaries = [];
     const countItems = [];
     const stackedBarCharts = [];
-    const numUniqueDatasets = [...new Set(this.state.filteredData.map(x => x.dataset))].length;
+    let numDatasets = 0;
+    let numTotal = 0;
+    if (aggsData.dataset && aggsData.dataset.histogram) {
+      aggsData.dataset.histogram.forEach((h) => {
+        if (h.count > 0) numDatasets += 1;
+        numTotal += h.count;
+      });
+    }
 
     countItems.push({
-      label: 'Supported Data Resources', // this.props.nodeCountTitle,
-      value: numUniqueDatasets, // this.props.totalCount,
+      label: 'Supported Data Resources',
+      value: numDatasets,
     });
     countItems.push({
-      label: 'Subjects', // this.props.nodeCountTitle,
-      value: this.state.filteredData.length, // this.props.totalCount,
+      label: 'Subjects',
+      value: numTotal,
     });
     Object.keys(chartConfig).forEach((field) => {
       if (!aggsData || !aggsData[field] || !aggsData[field].histogram) return;
       const histogram = this.filterSelf(aggsData[field].histogram, field, filter);
+      const emptyChart = histogram && histogram.length === 1 && histogram[0].key === 'N/A';
       switch (chartConfig[field].chartType) {
       case 'pie':
       case 'bar':
@@ -301,7 +253,11 @@ class Explorer extends React.Component {
         const dataItem = {
           type: chartConfig[field].chartType,
           title: chartConfig[field].title,
-          data: histogram.map(i => ({ name: i.key, value: i.count })),
+          chartIsEmpty: emptyChart,
+          data: histogram
+            // .filter(i => i.key !== 'N/A')
+            .map(i => ({ name: i.key, value: i.count })),
+          chartRow: chartConfig[field].chartRow,
         };
         if (chartConfig[field].chartType === 'stackedBar') {
           stackedBarCharts.push(dataItem);
@@ -450,30 +406,23 @@ class Explorer extends React.Component {
   }
 
   initializeData = () => {
-    this.allData = [];
-    this.obtainAllCommonsData().then((subCommonsData) => {
-      const data = subCommonsData.filter(x => typeof x !== 'undefined').flat();
-      if (data.length > 0) {
-        this.allData = this.allData.concat(data);
-      }
-
-      this.setState({
-        filteredData: this.allData,
-        rawData: this.allData,
+    const promiseArray = [];
+    Object.values(config.subcommons).forEach((subcommons) => {
+      promiseArray.push(
+        this.getFieldsOnTypeFromCommons(subcommons.URL),
+      );
+    });
+    promiseArray.push(this.getFieldsOnTypeFromCommons('/'));
+    Promise.all(promiseArray).then(() => {
+      this.refreshAggregations(null, () => {
+        this.setState({ loading: false });
       });
-
-      this.tableRef.current.updateData(this.allData);
-
-      return this.refreshAggregations();
-    }).catch((err) => {
-      console.log('Failed to initialize data: ', err);
-      this.setState({ loading: false });
     });
   }
 
-  refreshAggregations = (filtersApplied) => {
+  refreshAggregations = (filtersApplied, callback) => {
     let filters = Object.assign({}, filtersApplied);
-    if (typeof filtersApplied === 'undefined') {
+    if (filtersApplied === null || typeof filtersApplied === 'undefined') {
       filters = {};
     }
 
@@ -492,32 +441,16 @@ class Explorer extends React.Component {
         loading: false,
         tabs,
       });
+
+      if (callback) callback();
     });
   }
 
   handleFilterChange(filtersApplied) {
-    const rawData = this.state.rawData;
-    const filteredData = [];
-    for (let j = 0; j < rawData.length; j += 1) {
-      const isMatch = checkIfFiltersApply(filtersApplied, rawData[j]);
-      if (isMatch) {
-        filteredData.push(rawData[j]);
-      }
-    }
-
-    this.setState({
-      filteredData,
-    });
-
     this.refreshAggregations(filtersApplied);
-
-    this.tableRef.current.updateData(filteredData);
   }
 
   render() {
-    const totalCount = this.state.filteredData.length;
-    const barChartColor = components.categorical2Colors ? components.categorical2Colors[0] : null;
-
     return (
       <React.Fragment>
         <div className='ndef-page-title'>
@@ -547,14 +480,7 @@ class Explorer extends React.Component {
             {
               this.state.chartData.summaries && this.state.chartData.summaries.length > 0 && (
                 <div className='explorer-visualization__charts'>
-                  <SummaryChartGroup
-                    summaries={this.state.chartData.summaries}
-                    lockMessage={'This chart is locked.'}
-                    barChartColor={barChartColor}
-                    useCustomizedColorMap={!!components.categorical9Colors}
-                    customizedColorMap={components.categorical9Colors || []}
-                    maximumDisplayItem={6}
-                  />
+                  {this.getSummaryChart()}
                 </div>
               )
             }
@@ -574,17 +500,6 @@ class Explorer extends React.Component {
                 ),
                 )
             }
-            <ExplorerTable
-              ref={this.tableRef}
-              className='guppy-explorer-visualization__table'
-              tableConfig={config.dataExplorerConfig.tableConfig}
-              filteredData={this.state.filteredData}
-              totalCount={totalCount}
-              guppyConfig={config.dataExplorerConfig}
-              isLocked={false}
-              loading={this.state.loading}
-              isUserLoggedIn={this.state.isUserLoggedIn}
-            />
           </div>
         </div>
       </React.Fragment>
