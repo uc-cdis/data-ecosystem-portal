@@ -132,6 +132,12 @@ module.exports = {
       "rules": {
         "react/no-unused-prop-types": "off"
       }
+    },
+    {
+      "files": ["src/components/IndexButtonBar.jsx"],
+      "rules": {
+        "react/no-danger": "off"
+      }
     }
   ],
 };

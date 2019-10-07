@@ -30,7 +30,10 @@ class IndexButtonBar extends Component {
                         height='90px'
                       /> : <img height='70px' src={item.logo} alt='' /> }
                   </div>
-                  <div className='body-typo index-button-bar__thumbnail-text'>{item.body}</div>
+                  <div
+                    className='body-typo index-button-bar__thumbnail-text'
+                    dangerouslySetInnerHTML={{ __html: item.body }}
+                  />
                   <div className='index-button-bar__button-group'>
                     { Object.prototype.hasOwnProperty.call(item, 'internal_link') &&
                     <Button
