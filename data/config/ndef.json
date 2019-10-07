@@ -63,7 +63,7 @@
         {
           "name": "NIAID TB Environment",
           "icon": "data-explore",
-          "body": "Explore data from the NIAID TB Portals Program and PATRIC, the all-bacterial Bioinformatics Database and Analysis Resource Center.",
+          "body": "Explore data from <a href='https://tb.niaiddata.org'>the NIAID TB Portals Program</a> and PATRIC, the all-bacterial Bioinformatics Database and Analysis Resource Center.",
           "external_link": "https://tb.niaiddata.org"
         },
         {
