@@ -212,31 +212,6 @@
         "title": "Strain",
         "chartRow": 0
       },
-      "dataset": {
-        "chartType": "pie",
-        "title": "Dataset",
-        "chartRow": 0
-      },
-      "species": {
-        "chartType": "bar",
-        "title": "Genus species",
-        "chartRow": 0
-      },
-      "gender": {
-        "chartType": "pie",
-        "title": "Gender",
-        "chartRow": 0
-      },
-      "status": {
-        "chartType": "bar",
-        "title": "HIV Status",
-        "chartRow": 0
-      },
-      "strain": {
-        "chartType": "pie",
-        "title": "Strain",
-        "chartRow": 0
-      },
       "amikacin_res_phenotype": {
         "chartType": "bar",
         "title": "Amikacin Res Phenotype",
