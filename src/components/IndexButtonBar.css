@@ -19,6 +19,7 @@
   margin: 20px 20px;
   border: 1px solid var(--g3-color__silver);
   border-radius: 4px;
+  position: relative;
 }
 
 .index-button-bar__thumbnail-title {
@@ -26,10 +27,16 @@
 }
 
 .index-button-bar__thumbnail-text {
-  margin-top: 30px;
+  margin: 30px 0 50px 0;
   border-top: 1px solid #e7e7e7;
   padding: 10px 10px;
   text-align: left;
+}
+
+.index-button-bar__button-group {
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
 }
 
 .index-button-bar__icon {
@@ -40,6 +47,8 @@
 
 .index-button-bar__item {
   margin: 10px;
+  position: relative;
+  left: -50%;
 }
 
 .index-button-bar__header {
