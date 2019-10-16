@@ -77,19 +77,16 @@
 
 .slick-prev:before, .slick-next:before {
   font-size: 10px;
-}
-
-.slick-prev:hover, .slick-prev:focus, .slick-next:hover, .slick-next:focus {
-  opacity: 0.9;
-  background-color: var(--g3-color__smoke);
-}
-
-.slick-prev:before, .slick-next:before {
   content: ' ';
   border: solid;
   border-width: 0 3px 3px 0;
   display: inline-block;
   padding: 3px; 
+}
+
+.slick-prev:hover, .slick-prev:focus, .slick-next:hover, .slick-next:focus {
+  opacity: 0.9;
+  background-color: var(--g3-color__smoke);
 }
 
 .slick-prev:before {
