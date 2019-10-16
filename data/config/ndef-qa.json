@@ -11,6 +11,10 @@
     {
       "URL": "https://qa-flu.planx-pla.net/",
       "name": "NDE: FLU"
+    },
+    {
+      "URL": "https://qa-microbiome.planx-pla.net/",
+      "name": "NDE: Microbiome"
     }
   ],
   "gaTrackingId": "undefined",
@@ -148,7 +152,8 @@
           { "text": "ImmPort", "filterType": "singleSelect"},
           { "text": "NDE: TB", "filterType": "singleSelect"},
           { "text": "NDE: AIDS", "filterType": "singleSelect"},
-          { "text": "NDE: Flu", "filterType": "singleSelect"}
+          { "text": "NDE: Flu", "filterType": "singleSelect"},
+          { "text": "NDE: Microbiome", "filterType": "singleSelect"}
         ]
       },
       { 
