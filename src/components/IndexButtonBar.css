@@ -1,7 +1,7 @@
 @import '~@gen3/ui-component/dist/css/base.css';
 
 .index-button-bar {
-  display: flex;
+  width: 1250px;
 }
 
 @media screen and (max-width: 1170px) {
@@ -12,14 +12,12 @@
 
 .index-button-bar__thumbnail-button {
   background-color: white;
-  display: inline-block;
-  padding: 20px 20px;
   text-align: center;
-  width: 300px;
-  margin: 20px 20px;
   border: 1px solid var(--g3-color__silver);
   border-radius: 4px;
   position: relative;
+  width: 300px;
+  padding: 20px;
 }
 
 .index-button-bar__thumbnail-title {
@@ -55,10 +53,55 @@
   font-size: 22px;
   color: black;
   margin-top: 70px;
+  margin-bottom: 50px;
 }
 
 @media screen and (min-width: 1300px) {
   .index-button-bar__header {
     width: 1250px;
   }
+}
+
+/** override some style for carousel's arrow and dots **/
+
+.slick-dots li button:before {
+  font-size: 20px;
+}
+
+.slick-prev, .slick-next {
+  background: var(--g3-color__smoke);
+  border-radius: 50%;
+  transition: background-color 300ms;
+  -webkit-transition: background-color 300ms;
+}
+
+.slick-prev:before, .slick-next:before {
+  font-size: 10px;
+}
+
+.slick-prev:hover, .slick-prev:focus, .slick-next:hover, .slick-next:focus {
+  opacity: 0.9;
+  background-color: var(--g3-color__smoke);
+}
+
+.slick-prev:before, .slick-next:before {
+  content: ' ';
+  border: solid;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px; 
+}
+
+.slick-prev:before {
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
+}
+
+.slick-next:before {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+
+.slick-arrow.slick-disabled {
+  opacity: 0;
 }

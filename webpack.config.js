@@ -148,6 +148,10 @@ module.exports = {
       test: /\.flow$/,
       loader: 'ignore-loader',
     },
+    {
+      test: /\.(woff(2)?|ttf|eot|gif)(\?v=\d+\.\d+\.\d+)?$/,
+      loader: 'file-loader',
+    },
     ],
   },
   resolve: {
