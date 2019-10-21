@@ -553,11 +553,11 @@ class Explorer extends React.Component {
           </div>
           <div className='explorer__visualizations'>
             {
-              this.state.isUserLoggedIn || (<div className='explorer-visualization__login-msg'>Login to see more data. </div>)
+              this.state.isUserLoggedIn || (<div className='explorer-visualization__login-msg'>Log in to see more data. </div>)
             }
             <Button
               className='explorer-visualization__download-button'
-              label={`Downlaod Data (${this.state.totalSubjects})`}
+              label={`Download Data (${this.state.totalSubjects})`}
               onClick={this.downloadData}
               isPending={this.state.isDownloadingData}
             />
