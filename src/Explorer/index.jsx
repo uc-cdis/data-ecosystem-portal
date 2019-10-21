@@ -4,6 +4,7 @@ import React from 'react';
 import _ from 'lodash';
 import FilterGroup from '@gen3/ui-component/dist/components/filters/FilterGroup';
 import FilterList from '@gen3/ui-component/dist/components/filters/FilterList';
+import Button from '@gen3/ui-component/dist/components/Button';
 import { getGQLFilter } from '@gen3/guppy/dist/components/Utils/queries';
 import SummaryChartGroup from '@gen3/ui-component/dist/components/charts/SummaryChartGroup';
 import PercentageStackedBarChart from '@gen3/ui-component/dist/components/charts/PercentageStackedBarChart';
@@ -12,7 +13,7 @@ import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import './Explorer.less';
 import { fetchWithCredsAndTimeout, fetchUser } from '../actions';
 import { capitalizeFirstLetter } from '../utils';
-import { flatModelQueryRelativePath } from '../localconf';
+import { flatModelQueryRelativePath, flatModelDownloadRelativePath } from '../localconf';
 import getReduxStore from '../reduxStore';
 import Spinner from '../components/Spinner';
 
@@ -108,16 +109,16 @@ function buildFilterTabsByCombinedAggsData(combinedAggsData) {
   });
   return result;
 }
-
 class Explorer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       chartData: { },
-      datasetsCount: 0,
       loading: true,
       isUserLoggedIn: false,
       queryableFieldsForEachSubcommons: {},
+      filter: {},
+      totalSubjects: 0,
     };
     this.filterGroupRef = React.createRef();
   }
@@ -229,10 +230,18 @@ class Explorer extends React.Component {
     let numTotal = 0;
     if (aggsData.dataset && aggsData.dataset.histogram) {
       aggsData.dataset.histogram.forEach((h) => {
-        if (h.count > 0) numDatasets += 1;
-        numTotal += h.count;
+        if (h.count > 0) {
+          const datasetIsSelected = (!filter.dataset || filter.dataset.length === 0
+          || (filter.dataset && filter.dataset.selectedValues
+          && filter.dataset.selectedValues.includes(h.key)));
+          if (datasetIsSelected) {
+            numDatasets += 1;
+            numTotal += h.count;
+          }
+        }
       });
     }
+    this.setState({ totalSubjects: numTotal });
 
     countItems.push({
       label: 'Supported Data Resources',
@@ -280,21 +289,26 @@ class Explorer extends React.Component {
       }
     }`
 
-  obtainSubcommonsAggsData = (subcommonsConfig, filtersApplied) => {
+  isDatasetSelected = (filtersApplied, subcommonsName) => {
     let selectedDatasets = [];
     if (filtersApplied.dataset && filtersApplied.dataset.selectedValues) {
       selectedDatasets = filtersApplied.dataset.selectedValues;
     }
     const datasetIsSelected = (selectedDatasets.length === 0
-      || selectedDatasets.includes(subcommonsConfig.name));
+      || selectedDatasets.includes(subcommonsName));
+    return datasetIsSelected;
+  }
+
+  obtainSubcommonsAggsData = (subcommonsConfig, filtersApplied) => {
     const subcommonsURL = subcommonsConfig.URL;
     const subcommonsName = subcommonsConfig.name;
-
+    const datasetIsSelected = this.isDatasetSelected(filtersApplied, subcommonsName);
     const filtersAppliedReduced = Object.assign({}, filtersApplied);
     delete filtersAppliedReduced.dataset;
 
     // construct query fields list
-    const filterFields = config.dataExplorerConfig.filterConfig.tabs.reduce((acc, cur) => acc.concat(cur.fields), []).filter(f => f !== 'dataset');
+    const filterFields = config.dataExplorerConfig.filterConfig.tabs
+      .reduce((acc, cur) => acc.concat(cur.fields), []).filter(f => f !== 'dataset');
     let wantedFields = filterFields.slice();
     const queryableFields = this.state.queryableFieldsForEachSubcommons[subcommonsURL];
     if (typeof queryableFields !== 'undefined') {
@@ -448,14 +462,76 @@ class Explorer extends React.Component {
 
   handleFilterChange(filtersApplied) {
     this.refreshAggregations(filtersApplied);
+    this.setState({ filter: filtersApplied });
+  }
+
+  validateFilterForSubCommons(filtersApplied, subcommonsConfig) {
+    const subcommonsURL = subcommonsConfig.URL;
+    const filtersAppliedReduced = Object.assign({}, filtersApplied);
+    const queryableFields = this.state.queryableFieldsForEachSubcommons[subcommonsURL];
+    Object.keys(filtersApplied).forEach((field) => {
+      if (!queryableFields.includes(field)) {
+        delete filtersAppliedReduced[field];
+      }
+    });
+    return filtersAppliedReduced;
+  }
+
+  downloadSubcommonsData(subcommonsConfig, filtersApplied) {
+    // TODO
+    const subcommonsURL = subcommonsConfig.URL;
+    const subcommonsName = subcommonsConfig.name;
+    const datasetIsSelected = this.isDatasetSelected(filtersApplied, subcommonsName);
+    if (!datasetIsSelected) {
+      return [];
+    }
+    const filtersAppliedReduced = this.validateFilterForSubCommons(
+      filtersApplied, subcommonsConfig);
+    console.log(subcommonsName, filtersAppliedReduced);
+
+    // FIXME: type is "subject", and fields are all from fieldMapping config.
+    // Need a future refactoring task to remove lots of hardcodings from this file.
+    const type = 'subject';
+    const fields = config.dataExplorerConfig.fieldMapping
+      .map(e => e.field)
+      .filter(f => this.state.queryableFieldsForEachSubcommons[subcommonsURL].includes(f));
+    const queryBody = { type, fields };
+    if (filtersAppliedReduced) queryBody.filter = getGQLFilter(filtersAppliedReduced);
+    return fetchWithCredsAndTimeout({
+      path: `${subcommonsURL}${flatModelDownloadRelativePath}`,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(queryBody),
+    }).then(response => response.json());
+  }
+
+  downloadData = () => {
+    // TODO
+    const promiseArray = [];
+    const n = Object.keys(config.subcommons).length;
+    for (let j = 0; j < n; j += 1) {
+      promiseArray.push(
+        this.downloadSubcommonsData(config.subcommons[j], this.state.filter),
+      );
+    }
+    const thisCommonsName = 'ImmPort';
+    promiseArray.push(
+      this.downloadSubcommonsData({
+        URL: '/',
+        name: thisCommonsName,
+      }, this.state.filter),
+    );
+    Promise.all(promiseArray).then((res) => {
+      console.log(res);
+      // TODO
+    });
   }
 
   render() {
     return (
       <React.Fragment>
-        <div className='ndef-page-title'>
-          Data Explorer
-        </div>
         <div id='def-spinner' className={this.state.loading ? 'visible' : 'hidden'} >
           <Spinner />
         </div>
@@ -470,6 +546,14 @@ class Explorer extends React.Component {
             }
           </div>
           <div className='explorer__visualizations'>
+            {
+              this.state.isUserLoggedIn || (<div className='explorer-visualization__login-msg'>Login to see more data. </div>)
+            }
+            <Button
+              className='explorer-visualization__download-button'
+              label={`Downlaod Data (${this.state.totalSubjects})`}
+              onClick={this.downloadData}
+            />
             {
               this.state.chartData.countItems && this.state.chartData.countItems.length > 0 && (
                 <div className='explorer-visualization__summary-cards'>
