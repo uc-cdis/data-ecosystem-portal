@@ -2,6 +2,7 @@
 /* eslint no-console: 0 */
 import React from 'react';
 import _ from 'lodash';
+import FileSaver from 'file-saver';
 import FilterGroup from '@gen3/ui-component/dist/components/filters/FilterGroup';
 import FilterList from '@gen3/ui-component/dist/components/filters/FilterList';
 import Button from '@gen3/ui-component/dist/components/Button';
@@ -119,6 +120,7 @@ class Explorer extends React.Component {
       queryableFieldsForEachSubcommons: {},
       filter: {},
       totalSubjects: 0,
+      isDownloadingData: false,
     };
     this.filterGroupRef = React.createRef();
   }
@@ -127,7 +129,9 @@ class Explorer extends React.Component {
     this.initializeData();
     getReduxStore().then((store) => {
       store.dispatch(fetchUser).then((response) => {
-        this.setState({ isUserLoggedIn: !!response.user.username });
+        if (response.user) {
+          this.setState({ isUserLoggedIn: !!response.user.username });
+        }
       });
     });
   }
@@ -478,7 +482,6 @@ class Explorer extends React.Component {
   }
 
   downloadSubcommonsData(subcommonsConfig, filtersApplied) {
-    // TODO
     const subcommonsURL = subcommonsConfig.URL;
     const subcommonsName = subcommonsConfig.name;
     const datasetIsSelected = this.isDatasetSelected(filtersApplied, subcommonsName);
@@ -487,7 +490,6 @@ class Explorer extends React.Component {
     }
     const filtersAppliedReduced = this.validateFilterForSubCommons(
       filtersApplied, subcommonsConfig);
-    console.log(subcommonsName, filtersAppliedReduced);
 
     // FIXME: type is "subject", and fields are all from fieldMapping config.
     // Need a future refactoring task to remove lots of hardcodings from this file.
@@ -504,11 +506,12 @@ class Explorer extends React.Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(queryBody),
-    }).then(response => response.json());
+    }, 3000).then(response => (response.data ? response.data
+      .map(d => ({ ...d, dataset: subcommonsName })) : []));
   }
 
   downloadData = () => {
-    // TODO
+    this.setState({ isDownloadingData: true });
     const promiseArray = [];
     const n = Object.keys(config.subcommons).length;
     for (let j = 0; j < n; j += 1) {
@@ -524,8 +527,12 @@ class Explorer extends React.Component {
       }, this.state.filter),
     );
     Promise.all(promiseArray).then((res) => {
-      console.log(res);
-      // TODO
+      const allData = res.reduce((acc, cur) => acc.concat(cur), []);
+      console.log(allData);
+      const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'text/json' });
+      const filename = 'clinical.json';
+      FileSaver.saveAs(blob, filename);
+      this.setState({ isDownloadingData: false });
     });
   }
 
@@ -553,6 +560,7 @@ class Explorer extends React.Component {
               className='explorer-visualization__download-button'
               label={`Downlaod Data (${this.state.totalSubjects})`}
               onClick={this.downloadData}
+              isPending={this.state.isDownloadingData}
             />
             {
               this.state.chartData.countItems && this.state.chartData.countItems.length > 0 && (
