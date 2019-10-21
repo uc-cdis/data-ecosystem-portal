@@ -528,7 +528,6 @@ class Explorer extends React.Component {
     );
     Promise.all(promiseArray).then((res) => {
       const allData = res.reduce((acc, cur) => acc.concat(cur), []);
-      console.log(allData);
       const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'text/json' });
       const filename = 'clinical.json';
       FileSaver.saveAs(blob, filename);
