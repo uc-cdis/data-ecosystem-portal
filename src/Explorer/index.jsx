@@ -14,7 +14,7 @@ import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import './Explorer.less';
 import { fetchWithCredsAndTimeout, fetchUser } from '../actions';
 import { capitalizeFirstLetter } from '../utils';
-import { flatModelQueryRelativePath, flatModelDownloadRelativePath } from '../localconf';
+import { flatModelQueryRelativePath, flatModelDownloadRelativePath, basename } from '../localconf';
 import getReduxStore from '../reduxStore';
 import Spinner from '../components/Spinner';
 
@@ -541,6 +541,19 @@ class Explorer extends React.Component {
         <div id='def-spinner' className={this.state.loading ? 'visible' : 'hidden'} >
           <Spinner />
         </div>
+        {
+          this.state.isUserLoggedIn || (
+            <div className='explorer-visualization__login'>
+              <Button
+                className='explorer-visualization__login-btn'
+                label='see more data'
+                buttonType='default'
+                onClick={() => { window.location.href = `${basename}/login`; }}
+              />
+              <span className='explorer-visualization__login-msg'>Only shows partial data because you are currently not logged in. Please log in to explore more datasets.</span>
+            </div>
+          )
+        }
         <div className='explorer'>
           <div className='explorer__filters'>
             {
@@ -552,9 +565,6 @@ class Explorer extends React.Component {
             }
           </div>
           <div className='explorer__visualizations'>
-            {
-              this.state.isUserLoggedIn || (<div className='explorer-visualization__login-msg'>Log in to see more data. </div>)
-            }
             <Button
               className='explorer-visualization__download-button'
               label={`Download Data (${this.state.totalSubjects})`}
