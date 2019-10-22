@@ -9,12 +9,13 @@ import Button from '@gen3/ui-component/dist/components/Button';
 import { getGQLFilter } from '@gen3/guppy/dist/components/Utils/queries';
 import SummaryChartGroup from '@gen3/ui-component/dist/components/charts/SummaryChartGroup';
 import PercentageStackedBarChart from '@gen3/ui-component/dist/components/charts/PercentageStackedBarChart';
+import { Link } from 'react-router-dom';
 import { config, components } from '../params';
 import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import './Explorer.less';
 import { fetchWithCredsAndTimeout, fetchUser } from '../actions';
 import { capitalizeFirstLetter } from '../utils';
-import { flatModelQueryRelativePath, flatModelDownloadRelativePath, basename } from '../localconf';
+import { flatModelQueryRelativePath, flatModelDownloadRelativePath } from '../localconf';
 import getReduxStore from '../reduxStore';
 import Spinner from '../components/Spinner';
 
@@ -544,12 +545,13 @@ class Explorer extends React.Component {
         {
           this.state.isUserLoggedIn || (
             <div className='explorer-visualization__login'>
-              <Button
-                className='explorer-visualization__login-btn'
-                label='see more data'
-                buttonType='default'
-                onClick={() => { window.location.href = `${basename}/login`; }}
-              />
+              <Link to='/login'>
+                <Button
+                  className='explorer-visualization__login-btn'
+                  label='See more data'
+                  buttonType='default'
+                />
+              </Link>
               <span className='explorer-visualization__login-msg'>Only shows partial data because you are currently not logged in. Please log in to explore more datasets.</span>
             </div>
           )
