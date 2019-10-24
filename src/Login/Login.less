@@ -10,9 +10,9 @@
 }
 
 .login-page__side-box {
-  text-align: center;
-  display: flex;
-  justify-content: center;
+  width: 200px;
+  min-height: ~"calc(100vh - 221px)";
+  background-size: 200px;
 }
 
 .login-page__side-box svg {
@@ -59,5 +59,19 @@
 
 .login-page__entries {
   display: block;
-  margin: 25px auto;
+  margin: 20px auto;
+  width: 400px;
+}
+
+.login-page__entry-button {
+  width: 400px;
+}
+
+@media screen and (max-width: 820px) {
+  .login-page__entries {
+    width: auto;
+  }
+  .login-page__entry-button {
+    width: auto;
+  }
 }
