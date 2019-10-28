@@ -51,7 +51,8 @@ function flattenHistograms(listOfHistograms) {
   return result;
 }
 
-const filterValuesLastList = config.dataExplorerConfig.filterValuesLastList || [
+const filterValuesLastList = (config.dataExplorerConfig &&
+config.dataExplorerConfig.filterValuesLastList) || [
   'not specified',
   'unspecified',
   'unknown',
