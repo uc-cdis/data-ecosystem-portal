@@ -9,7 +9,7 @@ import Button from '@gen3/ui-component/dist/components/Button';
 import { getGQLFilter } from '@gen3/guppy/dist/components/Utils/queries';
 import SummaryChartGroup from '@gen3/ui-component/dist/components/charts/SummaryChartGroup';
 import PercentageStackedBarChart from '@gen3/ui-component/dist/components/charts/PercentageStackedBarChart';
-import { Link } from 'react-router-dom';
+import LoginMsg from './LoginMsg';
 import { config, components } from '../params';
 import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import './Explorer.less';
@@ -59,58 +59,7 @@ const filterValuesLastList = config.dataExplorerConfig.filterValuesLastList || [
   'n/a',
 ];
 
-function buildFilterTabsByCombinedAggsData(combinedAggsData) {
-  const result = config.dataExplorerConfig.filterConfig.tabs.map((t, i) => {
-    const sections = t.fields.map((field) => {
-      const options = combinedAggsData[field].histogram
-        .filter(h => h.count > 0)
-        .sort((h1, h2) => {
-          if (Array.isArray(h1.key)) return -1;
-          if (Array.isArray(h2.key)) return 1;
-          const v1 = h1.key.toLowerCase ? h1.key.toLowerCase() : h1.key;
-          const v2 = h2.key.toLowerCase ? h2.key.toLowerCase() : h2.key;
-          const v1FoundInLastListIndex = filterValuesLastList.findIndex(k => k === v1);
-          const v2FoundInLastListIndex = filterValuesLastList.findIndex(k => k === v2);
-          if (v1FoundInLastListIndex === -1) {
-            if (v2FoundInLastListIndex === -1) {
-              return h1.count > h2.count; // order by desc count
-            }
-            return -1; // h2 in last list, put h1 first
-          }
-          if (v2FoundInLastListIndex === -1) {
-            return 1; // h1 in last list, put h2 first
-          }
-          // both in last list, order by index
-          return v1FoundInLastListIndex - v2FoundInLastListIndex;
-        })
-        .map((h) => {
-          if (Array.isArray(h.key) && h.key.length === 2) {
-            return {
-              filterType: 'range',
-              min: h.key[0],
-              max: h.key[1],
-            };
-          }
-          return {
-            text: h.key,
-            count: h.count,
-            filterType: 'singleSelect',
-            disabled: h.disabled,
-          };
-        });
-      const foundFieldMapping = config.dataExplorerConfig
-        .fieldMapping.find(f => f.field === field);
-      const title = foundFieldMapping ? foundFieldMapping.name : capitalizeFirstLetter(field);
-      return {
-        title,
-        field,
-        options,
-      };
-    });
-    return (<FilterList key={i} sections={sections} />);
-  });
-  return result;
-}
+
 class Explorer extends React.Component {
   constructor(props) {
     super(props);
@@ -136,6 +85,7 @@ class Explorer extends React.Component {
       });
     });
   }
+
 
   getFieldsOnTypeFromCommons = (subcommonsURL) => {
     const query = {
@@ -209,6 +159,69 @@ class Explorer extends React.Component {
         }
       </React.Fragment>
     );
+  }
+
+  buildFilterTabsByCombinedAggsData(combinedAggsData) {
+    const result = config.dataExplorerConfig.filterConfig.tabs.map((t, i) => {
+      const sections = t.fields.map((field) => {
+        const options = combinedAggsData[field].histogram
+          .filter(h => h.count > 0)
+          .sort((h1, h2) => {
+            if (Array.isArray(h1.key)) return -1;
+            if (Array.isArray(h2.key)) return 1;
+            const v1 = h1.key.toLowerCase ? h1.key.toLowerCase() : h1.key;
+            const v2 = h2.key.toLowerCase ? h2.key.toLowerCase() : h2.key;
+            const v1FoundInLastListIndex = filterValuesLastList.findIndex(k => k === v1);
+            const v2FoundInLastListIndex = filterValuesLastList.findIndex(k => k === v2);
+            if (v1FoundInLastListIndex === -1) {
+              if (v2FoundInLastListIndex === -1) {
+                return h1.count > h2.count; // order by desc count
+              }
+              return -1; // h2 in last list, put h1 first
+            }
+            if (v2FoundInLastListIndex === -1) {
+              return 1; // h1 in last list, put h2 first
+            }
+            // both in last list, order by index
+            return v1FoundInLastListIndex - v2FoundInLastListIndex;
+          })
+          .map((h) => {
+            if (Array.isArray(h.key) && h.key.length === 2) {
+              return {
+                filterType: 'range',
+                min: h.key[0],
+                max: h.key[1],
+              };
+            }
+            return {
+              text: h.key,
+              count: h.count,
+              filterType: 'singleSelect',
+              disabled: h.disabled,
+            };
+          });
+        const foundFieldMapping = config.dataExplorerConfig
+          .fieldMapping.find(f => f.field === field);
+        const title = foundFieldMapping ? foundFieldMapping.name : capitalizeFirstLetter(field);
+        const commonsUrlToName = { '/': 'ImmPort' };
+        Object.values(config.subcommons).forEach((d) => { commonsUrlToName[d.URL] = d.name; });
+        const belongDatasets = Object.keys(this.state.queryableFieldsForEachSubcommons)
+          .filter((url) => {
+            const fields = this.state.queryableFieldsForEachSubcommons[url];
+            return fields.includes(field);
+          })
+          .map(url => commonsUrlToName[url]);
+        const tooltip = (field !== 'dataset' && belongDatasets.length > 0) ? `"${belongDatasets.join('", "')}" ${belongDatasets.length > 1 ? 'have' : 'has'} this property` : null;
+        return {
+          title,
+          tooltip,
+          field,
+          options,
+        };
+      });
+      return (<FilterList key={i} sections={sections} />);
+    });
+    return result;
   }
 
   filterSelf = (histograms, field, filtersApplied) => {
@@ -453,7 +466,7 @@ class Explorer extends React.Component {
         config.dataExplorerConfig.charts, filters);
 
       // refresh filters
-      const tabs = buildFilterTabsByCombinedAggsData(combinedAggsData);
+      const tabs = this.buildFilterTabsByCombinedAggsData(combinedAggsData);
 
       this.setState({
         chartData,
@@ -539,72 +552,63 @@ class Explorer extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <div id='def-spinner' className={this.state.loading ? 'visible' : 'hidden'} >
-          <Spinner />
-        </div>
-        {
-          this.state.isUserLoggedIn || (
-            <div className='explorer-visualization__login'>
-              <Link to='/login'>
-                <Button
-                  className='explorer-visualization__login-btn'
-                  label='See more data'
-                  buttonType='default'
-                />
-              </Link>
-              <span className='explorer-visualization__login-msg'>Only shows partial data because you are currently not logged in. Please log in to explore more datasets.</span>
-            </div>
-          )
-        }
-        <div className='explorer'>
-          <div className='explorer__filters'>
-            {
-              this.state.tabs && <FilterGroup
-                tabs={this.state.tabs}
-                filterConfig={config.dataExplorerConfig.filterConfig}
-                onFilterChange={e => this.handleFilterChange(e)}
-              />
-            }
-          </div>
-          <div className='explorer__visualizations'>
-            <Button
-              className='explorer-visualization__download-button'
-              label={`Download Data (${this.state.totalSubjects})`}
-              onClick={this.downloadData}
-              isPending={this.state.isDownloadingData}
-            />
-            {
-              this.state.chartData.countItems && this.state.chartData.countItems.length > 0 && (
-                <div className='explorer-visualization__summary-cards'>
-                  <DataSummaryCardGroup summaryItems={this.state.chartData.countItems} connected />
-                </div>
-              )
-            }
-            {
-              this.state.chartData.summaries && this.state.chartData.summaries.length > 0 && (
-                <div className='explorer-visualization__charts'>
-                  {this.getSummaryChart()}
-                </div>
-              )
-            }
-            {
-              this.state.chartData.stackedBarCharts
-                && this.state.chartData.stackedBarCharts.map((chart, i) => (
-                  <PercentageStackedBarChart
-                    key={i}
-                    data={chart.data}
-                    title={chart.title}
-                    width='100%'
-                    lockMessage={'This chart is locked.'}
-                    useCustomizedColorMap={!!components.categorical9Colors}
-                    customizedColorMap={components.categorical9Colors || []}
-                    maximumDisplayItem={6}
+        {this.state.loading ? (<Spinner />) : (
+          <React.Fragment>
+            { this.state.isUserLoggedIn || <LoginMsg /> }
+            <div className='explorer'>
+              <div className='explorer__filters'>
+                {
+                  this.state.tabs && <FilterGroup
+                    tabs={this.state.tabs}
+                    filterConfig={config.dataExplorerConfig.filterConfig}
+                    onFilterChange={e => this.handleFilterChange(e)}
                   />
-                ),
-                )
-            }
-          </div>
-        </div>
+                }
+              </div>
+              <div className='explorer__visualizations'>
+                <Button
+                  className='explorer-visualization__download-button'
+                  label={`Download Data (${this.state.totalSubjects})`}
+                  onClick={this.downloadData}
+                  isPending={this.state.isDownloadingData}
+                />
+                {
+                  this.state.chartData.countItems && this.state.chartData.countItems.length > 0 && (
+                    <div className='explorer-visualization__summary-cards'>
+                      <DataSummaryCardGroup
+                        summaryItems={this.state.chartData.countItems}
+                        connected
+                      />
+                    </div>
+                  )
+                }
+                {
+                  this.state.chartData.summaries && this.state.chartData.summaries.length > 0 && (
+                    <div className='explorer-visualization__charts'>
+                      {this.getSummaryChart()}
+                    </div>
+                  )
+                }
+                {
+                  this.state.chartData.stackedBarCharts
+                  && this.state.chartData.stackedBarCharts.map((chart, i) => (
+                    <PercentageStackedBarChart
+                      key={i}
+                      data={chart.data}
+                      title={chart.title}
+                      width='100%'
+                      lockMessage={'This chart is locked.'}
+                      useCustomizedColorMap={!!components.categorical9Colors}
+                      customizedColorMap={components.categorical9Colors || []}
+                      maximumDisplayItem={6}
+                    />
+                  ),
+                  )
+                }
+              </div>
+            </div>
+          </React.Fragment>
+        )}
       </React.Fragment>
     );
   }

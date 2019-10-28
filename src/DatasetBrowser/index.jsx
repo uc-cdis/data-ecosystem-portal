@@ -4,6 +4,7 @@ import FilterGroup from '@gen3/ui-component/dist/components/filters/FilterGroup'
 import FilterList from '@gen3/ui-component/dist/components/filters/FilterList';
 import { config } from '../params';
 import DatasetBrowserTable from './DatasetBrowserTable/';
+import LoginMsg from '../Explorer/LoginMsg';
 import DataSummaryCardGroup from '../components/cards/DataSummaryCardGroup/.';
 import './DatasetBrowser.less';
 import { fetchWithCreds, fetchUser } from '../actions';
@@ -259,36 +260,37 @@ class DatasetBrowser extends React.Component {
 
     return (
       <React.Fragment>
-        <div className='ndef-page-title'>
-          Dataset Browser
-        </div>
-        <div id='def-spinner' className={this.state.loading ? 'visible' : 'hidden'} ><Spinner /></div>
-        <div className='dataset-browser'>
-          <div className='dataset-browser__filters'>
-            <FilterGroup
-              tabs={tabs}
-              filterConfig={config.datasetBrowserConfig.filterConfig}
-              onFilterChange={e => this.handleFilterChange(e)}
-            />
-          </div>
-          <div className='dataset-browser__visualizations'>
-            {
-              <div className='guppy-explorer-visualization__charts'>
-                <DataSummaryCardGroup summaryItems={summaries} connected />
+        { this.state.loading ? (<Spinner />) : (
+          <React.Fragment>
+            { this.state.isUserLoggedIn || <LoginMsg /> }
+            <div className='dataset-browser'>
+              <div className='dataset-browser__filters'>
+                <FilterGroup
+                  tabs={tabs}
+                  filterConfig={config.datasetBrowserConfig.filterConfig}
+                  onFilterChange={e => this.handleFilterChange(e)}
+                />
               </div>
-            }
-            <DatasetBrowserTable
-              ref={this.tableRef}
-              className='guppy-explorer-visualization__table'
-              tableConfig={tableConfig}
-              filteredData={this.state.filteredData}
-              totalCount={totalCount}
-              guppyConfig={config.datasetBrowserConfig}
-              isLocked={false}
-              isUserLoggedIn={this.state.isUserLoggedIn}
-            />
-          </div>
-        </div>
+              <div className='dataset-browser__visualizations'>
+                {
+                  <div className='guppy-explorer-visualization__charts'>
+                    <DataSummaryCardGroup summaryItems={summaries} connected />
+                  </div>
+                }
+                <DatasetBrowserTable
+                  ref={this.tableRef}
+                  className='guppy-explorer-visualization__table'
+                  tableConfig={tableConfig}
+                  filteredData={this.state.filteredData}
+                  totalCount={totalCount}
+                  guppyConfig={config.datasetBrowserConfig}
+                  isLocked={false}
+                  isUserLoggedIn={this.state.isUserLoggedIn}
+                />
+              </div>
+            </div>
+          </React.Fragment>
+        )}
       </React.Fragment>
     );
   }
