@@ -55,7 +55,7 @@ class IndexButtonBar extends Component {
                               this.props.onActiveTab(item.internal_link);
                               this.props.history.push(`${item.internal_link}`);
                             }}
-                            label={Object.prototype.hasOwnProperty.call(item, 'internal_link_text') ? item.internal_link_text : 'Explorer Cohorts'}
+                            label={Object.prototype.hasOwnProperty.call(item, 'internal_link_text') ? item.internal_link_text : 'Explorer in Ecosystem'}
                             buttonType='secondary'
                           />
                         }
