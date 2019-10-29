@@ -5,7 +5,6 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Button from '@gen3/ui-component/dist/components/Button';
 import IconComponent from './Icon';
-import IconicLink from './buttons/IconicLink';
 import './IndexButtonBar.css';
 
 /**
@@ -22,6 +21,7 @@ class IndexButtonBar extends Component {
       slidesToScroll: 1,
       arrows: true,
     };
+    const isItemExternal = item => Object.prototype.hasOwnProperty.call(item, 'external_link_text');
     return (
       <React.Fragment>
         <div className='index-button-bar__header'>
@@ -49,25 +49,25 @@ class IndexButtonBar extends Component {
                       />
                       <div className='index-button-bar__button-group'>
                         { Object.prototype.hasOwnProperty.call(item, 'internal_link') &&
-                    <Button
-                      className='index-button-bar__item'
-                      onClick={() => {
-                        this.props.onActiveTab(item.internal_link);
-                        this.props.history.push(`${item.internal_link}`);
-                      }}
-                      label={Object.prototype.hasOwnProperty.call(item, 'internal_link_text') ? item.internal_link_text : 'Explorer Cohorts'}
-                      buttonType='secondary'
-                    />
+                          <Button
+                            className='index-button-bar__item'
+                            onClick={() => {
+                              this.props.onActiveTab(item.internal_link);
+                              this.props.history.push(`${item.internal_link}`);
+                            }}
+                            label={Object.prototype.hasOwnProperty.call(item, 'internal_link_text') ? item.internal_link_text : 'Explorer Cohorts'}
+                            buttonType='secondary'
+                          />
                         }
                         {
                           Object.prototype.hasOwnProperty.call(item, 'external_link') &&
-                        <IconicLink
-                          link={item.external_link}
-                          className='index-button-bar__item'
-                          caption={Object.prototype.hasOwnProperty.call(item, 'external_link_text') ? item.external_link_text : 'Visit Environment'}
-                          target='_blank'
-                          isExternal
-                        />
+                        <a href={item.external_link} target='_blank' rel='noopener noreferrer'>
+                          <Button
+                            label={isItemExternal(item) ? item.external_link_text : 'Visit Environment'}
+                            rightIcon={isItemExternal(item) ? 'external-link' : null}
+                            buttonType={isItemExternal(item) ? 'default' : 'primary'}
+                          />
+                        </a>
                         }
                       </div>
                     </div>

@@ -18,7 +18,11 @@
   position: relative;
   width: 300px;
   padding: 20px;
-  height: 400px;
+  height: 450px;
+}
+
+.index-button-bar__thumbnail-button-wrapper {
+  outline: none;
 }
 
 .index-button-bar__thumbnail-title {
@@ -35,7 +39,7 @@
 .index-button-bar__button-group {
   position: absolute;
   bottom: 25px;
-  left: 50%;
+  width: 260px;
 }
 
 .index-button-bar__icon {
@@ -47,7 +51,6 @@
 .index-button-bar__item {
   margin: 10px;
   position: relative;
-  left: -50%;
 }
 
 .index-button-bar__header {
