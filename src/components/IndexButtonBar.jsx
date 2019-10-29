@@ -48,17 +48,6 @@ class IndexButtonBar extends Component {
                         dangerouslySetInnerHTML={{ __html: item.body }}
                       />
                       <div className='index-button-bar__button-group'>
-                        { Object.prototype.hasOwnProperty.call(item, 'internal_link') &&
-                          <Button
-                            className='index-button-bar__item'
-                            onClick={() => {
-                              this.props.onActiveTab(item.internal_link);
-                              this.props.history.push(`${item.internal_link}`);
-                            }}
-                            label={Object.prototype.hasOwnProperty.call(item, 'internal_link_text') ? item.internal_link_text : 'Explorer in Ecosystem'}
-                            buttonType='secondary'
-                          />
-                        }
                         {
                           Object.prototype.hasOwnProperty.call(item, 'external_link') &&
                         <a href={item.external_link} target='_blank' rel='noopener noreferrer'>
@@ -68,6 +57,17 @@ class IndexButtonBar extends Component {
                             buttonType={isItemExternal(item) ? 'default' : 'primary'}
                           />
                         </a>
+                        }
+                        { Object.prototype.hasOwnProperty.call(item, 'internal_link') &&
+                          <Button
+                            className='index-button-bar__item'
+                            onClick={() => {
+                              this.props.onActiveTab(item.internal_link);
+                              this.props.history.push(`${item.internal_link}`);
+                            }}
+                            label={Object.prototype.hasOwnProperty.call(item, 'internal_link_text') ? item.internal_link_text : 'Explore in Ecosystem'}
+                            buttonType='default'
+                          />
                         }
                       </div>
                     </div>

@@ -42,6 +42,10 @@
   width: 260px;
 }
 
+.index-button-bar__button-group button {
+  width: 200px;
+}
+
 .index-button-bar__icon {
   vertical-align: middle;
   padding-left: 4px;
@@ -49,7 +53,7 @@
 }
 
 .index-button-bar__item {
-  margin: 10px;
+  margin-top: 10px;
   position: relative;
 }
 
