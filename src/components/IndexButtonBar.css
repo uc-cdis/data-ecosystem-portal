@@ -60,6 +60,11 @@
   margin-bottom: 50px;
 }
 
+.index-button-bar__icon img {
+  max-width: 260px;
+  margin: auto;
+}
+
 @media screen and (min-width: 1300px) {
   .index-button-bar__header {
     width: 1250px;
