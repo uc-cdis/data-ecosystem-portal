@@ -73,3 +73,25 @@
   width: 200px;
   margin-bottom: 20px;
 }
+
+/* stylelint-disable */
+/* make charts evenly distributed */
+/* thanks to this stackoverflow answer: https://stackoverflow.com/a/12198561 */
+/* 3 charts */
+.summary-chart-group__column:first-child:nth-last-child(4),
+.summary-chart-group__column:first-child:nth-last-child(4) ~ .summary-chart-group__column {
+  width: 33.3%;
+}
+
+/* 4 charts */
+.summary-chart-group__column:first-child:nth-last-child(4),
+.summary-chart-group__column:first-child:nth-last-child(4) ~ .summary-chart-group__column {
+  width: 25%;
+}
+
+/* 5 charts */
+.summary-chart-group__column:first-child:nth-last-child(5),
+.summary-chart-group__column:first-child:nth-last-child(5) ~ .summary-chart-group__column {
+  width: 20%;
+}
+/* stylelint-enable */
