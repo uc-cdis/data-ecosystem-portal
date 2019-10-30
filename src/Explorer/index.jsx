@@ -284,6 +284,8 @@ class Explorer extends React.Component {
           chartIsEmpty: emptyChart,
           data: histogram
             // .filter(i => i.key !== 'N/A')
+            .filter(i => i.count > 0)
+            .sort((a, b) => (b.count - a.count))
             .map(i => ({ name: i.key, value: i.count })),
           chartRow: chartConfig[field].chartRow,
         };

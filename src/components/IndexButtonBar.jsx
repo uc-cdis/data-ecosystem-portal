@@ -21,7 +21,7 @@ class IndexButtonBar extends Component {
       slidesToScroll: 1,
       arrows: true,
     };
-    const isItemExternal = item => Object.prototype.hasOwnProperty.call(item, 'external_link_text');
+    const isSupported = item => (!item.coming_soon);
     return (
       <React.Fragment>
         <div className='index-button-bar__header'>
@@ -50,24 +50,12 @@ class IndexButtonBar extends Component {
                       <div className='index-button-bar__button-group'>
                         {
                           Object.prototype.hasOwnProperty.call(item, 'external_link') &&
-                        <a href={item.external_link} target='_blank' rel='noopener noreferrer'>
-                          <Button
-                            label={isItemExternal(item) ? item.external_link_text : 'Visit Environment'}
-                            rightIcon={isItemExternal(item) ? 'external-link' : null}
-                            buttonType={isItemExternal(item) ? 'default' : 'primary'}
-                          />
-                        </a>
-                        }
-                        { Object.prototype.hasOwnProperty.call(item, 'internal_link') &&
-                          <Button
-                            className='index-button-bar__item'
-                            onClick={() => {
-                              this.props.onActiveTab(item.internal_link);
-                              this.props.history.push(`${item.internal_link}`);
-                            }}
-                            label={Object.prototype.hasOwnProperty.call(item, 'internal_link_text') ? item.internal_link_text : 'Explore in Ecosystem'}
-                            buttonType='default'
-                          />
+                          <a href={item.external_link} target='_blank' rel='noopener noreferrer'>
+                            <Button
+                              label={Object.prototype.hasOwnProperty.call(item, 'external_link_text') ? item.external_link_text : 'Visit Website'}
+                              buttonType={isSupported(item) ? 'primary' : 'default'}
+                            />
+                          </a>
                         }
                       </div>
                     </div>
