@@ -22,10 +22,11 @@ class IndexButtonBar extends Component {
       arrows: true,
     };
     const isSupported = item => (!item.coming_soon);
+    const supportedCount = this.props.buttons.filter(item => isSupported(item)).length;
     return (
       <React.Fragment>
         <div className='index-button-bar__header'>
-          {this.props.buttons.length} Supported Data Resources
+          {supportedCount} Supported Data Resources
         </div>
         <div className='index-button-bar'>
           {
