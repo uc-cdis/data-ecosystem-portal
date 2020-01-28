@@ -48,6 +48,19 @@ function checkIfFiltersApply(filtersApplied, row) {
   return true;
 }
 
+function flatArray(list) {
+  if (Array.prototype.flat) {
+    list.flat();
+  }
+  // Use MDN alternative implementation
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat#Alternative
+  function flatDeep(arr, d = 1) {
+    return d > 0 ? arr.reduce((acc, val) => acc.concat(Array.isArray(val)
+      ? flatDeep(val, d - 1) : val), []) : arr.slice();
+  }
+  return flatDeep(list, Infinity);
+}
+
 class DatasetBrowser extends React.Component {
   constructor(props) {
     super(props);
@@ -151,7 +164,7 @@ class DatasetBrowser extends React.Component {
       this.allData = this.allData.concat(parentCommonsData);
       return this.obtainAllSubcommonsData();
     }).then((subCommonsData) => {
-      const data = subCommonsData.flat();
+      const data = flatArray(subCommonsData);
       if (data.length > 0) {
         this.allData = this.allData.concat(data);
       }
