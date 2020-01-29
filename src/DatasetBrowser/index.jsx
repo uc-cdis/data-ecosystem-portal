@@ -50,7 +50,7 @@ function checkIfFiltersApply(filtersApplied, row) {
 
 function flatArray(list) {
   if (Array.prototype.flat) {
-    list.flat();
+    return list.flat();
   }
   // Use MDN alternative implementation
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat#Alternative
