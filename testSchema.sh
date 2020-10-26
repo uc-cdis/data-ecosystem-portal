@@ -19,4 +19,3 @@ while [[ $index -lt ${#testCases[@]} ]]; do
   npm run schema
   npm run relay
 done
-

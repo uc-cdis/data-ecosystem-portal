@@ -46,7 +46,7 @@
   text-align: left;
 }
 
-.dataset-browser-table .ReactTable .rt-thead .rt-th:first-child, 
+.dataset-browser-table .ReactTable .rt-thead .rt-th:first-child,
 .dataset-browser-table .ReactTable .rt-tbody .rt-td:first-child {
   padding-left: 20px;
 }
