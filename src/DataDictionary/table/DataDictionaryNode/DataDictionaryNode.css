@@ -69,7 +69,7 @@
   display: inline;
 }
 
-.data-dictionary-node__download-button:hover, 
+.data-dictionary-node__download-button:hover,
 .data-dictionary-node__download-button:active {
   color: white;
 }

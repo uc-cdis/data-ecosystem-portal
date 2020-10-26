@@ -1,9 +1,9 @@
 {
-  "subcommons": [ 
+  "subcommons": [
     {
       "URL": "https://qa-test2.planx-pla.net/",
       "name": "NDE: TB"
-    }, 
+    },
     {
       "URL": "https://qa-test4.planx-pla.net/",
       "name": "NDE: AIDS"
@@ -53,7 +53,7 @@
     "index": {
       "introduction": {
         "heading": "NIAID Data Ecosystem Datasets",
-        "text": "Disciplines within NIAID can have their own independent data models while maintaining interoperability of the data ecosystem, facilitating individual research communities to work within the system. The data within all supported resources are findable, accessible, interoperable, and reusable (FAIR).", 
+        "text": "Disciplines within NIAID can have their own independent data models while maintaining interoperability of the data ecosystem, facilitating individual research communities to work within the system. The data within all supported resources are findable, accessible, interoperable, and reusable (FAIR).",
         "link": "/datasets"
       },
       "buttons": [
@@ -147,7 +147,7 @@
   "datasetBrowserConfig": {
     "filterSections": [
       {
-        "title": "Supported Data Resources", 
+        "title": "Supported Data Resources",
         "options": [
           { "text": "ImmPort", "filterType": "singleSelect"},
           { "text": "NDE: TB", "filterType": "singleSelect"},
@@ -156,7 +156,7 @@
           { "text": "NDE: Microbiome", "filterType": "singleSelect"}
         ]
       },
-      { 
+      {
         "title": "Research Focus",
         "options": [
           { "text": "AIDS", "filterType": "singleSelect"},

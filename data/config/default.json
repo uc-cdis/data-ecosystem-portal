@@ -1,5 +1,5 @@
 {
-  "subcommons": [],  
+  "subcommons": [],
   "gaTrackingId": "undefined",
   "graphql": {
     "boardCounts": [
@@ -115,8 +115,8 @@
       "auth_filter_field": "auth_resource_path"
     },
     "filterSections": [
-      { 
-        "title": "Filter Title", 
+      {
+        "title": "Filter Title",
         "options": [
           { "text": "Filter Text", "filterType": "singleSelect"}
         ]
