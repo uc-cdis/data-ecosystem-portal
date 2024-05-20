@@ -39,7 +39,7 @@
     "material-ui": "^0.19.2",
     "moment": "^2.22.2",
     "node-fetch": "^1.7.3",
-    "npm": "^6.1.0",
+    "npm": "^7.21.0",
     "nunjucks": "^3.0.1",
     "prop-types": "^15.6.0",
     "query-string": "^6.3.0",
