@@ -1,7 +1,7 @@
 # To run: docker run -d --name=dataportal -p 80:80 quay.io/cdis/data-ecosystem-portal
 # To check running container: docker exec -it dataportal /bin/bash
 
-FROM ubuntu:16.04
+FROM ubuntu:xenial-20201014
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV REACT_APP_PROJECT_ID=search
